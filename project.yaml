@@ -5,8 +5,20 @@ expectations:
 
 actions:
 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Data extraction 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --output-format csv.gz --study-definition study_definition
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --output-format=csv.gz
     outputs:
       highly_sensitive:
         cohort: output/input.csv.gz
+
+  generate_study_population_flowchart:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_flowchart --output-format=csv.gz
+    outputs:
+      highly_sensitive:
+        cohort: output/input_flowchart.csv.gz
