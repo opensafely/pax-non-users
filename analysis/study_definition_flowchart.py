@@ -132,7 +132,7 @@ study = StudyDefinition(
   paxlovid_covid_prev=patients.with_covid_therapeutics(
     with_these_therapeutics="Paxlovid",
     with_these_indications="non_hospitalised",
-    on_or_before="covid_test_positive_date - 1 day",
+    between=["covid_test_positive_date - 91 days", "covid_test_positive_date - 1 day"],
     returning="binary_flag",
     return_expectations={
       "incidence": 0.01
@@ -142,7 +142,7 @@ study = StudyDefinition(
   sotrovimab_covid_prev=patients.with_covid_therapeutics(
     with_these_therapeutics="Sotrovimab",
     with_these_indications="non_hospitalised",
-    on_or_before="covid_test_positive_date - 1 day",
+    between=["covid_test_positive_date - 91 days", "covid_test_positive_date - 1 day"],
     returning="binary_flag",
     return_expectations={
       "incidence": 0.01
@@ -152,7 +152,7 @@ study = StudyDefinition(
   remdesivir_covid_prev=patients.with_covid_therapeutics(
     with_these_therapeutics="Remdesivir",
     with_these_indications="non_hospitalised",
-    on_or_before="covid_test_positive_date - 1 day",
+    between=["covid_test_positive_date - 91 days", "covid_test_positive_date - 1 day"],
     returning="binary_flag",
     return_expectations={
       "incidence": 0.01
@@ -162,7 +162,7 @@ study = StudyDefinition(
   molnupiravir_covid_prev=patients.with_covid_therapeutics(
     with_these_therapeutics="Molnupiravir",
     with_these_indications="non_hospitalised",
-    on_or_before="covid_test_positive_date - 1 day",
+    between=["covid_test_positive_date - 91 days", "covid_test_positive_date - 1 day"],
     returning="binary_flag",
     date_format="YYYY-MM-DD",
     return_expectations={
@@ -173,7 +173,7 @@ study = StudyDefinition(
   casirivimab_covid_prev=patients.with_covid_therapeutics(
     with_these_therapeutics="Casirivimab and imdevimab",
     with_these_indications="non_hospitalised",
-    on_or_before="covid_test_positive_date - 1 day",
+    between=["covid_test_positive_date - 91 days", "covid_test_positive_date - 1 day"],
     returning="binary_flag",
     return_expectations={
       "incidence": 0.01
@@ -737,7 +737,7 @@ study = StudyDefinition(
     returning="binary_flag",
     include_date_of_match=True,
     find_last_match_in_period=True,
-    date_format="YYYY-MM-DD"
+    date_format="YYYY-MM-DD",
   ), 
 
   # FIXME: what time frame is used for defining 'recent ascitic drainage'?
@@ -746,7 +746,8 @@ study = StudyDefinition(
     on_or_before="ascitic_drainage_snomed_date - 1 day",
     returning="binary_flag",
     include_date_of_match=True,
-    find_last_match_in_period=True
+    find_last_match_in_period=True,
+    date_format="YYYY-MM-DD",
   ),    
 
   # FIXME: hospital admission with liver disease (see below?)
@@ -869,7 +870,7 @@ study = StudyDefinition(
     },
   ),
 
-  RRT=patients.with_these_clinical_events(
+  rrt=patients.with_these_clinical_events(
     codelist=codelists.RRT_codelist,
     on_or_before ="covid_test_positive_date",
     returning = "binary_flag",
@@ -879,7 +880,7 @@ study = StudyDefinition(
     },
   ),
 
-  RRT_icd10=patients.admitted_to_hospital(
+  rrt_icd10=patients.admitted_to_hospital(
     returning="binary_flag",
     find_last_match_in_period=True,
     with_these_diagnoses=codelists.RRT_icd10_codelist,
@@ -889,7 +890,7 @@ study = StudyDefinition(
     },
   ),
 
-  RRT_procedure=patients.admitted_to_hospital(
+  rrt_procedure=patients.admitted_to_hospital(
     returning="binary_flag",
     find_last_match_in_period=True,
     with_these_procedures=codelists.RRT_opcs4_codelist,
