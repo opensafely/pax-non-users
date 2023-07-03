@@ -27,7 +27,7 @@ study = StudyDefinition(
   
   index_date=start_date,
 
-  population=patients.satisfying( #FIXME: extract data pt treated with pax without pos tests
+  population=patients.satisfying(
     """
     age >= 18 AND age < 110
     AND NOT has_died
@@ -62,7 +62,7 @@ study = StudyDefinition(
       "date": {"earliest": "index_date", "latest": end_date},
     },
   ),
-  
+
   ###################################################################
   # STUDY POPULATION EXCLUSION AND INCLUSION ------------------------
   ###################################################################
@@ -885,21 +885,9 @@ study = StudyDefinition(
     date_format="YYYY-MM-DD",
   ), 
 
-  # FIXME: what time frame is used for defining 'recent ascitic drainage'?
-  ascitic_drainage_snomed_pre=patients.with_these_clinical_events(
-    codelists.ascitic_drainage_snomed_codes,
-    on_or_before="ascitic_drainage_snomed_date - 1 day",
-    returning="binary_flag",
-    include_date_of_match=True,
-    find_last_match_in_period=True,
-    date_format="YYYY-MM-DD",
-  ),    
-
-  # FIXME: hospital admission with liver disease (see below?)
-
   ## CKD DEFINITIONS - adapted from https://github.com/opensafely/risk-factors-research
   ckd_stages_3_5=patients.with_these_clinical_events(
-    codelists.chronic_kidney_disease_stages_3_5_codes,
+    codelist=codelists.chronic_kidney_disease_stages_3_5_codes,
     on_or_before="covid_test_positive_date",
     returning="binary_flag",
     find_last_match_in_period=True,
@@ -907,7 +895,7 @@ study = StudyDefinition(
 
   ckd_primis_stage=patients.with_these_clinical_events(
     codelist=codelists.primis_ckd_stage,
-    on_or_before ="covid_test_positive_date",
+    on_or_before="covid_test_positive_date",
     returning="category",
     find_last_match_in_period=True,
     return_expectations={
@@ -1013,36 +1001,6 @@ study = StudyDefinition(
       "incidence": 0.2,
     },
   ),
-
-  rrt=patients.with_these_clinical_events(
-    codelist=codelists.RRT_codelist,
-    on_or_before ="covid_test_positive_date",
-    returning = "binary_flag",
-    find_last_match_in_period = True,
-    return_expectations={
-      "incidence": 0.2,
-    },
-  ),
-
-  rrt_icd10=patients.admitted_to_hospital(
-    returning="binary_flag",
-    find_last_match_in_period=True,
-    with_these_diagnoses=codelists.RRT_icd10_codelist,
-    on_or_before="covid_test_positive_date",
-    return_expectations={
-      "incidence": 0.2,
-    },
-  ),
-
-  rrt_procedure=patients.admitted_to_hospital(
-    returning="binary_flag",
-    find_last_match_in_period=True,
-    with_these_procedures=codelists.RRT_opcs4_codelist,
-    on_or_before="covid_test_positive_date",
-    return_expectations={
-      "incidence": 0.2,
-    },
-  ),  
 
   #  3-5 CKD based on recorded creatinine value
   creatinine_ctv3=patients.with_these_clinical_events(
@@ -1226,16 +1184,13 @@ study = StudyDefinition(
     },
   ),
 
-  # Solid organ transplant (plus solid_organ_transplant_nhsd_snomed defined below)
-  # FIXME: Bang uses different definition of solid organ transplants for exclusion here
-  # --> wouldn't it make sense to exclude based on high risk group? solid_organ_transplant_nhsd_snomed
-  #solid_organ_transplant_snomed = patients.with_these_clinical_events(
-    #codelists.solid_organ_transplant_codes,
-    #on_or_before ="covid_test_positive_date",
-    #returning = "date",
-    #date_format = "YYYY-MM-DD",
-    #find_last_match_in_period = True,
-  #),
+  solid_organ_transplant_snomed = patients.with_these_clinical_events(
+    codelists.solid_organ_transplant_codes,
+    on_or_before ="covid_test_positive_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
 
   ### contraindicated medication
   drugs_do_not_use=patients.with_these_medications(
