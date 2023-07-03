@@ -345,24 +345,6 @@ kidney_tx_opcs4_codelist = codelist_from_csv(
     column="code"
 )
 
-RRT_codelist = codelist_from_csv(
-    "codelists/opensafely-renal-replacement-therapy.csv",
-    system="ctv3",
-    column="CTV3ID"
-)
-
-RRT_icd10_codelist = combine_codelists(
-    kidney_tx_icd10_codelist,
-    dialysis_icd10_codelist,
-    codelist(["T861"], system="icd10")
-)
-
-RRT_opcs4_codelist = combine_codelists(
-    kidney_tx_opcs4_codelist,
-    dialysis_opcs4_codelist,
-    codelist(["M023", "M026", "M027", "X412"], system="opcs4")
-)
-
 creatinine_codes_ctv3 = codelist(["XE2q5"], system="ctv3")
 
 creatinine_codes_snomed = codelist_from_csv(
@@ -383,6 +365,12 @@ eGFR_short_level_codelist = codelist_from_csv(
     "codelists/user-bangzheng-egfr-value-shortlist.csv",
     system="snomed",
     column="code",
+)
+
+solid_organ_transplant_codes = codelist_from_csv(
+    "codelists/opensafely-solid-organ-transplantation-snomed.csv",
+    system = "snomed",
+    column = "id",
 )
 
 drugs_do_not_use_codes = codelist_from_csv(

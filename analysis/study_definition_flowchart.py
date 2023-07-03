@@ -1093,12 +1093,11 @@ study = StudyDefinition(
     },
   ),
 
-  solid_organ_transplant_snomed = patients.with_these_clinical_events(
-    codelists.solid_organ_transplant_codes,
-    on_or_before ="covid_test_positive_date",
-    returning = "date",
-    date_format = "YYYY-MM-DD",
-    find_last_match_in_period = True,
+  solid_organ_transplant_snomed=patients.with_these_clinical_events(
+    codelist=codelists.solid_organ_transplant_codes,
+    on_or_before="covid_test_positive_date",
+    returning="binary_flag",
+    find_last_match_in_period=True,
   ),
 
   ### contraindicated medication
