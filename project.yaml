@@ -23,6 +23,12 @@ actions:
       highly_sensitive:
         cohort: output/input_flowchart.csv.gz
 
+  generate_study_population_pax_trt:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_pax_trt --output-format=csv.gz
+    outputs:
+      highly_sensitive:
+        cohort: output/input_pax_trt.csv.gz
+
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # # 
   ## Data cleaning and description
