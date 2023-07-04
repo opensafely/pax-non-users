@@ -360,17 +360,17 @@
       "downloaded_at": "2023-07-03 16:11:21.764376Z",
       "sha": "cdb61aa51b4400c1aba2f8e4728c1b8130c4fd40"
     },
-    "opensafely-sps-paxlovid-interactions-do-not-use.csv": {
-      "id": "opensafely/sps-paxlovid-interactions-do-not-use/58f87823",
-      "url": "https://codelists.opensafely.org/codelist/opensafely/sps-paxlovid-interactions-do-not-use/58f87823/",
-      "downloaded_at": "2023-06-22 19:16:01.367734Z",
-      "sha": "f856f0bffa2b8ff05e2bcb245a77e268453db52b"
+    "opensafely-sps-paxlovid-interactions-do-not-use-dmd.csv": {
+      "id": "opensafely/sps-paxlovid-interactions-do-not-use-dmd/1a657b33",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/sps-paxlovid-interactions-do-not-use-dmd/1a657b33/",
+      "downloaded_at": "2023-07-04 14:10:43.865233Z",
+      "sha": "1ea163397491dd6aa73fd1453a42274364bfa177"
     },
-    "opensafely-nirmatrelvir-drug-interactions.csv": {
-      "id": "opensafely/nirmatrelvir-drug-interactions/3d3644f8",
-      "url": "https://codelists.opensafely.org/codelist/opensafely/nirmatrelvir-drug-interactions/3d3644f8/",
-      "downloaded_at": "2023-06-22 19:16:01.645833Z",
-      "sha": "e35b126fdea30ebaebe70ba70f1010e5d4e7cdc4"
+    "opensafely-nirmatrelvir-drug-interactions-dmd.csv": {
+      "id": "opensafely/nirmatrelvir-drug-interactions-dmd/015607fe",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/nirmatrelvir-drug-interactions-dmd/015607fe/",
+      "downloaded_at": "2023-07-04 14:10:44.044817Z",
+      "sha": "496c698c13e59be0de955da9535927d637da2081"
     },
     "primis-covid19-vacc-uptake-eth2001.csv": {
       "id": "primis-covid19-vacc-uptake/eth2001/v1",

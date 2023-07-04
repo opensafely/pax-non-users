@@ -374,16 +374,16 @@ solid_organ_transplant_codes = codelist_from_csv(
 )
 
 drugs_do_not_use_codes = codelist_from_csv(
-  "codelists/opensafely-sps-paxlovid-interactions-do-not-use.csv", 
+  "codelists/opensafely-sps-paxlovid-interactions-do-not-use-dmd.csv", 
   system = "snomed", 
-  column = "code"
+  column = "dmd_id"
 )
 
 # CAUTION AGAINST ----
 drugs_consider_risk_codes = codelist_from_csv(
-  "codelists/opensafely-nirmatrelvir-drug-interactions.csv", 
+  "codelists/opensafely-nirmatrelvir-drug-interactions-dmd.csv", 
   system = "snomed", 
-  column = "code"
+  column = "dmd_id"
 )
 
 ## COVARIATES ----

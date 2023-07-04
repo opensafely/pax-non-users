@@ -18,8 +18,6 @@ extract_data <- function(input_filename){
       # MAIN ELIGIBILITY - FIRST POSITIVE SARS-CoV-2 TEST IN PERIOD ----
       covid_test_positive_date = col_date(format = "%Y-%m-%d"),
       covid_test_positive = col_logical(),
-      in_study_pop = col_logical(),
-      paxlovid_without_pos_test = col_logical(), # pop added for descriptive purposes
       
       # TREATMENT - NEUTRALISING MONOCLONAL ANTIBODIES OR ANTIVIRALS ----
       paxlovid_covid_therapeutics = col_date(format = "%Y-%m-%d"),
@@ -47,18 +45,12 @@ extract_data <- function(input_filename){
       motor_neurone_disease_nhsd = col_logical(),
       myasthenia_gravis_nhsd = col_logical(),
       huntingtons_disease_nhsd = col_logical(), 
-      
-      # EVER PAX TREATED (IN STUDY PERIOD) ----
-      paxlovid_covid_therapeutics_in_study_period = col_date(format = "%Y-%m-%d"),
-      paxlovid_without_pos_test = col_logical(),
 
       # CONTRAINDICATIONS ----
       advanced_decompensated_cirrhosis = col_logical(),
       decompensated_cirrhosis_icd10 = col_logical(), 
       ascitic_drainage_snomed = col_logical(),
       ascitic_drainage_snomed_date = col_date(format = "%Y-%m-%d"),
-      ascitic_drainage_snomed_pre = col_logical(),
-      ascitic_drainage_snomed_pre_date = col_date(format = "%Y-%m-%d"),
       ckd_stages_3_5 = col_logical(),
       ckd_primis_stage = col_character(),
       ckd3_icd10 = col_logical(),
@@ -70,9 +62,6 @@ extract_data <- function(input_filename){
       kidney_transplant = col_logical(),
       kidney_transplant_icd10 = col_logical(),
       kidney_transplant_procedure = col_logical(),
-      rrt = col_logical(),
-      rrt_icd10 = col_logical(),
-      rrt_procedure = col_logical(),
       creatinine_ctv3 = col_double(),
       creatinine_operator_ctv3 = col_character(),
       age_creatinine_ctv3 = col_integer(),
@@ -86,6 +75,7 @@ extract_data <- function(input_filename){
       eGFR_operator = col_character(),
       eGFR_short_record = col_double(),
       eGFR_short_operator = col_character(),
+      solid_organ_transplant_snomed = col_logical(),
       drugs_do_not_use = col_logical(),
 
       # CAUTION AGAINST ----

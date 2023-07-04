@@ -145,7 +145,7 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
                   date_treated == 
                     molnupiravir_covid_therapeutics ~ "Molnupiravir",
                   TRUE ~ "Untreated") %>% 
-        factor(levels = c("Untreated", "Sotrovimab", "Molnupiravir")),
+        factor(levels = c("Untreated", "Paxlovid", "Sotrovimab", "Molnupiravir")),
       
       any_treatment_date =
         if_else(any_treatment_strategy_cat != "Untreated",
@@ -204,6 +204,13 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
                   paxlovid_covid_therapeutics == 
                     sotrovimab_covid_therapeutics ~ 1,
                   TRUE ~ 0),
+      
+      creatinine_ctv3 = if_else(creatinine_ctv3 == 0, NA_real_, creatinine_ctv3),
+      creatinine_snomed = if_else(creatinine_snomed == 0, NA_real_, creatinine_snomed),
+      creatinine_short_snomed = if_else(creatinine_short_snomed == 0, NA_real_, creatinine_short_snomed),
+      eGFR_record = if_else(eGFR_record == 0, NA_real_, eGFR_record),
+      eGFR_short_record = if_else(eGFR_short_record == 0, NA_real_, eGFR_short_record),
+      
     ) %>%
     # add dummy variable tb_postest categories
     pivot_wider(names_from = tb_postest_vax,
