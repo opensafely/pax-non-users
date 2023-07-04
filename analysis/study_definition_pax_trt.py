@@ -1451,7 +1451,7 @@ study = StudyDefinition(
     returning="date",
     date_format="YYYY-MM-DD",
     return_expectations={
-      "date": {"earliest": "paxlovid_covid_therapeutics", "latest": end_date},
+      "date": {"earliest": "index_date", "latest": end_date},
     },
   ),
 
