@@ -62,14 +62,14 @@ missing_stp <-
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
   filter(!is.na(sex)) %>%
-  filter(stp == "") %>%
+  filter(stp == "" | is.na(stp)) %>%
   nrow()
 # missing imd
 missing_imd <-
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
   filter(!is.na(sex)) %>%
-  filter(stp != "") %>%
+  filter(stp != "" & !is.na(stp)) %>%
   filter(imd == "-1") %>%
   nrow()
 # previously treated
@@ -77,13 +77,17 @@ prev_treated <-
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
   filter(!is.na(sex)) %>%
-  filter(stp != "") %>%
+  filter(stp != "" & !is.na(stp)) %>%
   filter(imd != "-1") %>%
   filter(prev_treated == TRUE) %>% 
   nrow()
 # not previously treated but evidence of covid < 90 days
-tested_positive <- 
+evidence_covid <- 
   data %>%
+  filter(!is.na(age) & (age >= 18 & age < 110)) %>%
+  filter(!is.na(sex)) %>%
+  filter(stp != "" & !is.na(stp)) %>%
+  filter(imd != "-1") %>%
   filter(prev_treated == FALSE) %>%
   filter(covid_positive_prev_90_days == TRUE |
            any_covid_hosp_prev_90_days == TRUE ) %>%
@@ -91,6 +95,10 @@ tested_positive <-
 # not previously treated and no evidence of covid < 90 days but in hospital
 in_hospital_when_tested <- 
   data %>%
+  filter(!is.na(age) & (age >= 18 & age < 110)) %>%
+  filter(!is.na(sex)) %>%
+  filter(stp != "" & !is.na(stp)) %>%
+  filter(imd != "-1") %>%
   filter(prev_treated == FALSE) %>%
   filter(covid_positive_prev_90_days == FALSE &
            any_covid_hosp_prev_90_days == FALSE) %>%
@@ -99,6 +107,10 @@ in_hospital_when_tested <-
 # included
 total_n_included <- 
   data %>%
+  filter(!is.na(age) & (age >= 18 & age < 110)) %>%
+  filter(!is.na(sex)) %>%
+  filter(stp != "" & !is.na(stp)) %>%
+  filter(imd != "-1") %>%
   filter(prev_treated == FALSE) %>%
   filter(covid_positive_prev_90_days == FALSE &
            any_covid_hosp_prev_90_days == FALSE) %>%
@@ -108,11 +120,12 @@ total_n_included <-
 out <-
   tibble(total_n,
          missing_age,
+         age_outside_range,
          missing_sex,
          missing_stp,
          missing_imd,
          prev_treated,
-         tested_positive,
+         evidence_covid,
          in_hospital_when_tested,
          total_n_included)
 out <- bind_cols(out, n_excluded_in_data_processing)
