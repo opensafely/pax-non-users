@@ -69,3 +69,25 @@ actions:
       moderately_sensitive:
         csv1: output/flowchart/flowchart.csv
         csv2: output/flowchart/flowchart_redacted.csv
+
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Descriptive analyses
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # #
+
+  describe_distr_trt_init:
+    run: r:latest analysis/descriptives/describe_distr_trt_init.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/descriptives/distr_pax_init.csv
+        csv2: output/descriptives/distr_pax_init_red.csv
+
+  describe_outcomes_in_trt_window:
+    run: r:latest analysis/descriptives/describe_outcomes_in_trt_window.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/descriptives/outcomes_in_trt_window.csv
+        csv2: output/descriptives/outcomes_in_trt_window_red.csv
