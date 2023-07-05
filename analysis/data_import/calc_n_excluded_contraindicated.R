@@ -58,7 +58,8 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     filter((!is.na(egfr_ctv3) & egfr_ctv3 < 60) | 
              (!is.na(egfr_snomed) & egfr_snomed < 60) |
-             (!is.na(egfr_short_snomed) & egfr_short_snomed < 60))
+             (!is.na(egfr_short_snomed) & egfr_short_snomed < 60)) %>%
+    nrow()
   # drugs do not use 
   n_drugs_do_not_use <-
     data_processed %>%
