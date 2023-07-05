@@ -55,20 +55,20 @@ age_outside_range <-
 missing_sex <-
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(is.na(sex)) %>%
+  filter(is.na(sex) | !(sex %in% c("F", "M"))) %>%
   nrow()
 # missing stp
 missing_stp <-
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(!is.na(sex)) %>%
+  filter(sex %in% c("F", "M")) %>%
   filter(stp == "" | is.na(stp)) %>%
   nrow()
 # missing imd
 missing_imd <-
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(!is.na(sex)) %>%
+  filter(sex %in% c("F", "M")) %>%
   filter(stp != "" & !is.na(stp)) %>%
   filter(imd == "-1") %>%
   nrow()
@@ -76,7 +76,7 @@ missing_imd <-
 prev_treated <- 
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(!is.na(sex)) %>%
+  filter(sex %in% c("F", "M")) %>%
   filter(stp != "" & !is.na(stp)) %>%
   filter(imd != "-1") %>%
   filter(prev_treated == TRUE) %>% 
@@ -85,7 +85,7 @@ prev_treated <-
 evidence_covid <- 
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(!is.na(sex)) %>%
+  filter(sex %in% c("F", "M")) %>%
   filter(stp != "" & !is.na(stp)) %>%
   filter(imd != "-1") %>%
   filter(prev_treated == FALSE) %>%
@@ -96,7 +96,7 @@ evidence_covid <-
 in_hospital_when_tested <- 
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(!is.na(sex)) %>%
+  filter(sex %in% c("F", "M")) %>%
   filter(stp != "" & !is.na(stp)) %>%
   filter(imd != "-1") %>%
   filter(prev_treated == FALSE) %>%
@@ -108,7 +108,7 @@ in_hospital_when_tested <-
 total_n_included <- 
   data %>%
   filter(!is.na(age) & (age >= 18 & age < 110)) %>%
-  filter(!is.na(sex)) %>%
+  filter(sex %in% c("F", "M")) %>%
   filter(stp != "" & !is.na(stp)) %>%
   filter(imd != "-1") %>%
   filter(prev_treated == FALSE) %>%
