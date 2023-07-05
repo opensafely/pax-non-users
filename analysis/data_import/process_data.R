@@ -3,6 +3,7 @@ library(forcats)
 source(here::here("lib", "functions", "fct_case_when.R"))
 source(here::here("analysis", "data_import", "functions", "define_status_and_fu_primary.R"))
 source(here::here("analysis", "data_import", "functions", "define_status_and_fu_all.R"))
+source(here::here("analysis", "data_import", "functions", "add_kidney_vars_to_data.R"))
 # function
 process_data <- function(data_extracted, study_dates, treat_window_days = 4){
   data_processed <- data_extracted %>%

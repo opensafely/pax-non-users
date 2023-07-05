@@ -30,10 +30,13 @@ args <- commandArgs(trailingOnly=TRUE)
 ################################################################################
 data_filename <- "data_flowchart_processed.rds"
 n_excluded_filename <- "n_excluded.rds"
+n_excluded_contraindicated_filename <- "n_excluded_contraindicated.rds"
 data <-
   read_rds(here::here("output", "data", data_filename))
 n_excluded_in_data_processing <-
   read_rds(here::here("output", "data_properties", n_excluded_filename))
+n_excluded_contraindicated <-
+  read_rds(here::here("output", "data_properties", n_excluded_contraindicated_filename))
 
 ################################################################################
 # 2 Calc numbers
@@ -128,7 +131,9 @@ out <-
          evidence_covid,
          in_hospital_when_tested,
          total_n_included)
-out <- bind_cols(out, n_excluded_in_data_processing)
+out <- 
+  bind_cols(out, n_excluded_in_data_processing, n_excluded_contraindicated) %>%
+  tidyr::pivot_longer(everything())
 out_redacted <- 
   out %>%
   mutate(across(where(~ is.integer(.x)), 

@@ -444,7 +444,7 @@ study = StudyDefinition(
     on_or_before="covid_test_positive_date",
     returning="binary_flag",
     return_expectations={
-      "incidence": 0.4
+      "incidence": 0.05
     },
   ),
 
@@ -453,7 +453,7 @@ study = StudyDefinition(
     on_or_before="covid_test_positive_date",
     with_these_diagnoses=codelists.liver_disease_nhsd_icd10_codes,
     return_expectations={
-      "incidence": 0.4
+      "incidence": 0.05
     },
   ),
 
@@ -889,6 +889,9 @@ study = StudyDefinition(
     on_or_before="covid_test_positive_date",
     returning="binary_flag",
     find_last_match_in_period=True,
+    return_expectations={
+      "incidence": 0.05,
+    },
   ),
 
   ckd_primis_stage=patients.with_these_clinical_events(
@@ -916,7 +919,7 @@ study = StudyDefinition(
     with_these_diagnoses=codelists.ckd3_icd_codes,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -946,7 +949,7 @@ study = StudyDefinition(
     returning = "binary_flag",
     find_last_match_in_period = True,
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -956,7 +959,7 @@ study = StudyDefinition(
     with_these_diagnoses=codelists.dialysis_icd10_codelist,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -966,7 +969,7 @@ study = StudyDefinition(
     with_these_procedures=codelists.dialysis_opcs4_codelist,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),  
 
@@ -976,7 +979,7 @@ study = StudyDefinition(
     returning="binary_flag",
     find_last_match_in_period=True,
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },    
   ),
 
@@ -986,7 +989,7 @@ study = StudyDefinition(
     with_these_diagnoses=codelists.kidney_tx_icd10_codelist,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -996,7 +999,7 @@ study = StudyDefinition(
     with_these_procedures=codelists.kidney_tx_opcs4_codelist,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -1196,7 +1199,7 @@ study = StudyDefinition(
     between=["covid_test_positive_date - 180 days", "covid_test_positive_date"],
     find_last_match_in_period=True,
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -1211,7 +1214,7 @@ study = StudyDefinition(
     find_last_match_in_period=True,
     date_format="YYYY-MM-DD",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
