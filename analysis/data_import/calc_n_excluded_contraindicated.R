@@ -29,9 +29,13 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     filter(ckd_stage_5_nhsd == TRUE) %>%
     nrow()
-  n_ckd_stages35_primis <-
+  n_ckd_stages35 <-
     data_processed %>%
     filter(ckd_stages_3_5 %in% c("3", "4", "5")) %>%
+    nrow()
+  n_ckd_stages35_primis <-
+    data_processed %>%
+    filter(ckd_primis_stage %in% c("3", "4", "5")) %>%
     nrow()
   n_ckd_stages35_icd10 <-
     data_processed %>%
@@ -47,8 +51,14 @@ calc_n_excluded_contraindicated <- function(data_processed){
     nrow()
   n_egfr <-
     data_processed %>%
-    filter(eGFR_record < 60 | eGFR_short_record < 60 | egfr_ctv3 < 60 | egfr_snomed < 60 | egfr_short_snomed < 60) %>%
+    filter((!is.na(eGFR_record) & eGFR_record < 60) | 
+             (!is.na(eGFR_short_record) & eGFR_short_record < 60)) %>%
     nrow()
+  n_egfr_creat <-
+    data_processed %>%
+    filter((!is.na(egfr_ctv3) & egfr_ctv3 < 60) | 
+             (!is.na(egfr_snomed) & egfr_snomed < 60) |
+             (!is.na(egfr_short_snomed) & egfr_short_snomed < 60))
   # drugs do not use 
   n_drugs_do_not_use <-
     data_processed %>%
@@ -67,11 +77,17 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
     filter(ckd_stage_5_nhsd == FALSE) %>%
-    filter(!(ckd_stages_3_5 %in% c("3", "4", "5"))) %>%
+    filter(ckd_stages_3_5 == FALSE) %>%
+    filter(!(ckd_primis_stage %in% c("3", "4", "5"))) %>%
     filter(ckd3_icd10 == FALSE & ckd4_icd10 == FALSE & ckd5_icd10 == FALSE) %>%
     filter(dialysis == FALSE & dialysis_icd10 == FALSE & dialysis_procedure == FALSE) %>%
     filter(kidney_transplant == FALSE & kidney_transplant_icd10 == FALSE & kidney_transplant_procedure == FALSE) %>%
-    filter(eGFR_record >= 60 & eGFR_short_record >= 60 & egfr_ctv3 >= 60 & egfr_snomed >= 60 & egfr_short_snomed >= 60) %>%
+    filter((is.na(eGFR_record) | eGFR_record >= 60) & 
+             (is.na(eGFR_short_record) | eGFR_short_record >= 60) #& 
+             #(is.na(egfr_ctv3) | egfr_ctv3 >= 60) &
+             #(is.na(egfr_snomed) | egfr_snomed >= 60) &
+             #(is.na(egfr_short_snomed) | egfr_short_snomed >= 60)
+           ) %>%
     filter(drugs_do_not_use == FALSE) %>%
     nrow()
   out <- tibble(n_before_exclusion_contraindications,
@@ -86,6 +102,7 @@ calc_n_excluded_contraindicated <- function(data_processed){
                 n_dialysis,
                 n_kidney_transplant,
                 n_egfr,
+                n_egfr_creat,
                 n_drugs_do_not_use,
                 n_drugs_caution,
                 n_after_exclusion_contraindications)

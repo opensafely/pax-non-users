@@ -21,11 +21,16 @@ add_contraindicated_indicator <- function(data_processed) {
       excl_renal_disease =
         if_else(
           ckd_stage_5_nhsd == TRUE |
-            (ckd_stages_3_5 %in% c("3", "4", "5")) |
+            ckd_stages_3_5 == TRUE |
+            ckd_primis_stage %in% c("3", "4", "5") |
             ckd3_icd10 == TRUE | ckd4_icd10 == TRUE | ckd5_icd10 == TRUE |
             dialysis == TRUE | dialysis_icd10 == TRUE | dialysis_procedure == TRUE |
             kidney_transplant == TRUE | kidney_transplant_icd10 == TRUE | kidney_transplant_procedure == TRUE |
-            eGFR_record < 60 | eGFR_short_record < 60 | egfr_ctv3 < 60 | egfr_snomed < 60 | egfr_short_snomed < 60,
+            (!is.na(eGFR_record) & eGFR_record < 60) | 
+            (!is.na(eGFR_short_record) & eGFR_short_record < 60), #| 
+            #(!is.na(egfr_ctv3) & egfr_ctv3 < 60) | 
+            #(!is.na(egfr_snomed) & egfr_snomed < 60) |
+            #(!is.na(egfr_short_snomed) & egfr_short_snomed < 60),
           TRUE,
           FALSE
         ),
