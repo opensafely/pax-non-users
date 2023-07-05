@@ -209,9 +209,9 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
       creatinine_snomed = if_else(creatinine_snomed == 0, NA_real_, creatinine_snomed),
       creatinine_short_snomed = if_else(creatinine_short_snomed == 0, NA_real_, creatinine_short_snomed),
       eGFR_record = if_else(eGFR_record == 0, NA_real_, eGFR_record),
-      eGFR_record = if_else(is.na(eGFR_operator) | eGFR_operator == "=", eGRF_record, NA_real_),
+      eGFR_record = if_else(is.na(eGFR_operator) | eGFR_operator == "=", eGFR_record, NA_real_),
       eGFR_short_record = if_else(eGFR_short_record == 0, NA_real_, eGFR_short_record),
-      eGFR_short_record = if_else(is.na(eGFR_short_operator) | eGFR_short_operator == "=", eGRF_short_record, NA_real_),
+      eGFR_short_record = if_else(is.na(eGFR_short_operator) | eGFR_short_operator == "=", eGFR_short_record, NA_real_),
       
     ) %>%
     add_kidney_vars_to_data() %>%
