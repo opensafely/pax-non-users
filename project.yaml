@@ -44,6 +44,10 @@ actions:
         data2: output/data/data_processed_grace6.rds
         data3: output/data/data_processed_grace7.rds
         data4: output/data/data_processed_grace8.rds
+        data1_excl: output/data/data_processed_excl_contraindicated.rds
+        data2_excl: output/data/data_processed_excl_contraindicated_grace6.rds
+        data3_excl: output/data/data_processed_excl_contraindicated_grace7.rds
+        data4_excl: output/data/data_processed_excl_contraindicated_grace8.rds
         rds1: output/data_properties/n_excluded.rds
         rds2: output/data_properties/n_excluded_contraindicated.rds
 

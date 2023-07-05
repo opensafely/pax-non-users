@@ -23,7 +23,7 @@ source(here::here("analysis", "data_import", "extract_data.R"))
 source(here::here("analysis", "data_import", "process_data.R"))
 source(here::here("analysis", "data_import", "calc_n_excluded.R"))
 source(here::here("analysis", "data_import", "calc_n_excluded_contraindicated.R"))
-source(here::here("analysis", "data_import", "functions", "exclude_contraindicated.R"))
+source(here::here("analysis", "data_import", "functions", "add_contraindicated_indicator.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -81,9 +81,12 @@ data_processed <-
         filter(is.na(remdesivir_covid_therapeutics)))
 # contraindications
 n_excluded_contraindicated <- calc_n_excluded_contraindicated(data_processed$grace5)
-data_processed_excl_contraindications <-
+data_processed <-
   map(.x = data_processed,
-      .f = ~ .x %>% exclude_contraindicated())
+      .f = ~ .x %>% add_contraindicated_indicator())
+data_processed_excl_contraindicated  <-
+  map(.x = data_processed,
+      .f = ~ .x %>% filter(excl_contraindicated == FALSE))
 
 ################################################################################
 # 4 Save data
@@ -97,7 +100,7 @@ iwalk(.x = data_processed,
                                     "_"[!.y == "grace5"],
                                     .y[!.y == "grace5"],
                                     ".rds"))))
-iwalk(.x = data_processed_excl_contraindications,
+iwalk(.x = data_processed_excl_contraindicated,
       .f = ~ write_rds(.x,
                        here::here("output", "data", 
                                   paste0(
