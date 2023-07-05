@@ -44,7 +44,8 @@ actions:
         data2: output/data/data_processed_grace6.rds
         data3: output/data/data_processed_grace7.rds
         data4: output/data/data_processed_grace8.rds
-        rds: output/data_properties/n_excluded.rds
+        rds1: output/data_properties/n_excluded.rds
+        rds2: output/data_properties/n_excluded_contraindicated.rds
 
   data_process_flowchart:
     run: r:latest analysis/data_process_flowchart.R
