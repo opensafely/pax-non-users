@@ -212,6 +212,7 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
       eGFR_short_record = if_else(eGFR_short_record == 0, NA_real_, eGFR_short_record),
       
     ) %>%
+    add_kidney_vars_to_data() %>%
     # add dummy variable tb_postest categories
     pivot_wider(names_from = tb_postest_vax,
                 values_from = tb_postest_vax,

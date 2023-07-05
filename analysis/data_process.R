@@ -43,8 +43,7 @@ study_dates <-
 ################################################################################
 input_filename <- "input.csv.gz"
 data_extracted <- 
-  extract_data(input_filename) %>%
-  add_kidney_vars_to_data()
+  extract_data(input_filename)
 # change data if run using dummy data
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   data_extracted <- 
