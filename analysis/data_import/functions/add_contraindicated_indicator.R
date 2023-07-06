@@ -27,10 +27,10 @@ add_contraindicated_indicator <- function(data_processed) {
             dialysis == TRUE | dialysis_icd10 == TRUE | dialysis_procedure == TRUE |
             kidney_transplant == TRUE | kidney_transplant_icd10 == TRUE | kidney_transplant_procedure == TRUE |
             (!is.na(eGFR_record) & eGFR_record < 60) | 
-            (!is.na(eGFR_short_record) & eGFR_short_record < 60), #| 
-            #(!is.na(egfr_ctv3) & egfr_ctv3 < 60) | 
-            #(!is.na(egfr_snomed) & egfr_snomed < 60) |
-            #(!is.na(egfr_short_snomed) & egfr_short_snomed < 60),
+            (!is.na(eGFR_short_record) & eGFR_short_record < 60) | 
+            (!is.na(egfr_ctv3) & egfr_ctv3 < 60) | 
+            (!is.na(egfr_snomed) & egfr_snomed < 60) |
+            (!is.na(egfr_short_snomed) & egfr_short_snomed < 60),
           TRUE,
           FALSE
         ),

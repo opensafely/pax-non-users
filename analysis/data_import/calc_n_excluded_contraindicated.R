@@ -84,10 +84,10 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(dialysis == FALSE & dialysis_icd10 == FALSE & dialysis_procedure == FALSE) %>%
     filter(kidney_transplant == FALSE & kidney_transplant_icd10 == FALSE & kidney_transplant_procedure == FALSE) %>%
     filter((is.na(eGFR_record) | eGFR_record >= 60) & 
-             (is.na(eGFR_short_record) | eGFR_short_record >= 60) #& 
-             #(is.na(egfr_ctv3) | egfr_ctv3 >= 60) &
-             #(is.na(egfr_snomed) | egfr_snomed >= 60) &
-             #(is.na(egfr_short_snomed) | egfr_short_snomed >= 60)
+             (is.na(eGFR_short_record) | eGFR_short_record >= 60) & 
+             (is.na(egfr_ctv3) | egfr_ctv3 >= 60) &
+             (is.na(egfr_snomed) | egfr_snomed >= 60) &
+             (is.na(egfr_short_snomed) | egfr_short_snomed >= 60)
            ) %>%
     filter(drugs_do_not_use == FALSE) %>%
     nrow()
