@@ -41,8 +41,12 @@ total_n <- nrow(data)
 # Distributions
 distr_pax_trt <- data %>%
   filter(any_treatment_strategy_cat == "Paxlovid") %>%
-  group_by(tb_postest_treat) %>%
-  tally()
+  group_by(tb_postest_treat, excl_contraindicated) %>%
+  tally() %>%
+  mutate(tb_postest_treat = if_else(tb_postest_treat >= 7, "7 or more", tb_postest_treat %>% as.character())) %>%
+  group_by(tb_postest_treat, excl_contraindicated) %>%
+  summarise(n = sum(n), .groups = "keep") %>%
+  arrange(excl_contraindicated, tb_postest_treat)
 distr_pax_trt_red <- 
   distr_pax_trt %>%
   mutate(n = case_when(n > 0 & n <= redaction_threshold ~ "[REDACTED]",
