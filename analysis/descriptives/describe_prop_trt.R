@@ -91,5 +91,5 @@ prop_trt_red <-
 ################################################################################
 write_csv(x = prop_trt,
           path(output_dir, "prop_trt.csv"))
-write_csv(x = prop_trt,
+write_csv(x = prop_trt_red,
           path(output_dir, "prop_trt_red.csv"))
