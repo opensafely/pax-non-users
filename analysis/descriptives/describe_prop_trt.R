@@ -1,9 +1,9 @@
 ################################################################################
 #
-# Distribution of initiation of Paxlovid
+# Proportion treated
 # 
 # The output of this script is:
-# csv file ./output/descriptives/distr_pax_init(_red).csv
+# csv file ./output/descriptives/prop_trt(_red).csv
 ################################################################################
 
 ################################################################################
