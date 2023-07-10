@@ -104,3 +104,11 @@ actions:
       moderately_sensitive:
         csv1: output/descriptives/prop_trt.csv
         csv2: output/descriptives/prop_trt_red.csv
+
+  describe_trt_contra:
+    run: r:latest analysis/descriptives/describe_trt_contra.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/descriptives/trt_contra.csv
+        csv2: output/descriptives/trt_contra_red.csv
