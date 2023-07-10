@@ -890,7 +890,7 @@ study = StudyDefinition(
     returning="binary_flag",
     find_last_match_in_period=True,
     return_expectations={
-      "incidence": 0.05,
+      "incidence": 0.01,
     },
   ),
 
@@ -903,11 +903,11 @@ study = StudyDefinition(
       "rate": "universal",
       "category": {
           "ratios": {
-              "1": 0.2, 
-              "2": 0.2,
-              "3": 0.2,
-              "4": 0.2,
-              "5": 0.2
+              "1": 0.4, 
+              "2": 0.45,
+              "3": 0.05,
+              "4": 0.05,
+              "5": 0.05
             }
       },
     },
@@ -929,7 +929,7 @@ study = StudyDefinition(
     with_these_diagnoses=codelists.ckd4_icd_codes,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),
 
@@ -939,7 +939,7 @@ study = StudyDefinition(
     with_these_diagnoses=codelists.ckd5_icd_codes,
     on_or_before="covid_test_positive_date",
     return_expectations={
-      "incidence": 0.2,
+      "incidence": 0.05,
     },
   ),    
 

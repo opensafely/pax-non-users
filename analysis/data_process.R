@@ -52,7 +52,11 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
     mutate(died_ons_covid_any_date = 
              if_else(!is.na(death_date), death_date, died_ons_covid_any_date),
            death_date =
-             if_else(!is.na(died_ons_covid_any_date), died_ons_covid_any_date, death_date)) 
+             if_else(!is.na(died_ons_covid_any_date), died_ons_covid_any_date, death_date),
+           date_treated = if_else(!is.na(date_treated),
+                                  covid_test_positive_date + runif(1, 0, 7) %>% ceiling(),
+                                  NA_Date_)
+    )
 }
 
 ################################################################################
