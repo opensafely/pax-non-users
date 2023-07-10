@@ -29,13 +29,9 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     filter(ckd_stage_5_nhsd == TRUE) %>%
     nrow()
-  n_ckd_stages35 <-
-    data_processed %>%
-    filter(ckd_stages_3_5 %in% c("3", "4", "5")) %>%
-    nrow()
   n_ckd_stages35_primis <-
     data_processed %>%
-    filter(ckd_primis_stage %in% c("3", "4", "5")) %>%
+    filter(ckd_stages_3_5 == TRUE | ckd_primis_stage %in% c("3", "4", "5")) %>%
     nrow()
   n_ckd_stages35_icd10 <-
     data_processed %>%
