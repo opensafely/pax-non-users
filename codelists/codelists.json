@@ -288,17 +288,11 @@
       "downloaded_at": "2023-06-22 19:15:58.355193Z",
       "sha": "ca7b31e702e404f0d8aa2e48aa12f244d197e4dc"
     },
-    "primis-covid19-vacc-uptake-ckd35.csv": {
-      "id": "primis-covid19-vacc-uptake/ckd35/v.1.5.3",
-      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/ckd35/v.1.5.3/",
-      "downloaded_at": "2023-06-22 19:15:58.565515Z",
-      "sha": "2e2e33d85817844bb8922fc6c87583c898f61ec5"
-    },
-    "user-Louis-ckd-stage.csv": {
-      "id": "user/Louis/ckd-stage/77b93e93",
-      "url": "https://codelists.opensafely.org/codelist/user/Louis/ckd-stage/77b93e93/",
-      "downloaded_at": "2023-06-22 19:15:58.847746Z",
-      "sha": "c5be45339cd50ef9fa91186273707e17ded06d0d"
+    "opensafely-chronic-kidney-disease-codes-all-stages-with-numeric-column.csv": {
+      "id": "opensafely/chronic-kidney-disease-codes-all-stages-with-numeric-column/2a95faf7",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/chronic-kidney-disease-codes-all-stages-with-numeric-column/2a95faf7/",
+      "downloaded_at": "2023-07-11 14:46:56.892515Z",
+      "sha": "41e8e072c065e84777800c17c7f4d346bb37f878"
     },
     "opensafely-dialysis.csv": {
       "id": "opensafely/dialysis/3ce108ac",

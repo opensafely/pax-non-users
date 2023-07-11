@@ -52,7 +52,6 @@ extract_data <- function(input_filename){
       ascitic_drainage_snomed = col_logical(),
       ascitic_drainage_snomed_date = col_date(format = "%Y-%m-%d"),
       liver_disease_nhsd_icd10 = col_logical(),
-      ckd_stages_3_5 = col_logical(),
       ckd_primis_stage = col_character(),
       ckd3_icd10 = col_logical(),
       ckd4_icd10 = col_logical(),

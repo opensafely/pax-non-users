@@ -32,12 +32,11 @@ calc_n_excluded_contraindicated <- function(data_processed){
   n_ckd3_primis <-
     data_processed %>%
     filter(ckd_primis_stage == "3") %>%
-    nrow() # FIXME: one code from ckd_stages_3_5 missing see 
-  # https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/ckd35/v.1.5.3/diff/77b93e93/
+    nrow()
   n_ckd45_primis <-
     data_processed %>%
     filter(ckd_primis_stage %in% c("4", "5")) %>%
-    nrow() #FIXME: two codes from ckd_stages_3_5 missing see above
+    nrow()
   n_ckd3_icd10 <-
     data_processed %>%
     filter(ckd3_icd10 == TRUE) %>%
@@ -114,7 +113,6 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
     filter(ckd_stage_5_nhsd == FALSE) %>%
-    #filter(ckd_stages_3_5 == FALSE) %>% #FIXME: codelist currently not used in non-strict exclusion
     filter(!(ckd_primis_stage %in% c("3", "4", "5"))) %>%
     filter(ckd3_icd10 == FALSE & ckd4_icd10 == FALSE & ckd5_icd10 == FALSE) %>%
     filter(dialysis == FALSE & dialysis_icd10 == FALSE & dialysis_procedure == FALSE) %>%

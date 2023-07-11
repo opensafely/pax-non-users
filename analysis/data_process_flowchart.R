@@ -54,7 +54,6 @@ data_processed <-
              ascitic_drainage_snomed_date = col_date(format = "%Y-%m-%d"),
              ascitic_drainage_snomed_pre = col_logical(),
              ascitic_drainage_snomed_pre_date = col_date(format = "%Y-%m-%d"),
-             ckd_stages_3_5 = col_logical(),
              ckd_primis_stage = col_character(),
              ckd3_icd10 = col_logical(),
              ckd4_icd10 = col_logical(),

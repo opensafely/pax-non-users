@@ -294,14 +294,8 @@ ascitic_drainage_snomed_codes = codelist_from_csv(
     column="code"
 )
 
-chronic_kidney_disease_stages_3_5_codes = codelist_from_csv(
-    "codelists/primis-covid19-vacc-uptake-ckd35.csv",
-    system="snomed",
-    column="code",
-)
-
 primis_ckd_stage = codelist_from_csv(
-    "codelists/user-Louis-ckd-stage.csv",
+    "codelists/opensafely-chronic-kidney-disease-codes-all-stages-with-numeric-column.csv",
     system="snomed",
     column="code",
     category_column="stage"

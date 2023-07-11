@@ -795,13 +795,7 @@ study = StudyDefinition(
   ), 
 
   ## CKD DEFINITIONS - adapted from https://github.com/opensafely/risk-factors-research
-  ckd_stages_3_5=patients.with_these_clinical_events(
-    codelist=codelists.chronic_kidney_disease_stages_3_5_codes,
-    on_or_before="covid_test_positive_date",
-    returning="binary_flag",
-    find_last_match_in_period=True,
-  ),
-
+  # new codelist see https://github.com/opensafely/codelist-development/issues/267#event-9788015642
   ckd_primis_stage=patients.with_these_clinical_events(
     codelist=codelists.primis_ckd_stage,
     on_or_before="covid_test_positive_date",

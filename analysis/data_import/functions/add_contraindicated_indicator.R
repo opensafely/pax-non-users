@@ -15,10 +15,9 @@ add_contraindicated_indicator <- function(data_processed) {
       ci_ckd5_nhsd = 
         if_else(ckd_stage_5_nhsd, TRUE, FALSE),
       ci_ckd3_primis =
-        if_else(!is.na(ckd_primis_stage) & ckd_primis_stage == "3", TRUE, FALSE), # FIXME: add one missing code ckd_stages_3_5
-      # https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/ckd35/v.1.5.3/diff/77b93e93/
+        if_else(!is.na(ckd_primis_stage) & ckd_primis_stage == "3", TRUE, FALSE),
       ci_ckd45_primis =
-        if_else(!is.na(ckd_primis_stage) & ckd_primis_stage %in% c("4", "5"), TRUE, FALSE), #FIXME: add two codes ckd_stages_3_5
+        if_else(!is.na(ckd_primis_stage) & ckd_primis_stage %in% c("4", "5"), TRUE, FALSE),
       ci_ckd3_icd10 = 
         if_else(ckd3_icd10, TRUE, FALSE),
       ci_ckd45_icd10 =

@@ -46,8 +46,7 @@ user/bangzheng/nhsd-transplant-spl-atriskv4-snomed-ct-new/15a9e878
 opensafely/condition-advanced-decompensated-cirrhosis-of-the-liver/071038cf
 opensafely/condition-advanced-decompensated-cirrhosis-of-the-liver-and-associated-conditions-icd-10/00e40554
 opensafely/procedure-ascitic-drainage/39388836
-primis-covid19-vacc-uptake/ckd35/v.1.5.3
-user/Louis/ckd-stage/77b93e93/
+opensafely/chronic-kidney-disease-codes-all-stages-with-numeric-column/2a95faf7
 opensafely/dialysis/3ce108ac
 ukrr/dialysis-icd10/2a5cf9a2/
 ukrr/dialysis-opcs-4/505bef04
