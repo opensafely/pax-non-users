@@ -39,10 +39,10 @@ rounding_threshold = 6
 redaction_threshold = 8
 total_n <- nrow(data)
 # Distributions
-calc_distr_pax_trt <- function(data, excl_contraindicated) {
-  if (excl_contraindicated == TRUE){
+calc_distr_pax_trt <- function(data, contraindicated) {
+  if (contraindicated == TRUE){
     data <-
-      data %>% filter(excl_contraindicated == TRUE)
+      data %>% filter(contraindicated == TRUE)
   }
   distr_pax_trt <- data %>%
     filter(any_treatment_strategy_cat == "Paxlovid") %>%
@@ -51,7 +51,7 @@ calc_distr_pax_trt <- function(data, excl_contraindicated) {
     mutate(tb_postest_treat = if_else(tb_postest_treat >= 7, "7 or more", tb_postest_treat %>% as.character())) %>%
     group_by(tb_postest_treat) %>%
     summarise(n = sum(n), .groups = "keep") %>%
-    mutate(excl_contraindicated = excl_contraindicated)
+    mutate(contraindicated = contraindicated)
 }
 distr_pax_trt <- 
   map_dfr(.x = c(TRUE, FALSE),

@@ -48,25 +48,25 @@ redaction_threshold = 8
 # Proportion treated 
 calc_trt_contra <- function(data) {
   n_trt_contra <- data %>%
-    filter(excl_contraindicated_strict == TRUE) %>%
+    filter(contraindicated_strict == TRUE) %>%
     group_by(treatment_strategy_cat, .drop = FALSE) %>%
-    summarise(n_cirrhosis = sum(excl_cirrhosis),
-              n_ascitic_drainage = sum(excl_ascitic_drainage),
-              n_liver_disease = sum(excl_liver_disease_icd10),
-              n_solid_organ_highrisk = sum(excl_solid_organ_highrisk),
-              n_solid_organ_snomed = sum(excl_solid_organ_snomed),
-              n_ckd_stage5_nhsd = sum(excl_ckd5_nhsd),
-              n_ckd3_primis = sum(excl_ckd3_primis), #FIXME
-              n_ckd45_primis = sum(excl_ckd45_primis), #FIXME
-              n_ckd3_icd10 = sum(excl_ckd3_icd10),
-              n_ckd45_icd10 = sum(excl_ckd45_icd10),
-              n_dialysis = sum(excl_dialysis),
-              n_kidney_transplant = sum(excl_kidney_transplant),
-              n_egfr_30_59 = sum(excl_egfr_30_59),
-              n_egfr_below30 = sum(excl_egfr_below30),
-              n_egfr_creat_30_59 = sum(excl_egfr_creat_30_59),
-              n_egfr_creat_below30 = sum(excl_egfr_creat_below30),
-              n_drugs_do_not_use = sum(excl_drugs_do_not_use),
+    summarise(n_cirrhosis = sum(ci_cirrhosis),
+              n_ascitic_drainage = sum(ci_ascitic_drainage),
+              n_liver_disease = sum(ci_liver_disease_icd10),
+              n_solid_organ_highrisk = sum(ci_solid_organ_highrisk),
+              n_solid_organ_snomed = sum(ci_solid_organ_snomed),
+              n_ckd_stage5_nhsd = sum(ci_ckd5_nhsd),
+              n_ckd3_primis = sum(ci_ckd3_primis), #FIXME
+              n_ckd45_primis = sum(ci_ckd45_primis), #FIXME
+              n_ckd3_icd10 = sum(ci_ckd3_icd10),
+              n_ckd45_icd10 = sum(ci_ckd45_icd10),
+              n_dialysis = sum(ci_dialysis),
+              n_kidney_transplant = sum(ci_kidney_transplant),
+              n_egfr_30_59 = sum(ci_egfr_30_59),
+              n_egfr_below30 = sum(ci_egfr_below30),
+              n_egfr_creat_30_59 = sum(ci_egfr_creat_30_59),
+              n_egfr_creat_below30 = sum(ci_egfr_creat_below30),
+              n_drugs_do_not_use = sum(ci_drugs_do_not_use),
               n_drugs_caution = sum(drugs_consider_risk),
               n_all = n(),
               .groups = "keep") %>%

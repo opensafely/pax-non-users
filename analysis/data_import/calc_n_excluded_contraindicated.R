@@ -3,7 +3,7 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     nrow()
   # liver disease
-  n_advanced_decompensated_cirrhosis <-
+  n_cirrhosis <-
     data_processed %>%
     filter(advanced_decompensated_cirrhosis == TRUE | decompensated_cirrhosis_icd10 == TRUE) %>%
     nrow()
@@ -11,16 +11,16 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     filter(ascitic_drainage_snomed == TRUE) %>%
     nrow()
-  n_hosp_liver_disease <-
+  n_liver_disease_icd10 <-
     data_processed %>%
     filter(liver_disease_nhsd_icd10 == TRUE) %>%
     nrow()
   # solid organ transplant
-  n_solid_organ_transplant_highrisk <-
+  n_solid_organ_highrisk <-
     data_processed %>%
     filter(solid_organ_transplant_nhsd_new == TRUE) %>%
     nrow()
-  n_solid_organ_transplant_snomed <-
+  n_solid_organ_snomed <-
     data_processed %>%
     filter(solid_organ_transplant_snomed == TRUE) %>%
     nrow()
@@ -128,11 +128,11 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(drugs_do_not_use == FALSE) %>%
     nrow()
   out <- tibble(n_before_exclusion_contraindications,
-                n_advanced_decompensated_cirrhosis,
+                n_cirrhosis,
                 n_ascitic_drainage,
-                n_hosp_liver_disease,
-                n_solid_organ_transplant_highrisk,
-                n_solid_organ_transplant_snomed,
+                n_liver_disease_icd10,
+                n_solid_organ_highrisk,
+                n_solid_organ_snomed,
                 n_ckd5_nhsd,
                 n_ckd3_primis,
                 n_ckd45_primis,

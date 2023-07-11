@@ -90,7 +90,7 @@ data_processed <-
       .f = ~ .x %>% add_contraindicated_indicator())
 data_processed_excl_contraindicated  <-
   map(.x = data_processed,
-      .f = ~ .x %>% filter(excl_contraindicated == FALSE))
+      .f = ~ .x %>% filter(contraindicated == FALSE))
 
 ################################################################################
 # 4 Save data

@@ -43,7 +43,7 @@ calc_outcomes_in_trt_window <- function(data, treat_window_days = 4) {
   outcomes_in_trt_window <- 
     data %>%
     filter(!(any_treatment_strategy_cat %in% c("Sotrovimab", "Molnupiravir")) &
-             excl_contraindicated == TRUE) %>%
+             contraindicated == TRUE) %>%
     filter(fu_primary <= treat_window_days) %>%
     group_by(status_primary, .drop = FALSE) %>%
     tally() %>%

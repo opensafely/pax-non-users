@@ -33,8 +33,7 @@ distr_trt_init <- read_csv(here("output", "descriptives", "distr_pax_init_red.cs
                            col_types = c(
                              tb_postest_treat = col_character(),
                              n = col_character(),
-                             excl_contraindicated = col_logical()
-                           ))
+                             contraindicated = col_logical()))
 
 ################################################################################
 # 0.4 Data manipulation
@@ -43,9 +42,9 @@ distr_trt_init <-
   distr_trt_init %>%
   mutate(n = if_else(n == "[REDACTED]", "0", n),
          n = n %>% as.integer(),
-         excl_contraindicated = if_else(excl_contraindicated == TRUE,
-                                        "Contraindicated individuals",
-                                        "Including contraindicated"))
+         contraindicated = if_else(contraindicated == TRUE,
+                                   "Contraindicated individuals",
+                                   "Including contraindicated"))
 
 ################################################################################
 # 1.0 Make histogram
@@ -55,7 +54,7 @@ plot <-
          aes(x = n, y = factor(tb_postest_treat))) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  facet_grid(rows = vars(excl_contraindicated)) + 
+  facet_grid(rows = vars(contraindicated)) + 
   theme_minimal() +
   labs(x = "Number of patients receiving Paxlovid",
        y = "Time between positive test and treatment initiation")
