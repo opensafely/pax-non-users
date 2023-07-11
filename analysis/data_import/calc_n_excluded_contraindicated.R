@@ -1,5 +1,5 @@
 calc_n_excluded_contraindicated <- function(data_processed){
-  n_before_exclusion_contraindications <- 
+    n_before_exclusion_contraindications <- 
     data_processed %>%
     nrow()
   # liver disease
@@ -25,23 +25,24 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(solid_organ_transplant_snomed == TRUE) %>%
     nrow()
   # renal disease
-  n_ckd_stage5_nhsd <-
+  n_ckd5_nhsd <-
     data_processed %>%
     filter(ckd_stage_5_nhsd == TRUE) %>%
     nrow()
-  n_ckd_stage3_primis <-
+  n_ckd3_primis <-
     data_processed %>%
     filter(ckd_primis_stage == "3") %>%
-    nrow() # FIXME: ckd_stages_3_5 underlying codelist should be split into 3 and 4/5
-  n_ckd_stages45_primis <-
+    nrow() # FIXME: one code from ckd_stages_3_5 missing see 
+  # https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/ckd35/v.1.5.3/diff/77b93e93/
+  n_ckd45_primis <-
     data_processed %>%
-    filter(ckd_stages_3_5 == TRUE | ckd_primis_stage %in% c("4", "5")) %>%
-    nrow() #FIXME: see above
-  n_ckd_stage3_icd10 <-
+    filter(ckd_primis_stage %in% c("4", "5")) %>%
+    nrow() #FIXME: two codes from ckd_stages_3_5 missing see above
+  n_ckd3_icd10 <-
     data_processed %>%
-    filter(ckd3_icd10 == TRUE | ckd4_icd10 == TRUE | ckd5_icd10 == TRUE) %>%
+    filter(ckd3_icd10 == TRUE) %>%
     nrow()
-  n_ckd_stages45_icd10 <-
+  n_ckd45_icd10 <-
     data_processed %>%
     filter(ckd4_icd10 == TRUE | ckd5_icd10 == TRUE) %>%
     nrow()
@@ -92,8 +93,28 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(liver_disease_nhsd_icd10 == FALSE) %>%
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
+    filter(ckd_stage_5_nhsd == FALSE) %>% 
+    filter(!(ckd_primis_stage %in% c("4", "5"))) %>% #FIXME: two codes missing see above
+    filter(ckd4_icd10 == FALSE & ckd5_icd10 == FALSE) %>%
+    filter(dialysis == FALSE & dialysis_icd10 == FALSE & dialysis_procedure == FALSE) %>%
+    filter(kidney_transplant == FALSE & kidney_transplant_icd10 == FALSE & kidney_transplant_procedure == FALSE) %>%
+    filter((is.na(eGFR_record) | eGFR_record >= 30) & 
+             (is.na(eGFR_short_record) | eGFR_short_record >= 30) & 
+             (is.na(egfr_ctv3) | egfr_ctv3 >= 30) &
+             (is.na(egfr_snomed) | egfr_snomed >= 30) &
+             (is.na(egfr_short_snomed) | egfr_short_snomed >= 30)
+    ) %>%
+    filter(drugs_do_not_use == FALSE) %>%
+    nrow()
+  n_after_exclusion_contraindications_strict <- 
+    data_processed %>% 
+    filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10 == FALSE) %>%
+    filter(ascitic_drainage_snomed == FALSE) %>%
+    filter(liver_disease_nhsd_icd10 == FALSE) %>%
+    filter(solid_organ_transplant_nhsd_new == FALSE) %>%
+    filter(solid_organ_transplant_snomed == FALSE) %>%
     filter(ckd_stage_5_nhsd == FALSE) %>%
-    filter(ckd_stages_3_5 == FALSE) %>% #FIXME: split in 3 and 4/5
+    #filter(ckd_stages_3_5 == FALSE) %>% #FIXME: codelist currently not used in non-strict exclusion
     filter(!(ckd_primis_stage %in% c("3", "4", "5"))) %>%
     filter(ckd3_icd10 == FALSE & ckd4_icd10 == FALSE & ckd5_icd10 == FALSE) %>%
     filter(dialysis == FALSE & dialysis_icd10 == FALSE & dialysis_procedure == FALSE) %>%
@@ -112,11 +133,11 @@ calc_n_excluded_contraindicated <- function(data_processed){
                 n_hosp_liver_disease,
                 n_solid_organ_transplant_highrisk,
                 n_solid_organ_transplant_snomed,
-                n_ckd_stage5_nhsd,
-                n_ckd_stage3_primis,
-                n_ckd_stages45_primis,
-                n_ckd_stage3_icd10,
-                n_ckd_stages45_icd10,
+                n_ckd5_nhsd,
+                n_ckd3_primis,
+                n_ckd45_primis,
+                n_ckd3_icd10,
+                n_ckd45_icd10,
                 n_dialysis,
                 n_kidney_transplant,
                 n_egfr_30_59,
@@ -125,5 +146,6 @@ calc_n_excluded_contraindicated <- function(data_processed){
                 n_egfr_creat_below30,
                 n_drugs_do_not_use,
                 n_drugs_caution,
-                n_after_exclusion_contraindications)
+                n_after_exclusion_contraindications,
+                n_after_exclusion_contraindications_strict)
 }

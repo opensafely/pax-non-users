@@ -44,42 +44,30 @@ data <- read_rds(here("output", "data", "data_processed.rds"))
 # Set rounding and redaction thresholds
 rounding_threshold = 6
 redaction_threshold = 8
-total_n <- nrow(data)
+
 # Proportion treated 
 calc_trt_contra <- function(data) {
   n_trt_contra <- data %>%
-    filter(excl_contraindicated == TRUE &
-             treatment_strategy_cat %in% c("Paxlovid", "Untreated")) %>%
+    filter(excl_contraindicated_strict == TRUE) %>%
     group_by(treatment_strategy_cat, .drop = FALSE) %>%
-    summarise(n_cirrhosis = sum(advanced_decompensated_cirrhosis == TRUE |
-                        decompensated_cirrhosis_icd10 == TRUE),
-              n_ascitic_drainage = sum(ascitic_drainage_snomed == TRUE),
-              n_liver_disease = sum(liver_disease_nhsd_icd10 == TRUE),
-              n_solid_organ_highrisk = sum(solid_organ_transplant_nhsd_new == TRUE),
-              n_solid_organ_snomed = sum(solid_organ_transplant_snomed == TRUE),
-              n_ckd_stage5_nhsd = sum(ckd_stage_5_nhsd == TRUE),
-              n_ckd_3_primis = sum(ckd_primis_stage== "3"), #FIXME
-              n_ckd_stages45_primis = sum(ckd_stages_3_5 == TRUE |
-                                            ckd_primis_stage %in% c("4", "5")), #FIXME
-              n_ckd3_icd10 = sum(ckd3_icd10 == TRUE),
-              n_ckd45_icd10 = sum(ckd4_icd10 == TRUE | ckd5_icd10 == TRUE),
-              n_dialysis = sum(dialysis == TRUE | dialysis_icd10 == TRUE |
-                                 dialysis_procedure == TRUE),
-              n_kidney_transplant = sum(kidney_transplant == TRUE | 
-                                          kidney_transplant_icd10 == TRUE | 
-                                          kidney_transplant_procedure == TRUE),
-              n_egfr_30_59 = sum((!is.na(eGFR_record) & (eGFR_record >= 30 & eGFR_record < 60)) | 
-                                   (!is.na(eGFR_short_record) & (eGFR_short_record >= 30 & eGFR_short_record < 60))),
-              n_egfr_below30 = sum((!is.na(eGFR_record) & eGFR_record < 30) | 
-                                     (!is.na(eGFR_short_record) & eGFR_short_record < 30)),
-              n_egfr_creat_30_59 = sum((!is.na(egfr_ctv3) & (egfr_ctv3 >= 30 & egfr_ctv3 < 60)) | 
-                                         (!is.na(egfr_snomed) & (egfr_snomed >= 30 & egfr_snomed < 60)) |
-                                         (!is.na(egfr_short_snomed) & (egfr_short_snomed >= 30 & egfr_short_snomed < 60))),
-              n_egfr_creat_30 = sum((!is.na(egfr_ctv3) & egfr_ctv3 < 30) | 
-                                      (!is.na(egfr_snomed) & egfr_snomed < 30) |
-                                      (!is.na(egfr_short_snomed) & egfr_short_snomed < 30)),
-              n_drugs_do_not_use = sum(drugs_do_not_use == TRUE),
-              n_drugs_caution = sum(drugs_consider_risk == TRUE),
+    summarise(n_cirrhosis = sum(excl_cirrhosis),
+              n_ascitic_drainage = sum(excl_ascitic_drainage),
+              n_liver_disease = sum(excl_liver_disease_icd10),
+              n_solid_organ_highrisk = sum(excl_solid_organ_highrisk),
+              n_solid_organ_snomed = sum(excl_solid_organ_snomed),
+              n_ckd_stage5_nhsd = sum(excl_ckd5_nhsd),
+              n_ckd3_primis = sum(excl_ckd3_primis), #FIXME
+              n_ckd45_primis = sum(excl_ckd45_primis), #FIXME
+              n_ckd3_icd10 = sum(excl_ckd3_icd10),
+              n_ckd45_icd10 = sum(excl_ckd45_icd10),
+              n_dialysis = sum(excl_dialysis),
+              n_kidney_transplant = sum(excl_kidney_transplant),
+              n_egfr_30_59 = sum(excl_egfr_30_59),
+              n_egfr_below30 = sum(excl_egfr_below30),
+              n_egfr_creat_30_59 = sum(excl_egfr_creat_30_59),
+              n_egfr_creat_below30 = sum(excl_egfr_creat_below30),
+              n_drugs_do_not_use = sum(excl_drugs_do_not_use),
+              n_drugs_caution = sum(drugs_consider_risk),
               n_all = n(),
               .groups = "keep") %>%
     tidyr::pivot_longer(-1) %>%
@@ -87,7 +75,11 @@ calc_trt_contra <- function(data) {
     mutate(n_total = rowSums(across(where(is.numeric))))
 }
 redact_trt_contra <- function(trt_contra) {
-  trt_contra #FIXME
+  trt_contra <-
+    trt_contra %>%
+    mutate(across(where(is.numeric), ~ if_else(.x > 0 & .x <= redaction_threshold, 
+                                               "[REDACTED]",  
+                                               .x %>% plyr::round_any(rounding_threshold) %>% as.character())))
 }
 trt_contra <- calc_trt_contra(data)
 trt_contra_red <-
