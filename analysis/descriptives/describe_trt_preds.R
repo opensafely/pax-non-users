@@ -9,6 +9,7 @@ library('kableExtra')
 library('cowplot')
 library('splines')
 
+# Import custom user functions
 source(here::here("lib", "functions", "clean_coef_names.R"))
 
 ## Import data
