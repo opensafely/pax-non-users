@@ -251,7 +251,7 @@ desc <- rbind(desc1, desc2)
 # Save fitted model
 write_rds(psModel,
           here::here("output", "descriptives",
-                     paste0("psModel", population, "rds")))
+                     paste0("psModel_", population, ".rds")))
 
 # Save full overlap plot
 ggsave(overlapPlot, 
@@ -279,7 +279,7 @@ ggsave(plot_combined,
 # Save trimmed versus untrimmed descriptives
 write_csv(desc, 
             here::here("output", "descriptives",
-               paste0("trimming_descriptives,", population, ".csv"))
+               paste0("trimming_descriptives_", population, ".csv"))
 )
 
           

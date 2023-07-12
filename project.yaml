@@ -117,6 +117,8 @@ actions:
     run: r:latest analysis/descriptives/describe_trt_preds.R all_ci
     needs: [data_process]
     outputs:
+      highly_sensitive:
+        data1: output/descriptives/psModel_all_ci.rds     
       moderately_sensitive:
         png1: output/descriptives/psOverlap_untrimmed_all_ci.png
         png2: output/descriptives/psOverlap_trimmed_all_ci.png
@@ -128,6 +130,8 @@ actions:
     run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu
     needs: [data_process]
     outputs:
+      highly_sensitive:
+        data1: output/descriptives/psModel_excl_drugs_dnu.rds
       moderately_sensitive:
         png1: output/descriptives/psOverlap_untrimmed_excl_drugs_dnu.png
         png2: output/descriptives/psOverlap_trimmed_excl_drugs_dnu.png
