@@ -120,10 +120,6 @@ psModelFunction <- as.formula(
 psModel <- glm(psModelFunction,
                family = binomial(link = "logit"),
                data = data_cohort)
-# Save fitted model
-write_rds(psModel,
-          here::here("output", "descriptives",
-                     paste0("psModel", population, "rds")))
 
 # Calculate patient-level predicted probability of being assigned to cohort
 data_cohort$pscore <- predict(psModel, type = "response")
@@ -252,18 +248,22 @@ desc <- rbind(desc1, desc2)
 ############################################################################
 # 4.0 Save outputs
 ############################################################################  
+# Save fitted model
+write_rds(psModel,
+          here::here("output", "descriptives",
+                     paste0("psModel", population, "rds")))
 
 # Save full overlap plot
 ggsave(overlapPlot, 
        filename = 
-         here:here("output", "descriptives", 
+         here::here("output", "descriptives", 
                    paste0("psOverlap_untrimmed_",population,".png")),
        width = 20, height = 14, units = "cm")
 
 # Save trimmed overlap plot
 ggsave(overlapPlot2, 
        filename = 
-         here:here("output", "descriptives", 
+         here::here("output", "descriptives", 
               paste0("psOverlap_trimmed_",population,".png")),
        width = 20, height = 14, units = "cm")
 
@@ -278,7 +278,7 @@ ggsave(plot_combined,
 
 # Save trimmed versus untrimmed descriptives
 write_csv(desc, 
-            here:here("output", "descriptives",
+            here::here("output", "descriptives",
                paste0("trimming_descriptives,", population, ".csv"))
 )
 
