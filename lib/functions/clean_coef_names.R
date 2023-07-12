@@ -22,6 +22,15 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="imdQ52"] = "IMD: 2"
   input_table$variable[input_table$variable=="imdQ51 (most deprived)"] = "IMD: 1"
   
+  input_table$variable[input_table$variable=="region_nhsEast Midlands"] = "East Midlands"
+  input_table$variable[input_table$variable=="region_nhsWest Midlands"] = "West Midlands"
+  input_table$variable[input_table$variable=="region_nhsEast of England"] = "East of England"
+  input_table$variable[input_table$variable=="region_nhsYorkshire and the Humber"] = "Yorkshire and the Humber"
+  input_table$variable[input_table$variable=="region_nhsNorth West"] = "North West"
+  input_table$variable[input_table$variable=="region_nhsNorth East"] = "North East"
+  input_table$variable[input_table$variable=="region_nhsSouth East"] = "South East"
+  input_table$variable[input_table$variable=="region_nhsSouth West"] = "South West"
+  
   input_table$variable[input_table$variable=="stpSTP9"] = "STP9"
   input_table$variable[input_table$variable=="stpSTP10"] = "STP10"
   input_table$variable[input_table$variable=="stpSTP8"] = "STP8"
@@ -86,5 +95,7 @@ clean_coef_names = function(input_table) {
   
   input_table$variable[input_table$variable=="treatment_strategy_cat"] = "Treatment variable"
   input_table$variable[input_table$Variable=="N"] = "N"
+  
+  
   return(input_table)
 }

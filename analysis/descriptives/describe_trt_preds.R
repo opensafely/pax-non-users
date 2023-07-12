@@ -53,8 +53,7 @@ if (length(args) != 1){
 # 0.3 Import data
 ################################################################################
 if (population == "all_ci") {
-  data_cohort <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) #%>%
-  #mutate(treatment_strategy_cat = ifelse(row_number() > 13000, 0, treatment_strategy_cat))
+  data_cohort <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) 
   
 } else if (population == "excl_drugs_dnu") {
   data_cohort <- read_rds(here("output", "data", "data_processed.rds")) %>%
@@ -70,14 +69,30 @@ if (population == "all_ci") {
 ############################################################################
 # Create vector of variables for propensity score model
 # Note: age modelled with cubic spline with 3 knots
+
 vars <-
     c("ns(age, df=3)",
-      "ns(study_week, df=3)",
       "sex",
       "ethnicity",
       "imdQ5" ,
       "stp",
       "rural_urban",
+      "region_nhs",
+      # other comorbidities/clinical characteristics
+      "diabetes",
+      "smoking_status",
+      "copd",
+      "dialysis",
+      "autism_nhsd",
+      "care_home_primis",
+      "housebound_opensafely",
+      "obese",
+      "serious_mental_illness_nhsd",
+      "chronic_cardiac_disease",
+      "dementia_nhsd",
+      "hypertension",
+      "learning_disability_primis",
+      # high risk group
       "huntingtons_disease_nhsd" ,
       "myasthenia_gravis_nhsd" ,
       "motor_neurone_disease_nhsd" ,
@@ -89,23 +104,13 @@ vars <-
       "haematological_disease_nhsd",
       "cancer_opensafely_snomed_new",
       "downs_syndrome_nhsd",
-      "diabetes",
-      "smoking_status",
-      "copd",
-      "dialysis",
+      # vax vars
       "vaccination_status",
       "pfizer_most_recent_cov_vac",
       "az_most_recent_cov_vac",
       "moderna_most_recent_cov_vac",
-      "learning_disability_primis",
-      "autism_nhsd",
-      "care_home_primis",
-      "housebound_opensafely",
-      "obese",
-      "serious_mental_illness_nhsd",
-      "chronic_cardiac_disease",
-      "dementia_nhsd",
-      "hypertension")
+      # calendar time
+      "ns(study_week, df=3)")
 
 
 ############################################################################
