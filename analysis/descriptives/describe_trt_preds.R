@@ -53,15 +53,15 @@ if (length(args) != 1){
 # 0.3 Import data
 ################################################################################
 if (population == "all_ci") {
-  data_cohort <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) 
+  data_cohort <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
+  filter(treatment_strategy_cat %in% c("Paxlovid", "Untreated")) 
   
 } else if (population == "excl_drugs_dnu") {
   data_cohort <- read_rds(here("output", "data", "data_processed.rds")) %>%
     mutate(contraindicated_excl_rx_dnu =
               if_else(ci_liver_disease | ci_solid_organ_transplant | 
-                        ci_renal_disease | ci_ckd3_primis | ci_ckd3_icd10 |
-                        ci_egfr_30_59 | ci_egfr_creat_30_59, TRUE, FALSE)) %>% 
-    filter(contraindicated_excl_rx_dnu == TRUE)
+                        ci_renal_disease, TRUE, FALSE)) %>% 
+    filter(treatment_strategy_cat %in% c("Paxlovid", "Untreated")) 
 }
 
 ############################################################################
@@ -136,9 +136,9 @@ data_cohort$pscore <- predict(psModel, type = "response")
 # Make plot of non-trimmed propensity scores and save
 # Overlap plot 
 overlapPlot <- data_cohort %>% 
-  mutate(trtlabel = ifelse(treatment_strategy_cat == 1,
-                           yes = 'Treated',
-                           no = 'Untreated')) %>%
+  mutate(trtlabel = if_else(treatment_strategy_cat == "Paxlovid",
+                              'Treated',
+                              'Untreated')) %>%
   ggplot(aes(x = pscore, linetype = trtlabel)) +
   scale_linetype_manual(values=c("solid", "dotted")) +
   geom_density(alpha = 0.5) +
@@ -179,9 +179,9 @@ data_cohort_trimmed <- data_cohort %>%
 # Make plot of trimmed propensity scores and save
 # Overlap plot 
 overlapPlot2 <- data_cohort_trimmed %>% 
-  mutate(trtlabel = ifelse(treatment_strategy_cat == 1,
-                           yes = 'Treated',
-                           no = 'Untreated')) %>%
+  mutate(trtlabel = if_else(treatment_strategy_cat == "Paxlovid",
+                             'Treated',
+                             'Untreated')) %>%
   ggplot(aes(x = pscore, linetype = trtlabel)) +
   scale_linetype_manual(values=c("solid", "dotted")) +
   geom_density(alpha = 0.5) +
