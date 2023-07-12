@@ -55,10 +55,10 @@ rounding_threshold = 6
 redaction_threshold = 8
 total_n <- nrow(data)
 # Proportion treated 
-calc_prop_trt <- function(data, excl_contraindicated) {
-  if (excl_contraindicated == TRUE){
+calc_prop_trt <- function(data, contraindicated) {
+  if (contraindicated == TRUE){
     data <-
-      data %>% filter(excl_contraindicated == TRUE)
+      data %>% filter(contraindicated == TRUE)
   }
   prop_trt <- data %>%
     group_by(period, treatment_strategy_cat, .drop = FALSE) %>%
@@ -69,7 +69,7 @@ calc_prop_trt <- function(data, excl_contraindicated) {
            n_rounded = n %>% plyr::round_any(rounding_threshold),
            n_total_rounded = n_total %>% plyr::round_any(rounding_threshold),
            prop_rounded = n_rounded / n_total_rounded,
-           excl_contraindicated = excl_contraindicated)
+           contraindicated = contraindicated)
 }
 redact_prop_trt <- function(prop_trt) {
   prop_trt_red <- 
@@ -78,7 +78,7 @@ redact_prop_trt <- function(prop_trt) {
            n_total_red = if_else(n_total > 0 & n_total <= redaction_threshold, "[REDACTED]", n_total_rounded %>% as.character()),
            prop_red = if_else(n > 0 & n <= redaction_threshold, "[REDACTED]", prop_rounded %>% as.character())
     ) %>%
-    select(period, treatment_strategy_cat, n_red, n_total_red, prop_red, excl_contraindicated)
+    select(period, treatment_strategy_cat, n_red, n_total_red, prop_red, contraindicated)
 }
 prop_trt <- 
   map_dfr(.x = c(TRUE, FALSE),
