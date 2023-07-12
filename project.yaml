@@ -125,7 +125,6 @@ actions:
         png3: output/descriptives/psCoefs_all_ci.png
         csv1: output/descriptives/trimming_descriptives_all_ci.csv
 
-
   describe_trt_preds_excl_drugs_dnu:
     run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu
     needs: [data_process]

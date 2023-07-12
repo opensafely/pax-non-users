@@ -87,6 +87,7 @@ vars <-
       "liver_disease_nhsd",
       "ckd_stage_5_nhsd",
       "haematological_disease_nhsd",
+      "cancer_opensafely_snomed_new",
       "downs_syndrome_nhsd",
       "diabetes",
       "smoking_status",

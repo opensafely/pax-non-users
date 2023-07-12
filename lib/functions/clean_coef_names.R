@@ -56,7 +56,7 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="hypertensionTRUE"] = "Hypertension"
   # high risk variables
   input_table$variable[input_table$variable=="downs_syndrome_nhsdTRUE"] = "Down's syndrome"
-  input_table$variable[input_table$variable=="cancer_opensafely_snomed_new"] = "Solid cancer"
+  input_table$variable[input_table$variable=="cancer_opensafely_snomed_newTRUE"] = "Solid cancer"
   input_table$variable[input_table$variable=="haematological_disease_nhsdTRUE"] = "Haematological diseases"
   input_table$variable[input_table$variable=="ckd_stage_5_nhsd"] = "Renal disease"
   input_table$variable[input_table$variable=="liver_disease_nhsdTRUE"] = "Liver disease"
