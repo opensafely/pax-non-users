@@ -112,3 +112,24 @@ actions:
       moderately_sensitive:
         csv1: output/descriptives/trt_contra.csv
         csv2: output/descriptives/trt_contra_red.csv
+
+  describe_trt_preds_all_ci:
+    run: r:latest analysis/descriptives/describe_trt_preds.R all_ci
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_untrimmed_all_ci.png
+        png2: output/descriptives/psOverlap_trimmed_all_ci.png
+        png3: output/descriptives/psCoefs_all_ci.png
+        csv1: output/descriptives/trimming_descriptives_all_ci.csv
+
+
+  describe_trt_preds_excl_drugs_dnu:
+    run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_untrimmed_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_trimmed_excl_drugs_dnu.png
+        png3: output/descriptives/psCoefs_excl_drugs_dnu.png
+        csv1: output/descriptives/trimming_descriptives_excl_drugs_dnu.csv
