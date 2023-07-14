@@ -54,8 +54,17 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
            death_date =
              if_else(!is.na(died_ons_covid_any_date), died_ons_covid_any_date, death_date),
            date_treated = if_else(!is.na(date_treated),
-                                  covid_test_positive_date + runif(1, 0, 7) %>% ceiling(),
-                                  NA_Date_)
+                                  covid_test_positive_date + runif(1, 0, 4) %>% ceiling(),
+                                  NA_Date_),
+           paxlovid_covid_therapeutics = if_else(!is.na(paxlovid_covid_therapeutics),
+                                                 date_treated,
+                                                 NA_Date_),
+           sotrovimab_covid_therapeutics = if_else(!is.na(sotrovimab_covid_therapeutics),
+                                                   date_treated,
+                                                   NA_Date_),
+           molnupiravir_covid_therapeutics = if_else(!is.na(molnupiravir_covid_therapeutics),
+                                                     date_treated,
+                                                     NA_Date_)
     )
 }
 
