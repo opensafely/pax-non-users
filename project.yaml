@@ -1,7 +1,7 @@
 version: '3.0'
 
 expectations:
-  population_size: 1000
+  population_size: 5000
 
 actions:
 
@@ -136,3 +136,12 @@ actions:
         png2: output/descriptives/psOverlap_trimmed_excl_drugs_dnu.png
         png3: output/descriptives/psCoefs_excl_drugs_dnu.png
         csv1: output/descriptives/trimming_descriptives_excl_drugs_dnu.csv
+        
+  create_table1:
+    run: r:latest analysis/descriptives/table1.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/tables/table1.csv
+        csv2: output/tables/table1_red.csv
+    
