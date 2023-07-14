@@ -14,6 +14,7 @@ library(dplyr)
 library(fs)
 library(here)
 library(purrr)
+source(here::here("lib", "design", "redaction.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -41,10 +42,6 @@ data <- read_rds(here("output", "data", "data_processed.rds"))
 ################################################################################
 # 1.0 Number of people treated who are contraindicated
 ################################################################################
-# Set rounding and redaction thresholds
-rounding_threshold = 6
-redaction_threshold = 8
-
 # Proportion treated 
 calc_trt_contra <- function(data) {
   n_trt_contra <- data %>%

@@ -14,6 +14,7 @@ library(dplyr)
 library(fs)
 library(here)
 library(purrr)
+source(here::here("lib", "design", "redaction.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -34,9 +35,6 @@ data <- read_rds(here("output", "data", "data_processed.rds"))
 ################################################################################
 # 1.0 Distribution trt init
 ################################################################################
-# Set rounding and redaction thresholds
-rounding_threshold = 6
-redaction_threshold = 8
 total_n <- nrow(data)
 
 calc_outcomes_in_trt_window <- function(data, treat_window_days = 4) {

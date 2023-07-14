@@ -14,6 +14,7 @@ library(dplyr)
 library(fs)
 library(here)
 library(purrr)
+source(here::here("lib", "design", "redaction.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -50,9 +51,6 @@ data <-
 ################################################################################
 # 1.0 Proportion treated in 12 periods
 ################################################################################
-# Set rounding and redaction thresholds
-rounding_threshold = 6
-redaction_threshold = 8
 total_n <- nrow(data)
 # Proportion treated 
 calc_prop_trt <- function(data, contraindicated) {
