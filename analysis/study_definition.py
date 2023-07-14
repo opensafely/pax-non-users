@@ -57,7 +57,7 @@ study = StudyDefinition(
     between=["index_date", end_date],
     return_expectations={
       "incidence": 1.0,
-      "date": {"earliest": "index_date", "latest": end_date},
+      "date": {"earliest": "index_date", "latest": "index_date"},
     },
   ),
 
