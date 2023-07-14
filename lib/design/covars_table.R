@@ -10,7 +10,7 @@ covars <-
     "smoking_status",
     "diabetes",
     "hypertension",
-    "chronic_cardiac_disease",
+    "chronic_cardiac_disease",                                       
     "copd",
     "serious_mental_illness_nhsd",
     "learning_disability_primis",
