@@ -9,7 +9,6 @@
 ################################################################################
 # 0.0 Import libraries + functions
 ################################################################################
-
 library('here')
 library('tidyverse')
 library('readr')
@@ -38,7 +37,9 @@ fs::dir_create(output_dir)
 args <- commandArgs(trailingOnly=TRUE)
 print(args)
 
-if (length(args) != 1){
+if (length(args) == 0){
+  population = "all_ci" # when run not via action.yaml
+} else if (length(args) != 1){
   stop("One argument is needed")
 } else if (length(args) == 1) {
   if (args[[1]] == "all_ci") {

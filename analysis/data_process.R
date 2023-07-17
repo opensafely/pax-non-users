@@ -54,7 +54,7 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
            death_date =
              if_else(!is.na(died_ons_covid_any_date), died_ons_covid_any_date, death_date),
            date_treated = if_else(!is.na(date_treated),
-                                  covid_test_positive_date + runif(1, 0, 4) %>% ceiling(),
+                                  covid_test_positive_date + runif(nrow(data_extracted), 0, 4) %>% round(),
                                   NA_Date_),
            paxlovid_covid_therapeutics = if_else(!is.na(paxlovid_covid_therapeutics),
                                                  date_treated,
@@ -75,6 +75,12 @@ data_processed <-
   map(.x = list(4, 5, 6, 7),
       .f = ~ process_data(data_extracted, study_dates, treat_window_days = .x))
 names(data_processed) <- c("grace5", "grace6", "grace7", "grace8")
+# change data if run using dummy data
+if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
+  data_processed <- 
+    map(.x = data_processed,
+        .f = ~ .x %>% mutate(study_week = runif(nrow(.x), 1, 52) %>% round()))
+}
 
 ################################################################################
 # 3 Apply additional eligibility and exclusion criteria
