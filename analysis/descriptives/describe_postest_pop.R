@@ -49,6 +49,13 @@ data <-
                       include.lowest = TRUE,
                       right = FALSE,
                       labels = 1:12))
+if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
+  data <- 
+    data %>%
+    mutate(period = runif(nrow(data), 0, 12) %>% ceiling())
+           # in dummy data, everyone has pos test on same day (start of study period)
+  periods <- 1:2 # to make run faster
+}
 
 ################################################################################
 # 1.0 Proportion treated in 12 periods
@@ -56,25 +63,22 @@ data <-
 generate_table1_in_period <- function(data_table, period, pop_levels) {
   data_table <-
     data_table %>%
-    filter(period == period) %>%
+    filter(period == {{ period }}) %>%
     select(-period)
   # Generate table - full and stratified populations
   table1 <- generate_table1(data_table, pop_levels)$table1
-  table1 <- table1 %>% mutate(period = period)
+  table1 <- table1 %>% mutate(period = {{ period }})
 }
 data_table <- 
   data %>%
   select(treatment_strategy_cat_prim, all_of(covars), period)
 periods <- 1:12
 pop_levels = c("All", "Molnupiravir", "Sotrovimab", "Paxlovid", "Untreated")
-# change data if run using dummy data
-if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
-  periods = 1 # in dummy data, everyone has pos test on same day (start of study period)
-}
 table1_periods <- map_dfr(
   .x = periods,
   .f = ~ generate_table1_in_period(data_table, .x, pop_levels)
 )
+# redact
 table1_periods_red <-
   table1_periods %>% 
   mutate(across(all_of(pop_levels),
