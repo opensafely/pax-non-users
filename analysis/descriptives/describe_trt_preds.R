@@ -61,7 +61,8 @@ if (population == "all_ci") {
     mutate(contraindicated_excl_rx_dnu =
               if_else(ci_liver_disease | ci_solid_organ_transplant | 
                         ci_renal_disease, TRUE, FALSE)) %>% 
-    filter(treatment_strategy_cat %in% c("Paxlovid", "Untreated")) 
+    filter(treatment_strategy_cat %in% c("Paxlovid", "Untreated") &
+             contraindicated_excl_rx_dnu == FALSE) 
 }
 
 ############################################################################
