@@ -22,11 +22,9 @@ covars <-
     "downs_syndrome_nhsd",
     "cancer_opensafely_snomed_new", # non-overlapping
     "haematological_disease_nhsd",
-    "liver_disease_nhsd", 
     "imid_nhsd",
     "immunosupression_nhsd_new", # non-overlapping
     "hiv_aids_nhsd",
-    #"solid_organ_transplant_nhsd_new", # non-overlapping
     "multiple_sclerosis_nhsd", 
     "motor_neurone_disease_nhsd",
     "myasthenia_gravis_nhsd",

@@ -14,7 +14,7 @@ library(dplyr)
 library(fs)
 library(here)
 library(purrr)
-source(here::here("lib", "design", "covars_table.R"))
+source(here::here("lib", "design", "covars_postest_pop.R"))
 source(here::here("lib", "design", "redaction.R"))
 source(here::here("analysis", "descriptives", "functions", "generate_table1.R"))
 
@@ -54,7 +54,7 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
     data %>%
     mutate(period = runif(nrow(data), 0, 12) %>% ceiling())
            # in dummy data, everyone has pos test on same day (start of study period)
-  periods <- 1:2 # to make run faster
+  periods <- 1# to make run faster
 }
 
 ################################################################################
