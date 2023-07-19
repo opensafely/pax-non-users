@@ -859,6 +859,9 @@ study = StudyDefinition(
   ###################################################################
   # CONTRAINDICATIONS FOR PAXLOVID ----------------------------------
   ###################################################################
+  # liver_disease_nhsd_snomed (used to identify high risk group) has only 11 codes that are not in 
+  # the codelist to identify contraindication (among which 3 related to children), see
+  # https://www.opencodelists.org/codelist/nhsd/liver-cirrhosis/64f239d0/diff/071038cf/
   advanced_decompensated_cirrhosis=patients.with_these_clinical_events(
     codelists.advanced_decompensated_cirrhosis_snomed_codes,
     on_or_before="covid_test_positive_date",
@@ -866,6 +869,8 @@ study = StudyDefinition(
     find_last_match_in_period=True,
   ),
 
+  # liver_disease_nhsd_icd10 (used to identify high risk group) is a subset of the codelist used here, see
+  # https://www.opencodelists.org/codelist/nhsd/liver-cirrhosis-icd-10/3e6506cd/diff/00e40554/
   decompensated_cirrhosis_icd10=patients.admitted_to_hospital(
     with_these_diagnoses=codelists.advanced_decompensated_cirrhosis_icd10_codes,
     on_or_before="covid_test_positive_date",
@@ -924,7 +929,7 @@ study = StudyDefinition(
     },
   ),
 
-  ckd5_icd10 = patients.admitted_to_hospital(
+  ckd5_icd10=patients.admitted_to_hospital(
     returning="binary_flag",
     find_last_match_in_period=True,
     with_these_diagnoses=codelists.ckd5_icd_codes,
@@ -934,7 +939,7 @@ study = StudyDefinition(
     },
   ),    
 
-  dialysis = patients.with_these_clinical_events(
+  dialysis=patients.with_these_clinical_events(
     codelists.dialysis_codes,
     on_or_before ="covid_test_positive_date",
     returning = "binary_flag",
@@ -944,7 +949,7 @@ study = StudyDefinition(
     },
   ),
 
-  dialysis_icd10 = patients.admitted_to_hospital(
+  dialysis_icd10=patients.admitted_to_hospital(
     returning="binary_flag",
     find_last_match_in_period=True,
     with_these_diagnoses=codelists.dialysis_icd10_codelist,
@@ -954,7 +959,7 @@ study = StudyDefinition(
     },
   ),
 
-  dialysis_procedure = patients.admitted_to_hospital(
+  dialysis_procedure=patients.admitted_to_hospital(
     returning="binary_flag",
     find_last_match_in_period=True,
     with_these_procedures=codelists.dialysis_opcs4_codelist,
@@ -964,7 +969,7 @@ study = StudyDefinition(
     },
   ),  
 
-  kidney_transplant = patients.with_these_clinical_events(
+  kidney_transplant=patients.with_these_clinical_events(
     codelists.kidney_transplant_codes,
     on_or_before="covid_test_positive_date",
     returning="binary_flag",
@@ -974,7 +979,7 @@ study = StudyDefinition(
     },    
   ),
 
-  kidney_transplant_icd10 = patients.admitted_to_hospital(
+  kidney_transplant_icd10=patients.admitted_to_hospital(
     returning="binary_flag",
     find_last_match_in_period=True,
     with_these_diagnoses=codelists.kidney_tx_icd10_codelist,
