@@ -51,7 +51,7 @@ extract_data <- function(input_filename){
       decompensated_cirrhosis_icd10 = col_logical(), 
       ascitic_drainage_snomed = col_logical(),
       ascitic_drainage_snomed_date = col_date(format = "%Y-%m-%d"),
-      liver_disease_nhsd_icd10 = col_logical(),
+      liver_disease_nhsd_icd10 = col_logical(), #note subset of decompensated_cirrhosis_icd10
       ckd_primis_stage = col_character(),
       ckd3_icd10 = col_logical(),
       ckd4_icd10 = col_logical(),
