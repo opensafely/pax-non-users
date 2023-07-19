@@ -45,16 +45,15 @@ data <- read_rds(here("output", "data", "data_processed.rds"))
 # Proportion treated 
 calc_trt_contra <- function(data) {
   n_trt_contra <- data %>%
-    filter(contraindicated_strict == TRUE) %>%
     group_by(treatment_strategy_cat, .drop = FALSE) %>%
-    summarise(n_cirrhosis = sum(ci_cirrhosis),
+    summarise(n_cirrhosis_snomed = sum(ci_cirrhosis_snomed),
+              n_cirrhosis_icd10 = sum(ci_cirrhosis_icd10),
               n_ascitic_drainage = sum(ci_ascitic_drainage),
-              n_liver_disease = sum(ci_liver_disease_icd10),
               n_solid_organ_highrisk = sum(ci_solid_organ_highrisk),
               n_solid_organ_snomed = sum(ci_solid_organ_snomed),
               n_ckd_stage5_nhsd = sum(ci_ckd5_nhsd),
-              n_ckd3_primis = sum(ci_ckd3_primis), #FIXME
-              n_ckd45_primis = sum(ci_ckd45_primis), #FIXME
+              n_ckd3_primis = sum(ci_ckd3_primis),
+              n_ckd45_primis = sum(ci_ckd45_primis),
               n_ckd3_icd10 = sum(ci_ckd3_icd10),
               n_ckd45_icd10 = sum(ci_ckd45_icd10),
               n_dialysis = sum(ci_dialysis),
@@ -65,6 +64,8 @@ calc_trt_contra <- function(data) {
               n_egfr_creat_below30 = sum(ci_egfr_creat_below30),
               n_drugs_do_not_use = sum(ci_drugs_do_not_use),
               n_drugs_caution = sum(drugs_consider_risk),
+              n_contraindicated = sum(contraindicated),
+              n_contraindicated_strict = sum(contraindicated_strict),
               n_all = n(),
               .groups = "keep") %>%
     tidyr::pivot_longer(-1) %>%

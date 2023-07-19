@@ -3,17 +3,17 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     nrow()
   # liver disease
-  n_cirrhosis <-
+  n_cirrhosis_snomed <-
     data_processed %>%
-    filter(advanced_decompensated_cirrhosis == TRUE | decompensated_cirrhosis_icd10 == TRUE) %>%
+    filter(advanced_decompensated_cirrhosis == TRUE) %>%
+    nrow()
+  n_cirrhosis_icd10 <- 
+    data_processed %>%
+    filter(decompensated_cirrhosis_icd10 == TRUE) %>%
     nrow()
   n_ascitic_drainage <-
     data_processed %>%
     filter(ascitic_drainage_snomed == TRUE) %>%
-    nrow()
-  n_liver_disease_icd10 <-
-    data_processed %>%
-    filter(liver_disease_nhsd_icd10 == TRUE) %>%
     nrow()
   # solid organ transplant
   n_solid_organ_highrisk <-
@@ -89,7 +89,6 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>% 
     filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10 == FALSE) %>%
     filter(ascitic_drainage_snomed == FALSE) %>%
-    filter(liver_disease_nhsd_icd10 == FALSE) %>%
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
     filter(ckd_stage_5_nhsd == FALSE) %>% 
@@ -109,7 +108,6 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>% 
     filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10 == FALSE) %>%
     filter(ascitic_drainage_snomed == FALSE) %>%
-    filter(liver_disease_nhsd_icd10 == FALSE) %>%
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
     filter(ckd_stage_5_nhsd == FALSE) %>%
@@ -126,9 +124,9 @@ calc_n_excluded_contraindicated <- function(data_processed){
     filter(drugs_do_not_use == FALSE) %>%
     nrow()
   out <- tibble(n_before_exclusion_contraindications,
-                n_cirrhosis,
+                n_cirrhosis_snomed,
+                n_cirrhosis_icd10,
                 n_ascitic_drainage,
-                n_liver_disease_icd10,
                 n_solid_organ_highrisk,
                 n_solid_organ_snomed,
                 n_ckd5_nhsd,

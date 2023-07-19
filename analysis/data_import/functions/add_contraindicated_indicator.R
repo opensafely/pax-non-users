@@ -2,12 +2,12 @@ add_contraindicated_indicator <- function(data_processed) {
   data_processed <-
     data_processed %>% 
     mutate(
-      ci_cirrhosis = 
-        if_else(advanced_decompensated_cirrhosis | decompensated_cirrhosis_icd10, TRUE, FALSE),
+      ci_cirrhosis_snomed = 
+        if_else(advanced_decompensated_cirrhosis, TRUE, FALSE),
+      ci_cirrhosis_icd10 =
+        if_else(decompensated_cirrhosis_icd10, TRUE, FALSE),
       ci_ascitic_drainage =
         if_else(ascitic_drainage_snomed, TRUE, FALSE),
-      ci_liver_disease_icd10 =
-        if_else(liver_disease_nhsd_icd10, TRUE, FALSE),
       ci_solid_organ_highrisk =
         if_else(solid_organ_transplant_nhsd_new, TRUE, FALSE),
       ci_solid_organ_snomed =
@@ -44,7 +44,7 @@ add_contraindicated_indicator <- function(data_processed) {
         if_else(drugs_do_not_use, TRUE, FALSE),
       # aggregated
       ci_liver_disease = 
-        if_else(ci_cirrhosis | ci_ascitic_drainage | ci_liver_disease_icd10, TRUE, FALSE),
+        if_else(ci_cirrhosis_snomed | ci_cirrhosis_icd10 | ci_ascitic_drainage, TRUE, FALSE),
       ci_solid_organ_transplant =
         if_else(ci_solid_organ_highrisk | ci_solid_organ_snomed, TRUE, FALSE),
       ci_renal_disease =
