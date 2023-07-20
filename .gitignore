@@ -12,3 +12,4 @@ venv/
 .Rproj.user
 *.Rproj
 codelists/codelists.html
+*.html
