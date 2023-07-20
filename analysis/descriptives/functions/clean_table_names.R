@@ -16,6 +16,7 @@ clean_table_names = function(input_table) {
                         group == "hypertension" ~ "Hypertension",
                         group == "chronic_cardiac_disease" ~ "Chronic Cardiac Disease",
                         group == "copd" ~ "COPD",
+                        group == "dialysis" ~ "Dialysis",
                         group == "serious_mental_illness_nhsd" ~ "Severe mental illness",
                         group == "learning_disability_primis" ~ "Learning disability",
                         group == "dementia_nhsd" ~ "Dementia",
@@ -35,7 +36,7 @@ clean_table_names = function(input_table) {
                         group == "multiple_sclerosis_nhsd" ~ "Multiple sclerosis",
                         group == "motor_neurone_disease_nhsd" ~ "Motor neurone disease",
                         group == "myasthenia_gravis_nhsd" ~ "Myasthenia gravis",
-                        group == "huntingtons_disease_nhsd" ~ "Huntington’s disease",
+                        group == "huntingtons_disease_nhsd" ~ "Huntington's disease",
                         # vax vars
                         group == "vaccination_status" ~ "Vaccination status",
                         group == "tb_postest_vacc_cat" ~ "Time-between test since last vaccination",
