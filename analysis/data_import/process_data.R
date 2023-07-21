@@ -274,8 +274,11 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
       sot_and_covid_hosp_same_day = 
         if_else(any_treatment_strategy_cat == "Sotrovimab" &
                   status_all == "covid_hosp" &
-                  ((min_date_all == any_treatment_date & tb_covid_hosp_admission_discharge %in% c(0, 1)) |
-                     covid_hosp_date_mabs_procedure == any_treatment_date),
+                  ((min_date_all == any_treatment_date & 
+                     (!is.na(tb_covid_hosp_admission_discharge) &
+                     tb_covid_hosp_admission_discharge %in% c(0, 1))) |
+                     (!is.na(covid_hosp_date_mabs_procedure) &
+                       covid_hosp_date_mabs_procedure == any_treatment_date)),
                 TRUE,
                 FALSE),
       fu_all = 
