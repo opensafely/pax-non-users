@@ -8,23 +8,41 @@ format:
     embed-resources: true
 ---
 
-## Introduction
+# Introduction
 
 This report describes the OpenSAFELY-TPP population at high risk of severe COVID-19 outcomes with a positive SARS-CoV-2 test between 10 Feb 2022 - 9 Feb 2023.
 
 ### Total number of positive tests
 ![](../../output/descriptives/figures/postest_pop_n.png){#fig-total_n}
 
+## All positive tests 
+
 ### Demographics
-![](../../output/descriptives/figures/postest_pop_demographics.png){#fig-demog}
+![](../../output/descriptives/figures/postest_pop_all/demographics.png){#fig-demog}
 
 ### Clinical characteristics
-![](../../output/descriptives/figures/postest_pop_clin.png){#fig-clin}
+![](../../output/descriptives/figures/postest_pop_all/clin.png){#fig-clin}
 
 
 ### High risk groups
-![](../../output/descriptives/figures/postest_pop_highrisk.png){#fig-highrisk}
+![](../../output/descriptives/figures/postest_pop_all/highrisk.png){#fig-highrisk}
 
 
 ### Vaccination
-![](../../output/descriptives/figures/postest_pop_vax.png){#fig-vax}
+![](../../output/descriptives/figures/postest_pop_all/vax.png){#fig-vax}
+
+## Untreated Population
+
+### Demographics
+![](../../output/descriptives/figures/postest_pop_untrt/demographics.png){#fig-demog}
+
+### Clinical characteristics
+![](../../output/descriptives/figures/postest_pop_untrt/clin.png){#fig-clin}
+
+
+### High risk groups
+![](../../output/descriptives/figures/postest_pop_untrt/highrisk.png){#fig-highrisk}
+
+
+### Vaccination
+![](../../output/descriptives/figures/postest_pop_untrt/vax.png){#fig-vax}
