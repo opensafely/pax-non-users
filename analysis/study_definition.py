@@ -449,9 +449,9 @@ study = StudyDefinition(
   ),
 
   liver_disease_nhsd_icd10=patients.admitted_to_hospital(
-    returning="binary_flag",
-    on_or_before="covid_test_positive_date",
     with_these_diagnoses=codelists.liver_disease_nhsd_icd10_codes,
+    on_or_before="covid_test_positive_date",
+    returning="binary_flag",
     return_expectations={
       "incidence": 0.05
     },
@@ -714,6 +714,24 @@ study = StudyDefinition(
     },
   ),
 
+  solid_organ_transplant_nhsd_snomed_new_code=patients.with_these_clinical_events(
+    codelists.solid_organ_transplant_new_codes,
+    on_or_before="covid_test_positive_date",
+    returning="code",
+    return_expectations={
+      "rate": "universal",
+      "category": {
+          "ratios": {
+              "code1": 0.4,
+              "code2": 0.45,
+              "code3": 0.05,
+              "code4": 0.05,
+              "code5": 0.05
+            }
+      },
+    },
+  ),
+
   solid_organ_transplant_nhsd_new=patients.satisfying(
     """
     solid_organ_transplant_nhsd_snomed_new OR
@@ -869,6 +887,25 @@ study = StudyDefinition(
     find_last_match_in_period=True,
   ),
 
+  advanced_decompensated_cirrhosis_code=patients.with_these_clinical_events(
+    codelists.advanced_decompensated_cirrhosis_snomed_codes,
+    on_or_before="covid_test_positive_date",
+    returning="code",
+    find_last_match_in_period=True,
+    return_expectations={
+      "rate": "universal",
+      "category": {
+          "ratios": {
+              "code1": 0.4,
+              "code2": 0.45,
+              "code3": 0.05,
+              "code4": 0.05,
+              "code5": 0.05
+            }
+      },
+    },
+  ),
+
   # liver_disease_nhsd_icd10 (used to identify high risk group) is a subset of the codelist used here, see
   # https://www.opencodelists.org/codelist/nhsd/liver-cirrhosis-icd-10/3e6506cd/diff/00e40554/
   decompensated_cirrhosis_icd10=patients.admitted_to_hospital(
@@ -876,6 +913,25 @@ study = StudyDefinition(
     on_or_before="covid_test_positive_date",
     returning="binary_flag",
     find_last_match_in_period=True,
+  ),
+
+  decompensated_cirrhosis_icd10_code=patients.admitted_to_hospital(
+    with_these_diagnoses=codelists.advanced_decompensated_cirrhosis_icd10_codes,
+    on_or_before="covid_test_positive_date",
+    returning="primary_diagnosis",
+    find_last_match_in_period=True,
+    return_expectations={
+      "rate": "universal",
+      "incidence": 0.05,
+      "category": {
+        "ratios": {
+          "icd1": 0.2,
+          "icd2": 0.2,
+          "icd3": 0.2,
+          "icd4": 0.2,
+          "icd5": 0.2},
+      },
+    },
   ),
 
   # regular ascitic drainage (opcs4_codes in hospital??)
@@ -1186,6 +1242,25 @@ study = StudyDefinition(
     on_or_before="covid_test_positive_date",
     returning="binary_flag",
     find_last_match_in_period=True,
+  ),
+
+  solid_organ_transplant_snomed_code=patients.with_these_clinical_events(
+    codelist=codelists.solid_organ_transplant_codes,
+    on_or_before="covid_test_positive_date",
+    returning="code",
+    find_last_match_in_period=True,
+    return_expectations={
+      "rate": "universal",
+      "category": {
+          "ratios": {
+              "code1": 0.4,
+              "code2": 0.45,
+              "code3": 0.05,
+              "code4": 0.05,
+              "code5": 0.05
+            }
+      },
+    },
   ),
 
   ### contraindicated medication
