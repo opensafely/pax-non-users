@@ -84,9 +84,47 @@ trt_contra_red <-
   trt_contra %>% redact_trt_contra()
 
 ################################################################################
+# 1.1 Codes 
+################################################################################
+n_cirrhosis_snomed <-
+  data %>%
+  filter(ci_cirrhosis_snomed & treatment_strategy_cat == "Paxlovid") %>%
+  group_by(advanced_decompensated_cirrhosis_code, .drop = FALSE) %>%
+  summarise(n = n())
+n_cirrhosis_icd10 <-
+  data %>%
+  filter(ci_cirrhosis_icd10 & treatment_strategy_cat == "Paxlovid") %>%
+  group_by(decompensated_cirrhosis_icd10_code, .drop = FALSE) %>%
+  summarise(n = n())
+n_organ_transplant_nhsd_snomed_new <-
+  data %>%
+  filter(ci_solid_organ_highrisk & treatment_strategy_cat == "Paxlovid") %>%
+  group_by(solid_organ_transplant_nhsd_snomed_new_code, .drop = FALSE) %>%
+  summarise(n = n())  
+n_organ_transplant_snomed <-
+  data %>%
+  filter(ci_solid_organ_snomed & treatment_strategy_cat == "Paxlovid") %>%
+  group_by(solid_organ_transplant_snomed_code, .drop = FALSE) %>%
+  summarise(n = n()) 
+n_codes_contra <-
+  list(cirrhosis_snomed = n_cirrhosis_snomed,
+       cirrhosis_icd10 = n_cirrhosis_icd10,
+       organ_transplant_nhsd_snomed_new = n_organ_transplant_nhsd_snomed_new,
+       organ_transplant_snomed = n_organ_transplant_snomed)
+n_codes_contra_red <-
+  map(.x = n_codes_contra,
+      .f = ~ .x %>% redact_trt_contra())
+
+################################################################################
 # 2.0 Save output
 ################################################################################
 write_csv(x = trt_contra,
           path(output_dir, "trt_contra.csv"))
 write_csv(x = trt_contra_red,
           path(output_dir, "trt_contra_red.csv"))
+iwalk(.x = n_codes_contra,
+      .f = ~ write_csv(.x,
+                       path(output_dir, paste0("n_codes_", .y, ".csv"))))
+iwalk(.x = n_codes_contra_red,
+      .f = ~ write_csv(.x,
+                       path(output_dir, paste0("n_codes_", .y, "_red.csv"))))
