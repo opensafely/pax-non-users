@@ -41,6 +41,7 @@ extract_data <- function(input_filename){
       hiv_aids_nhsd = col_logical(),
       solid_organ_transplant_nhsd = col_logical(), 
       solid_organ_transplant_nhsd_new = col_logical(), # non-overlapping
+      solid_organ_transplant_nhsd_snomed_new_code = col_character(), # added to investigate codes for exclusion while treated
       multiple_sclerosis_nhsd = col_logical(), 
       motor_neurone_disease_nhsd = col_logical(),
       myasthenia_gravis_nhsd = col_logical(),
@@ -48,7 +49,9 @@ extract_data <- function(input_filename){
 
       # CONTRAINDICATIONS ----
       advanced_decompensated_cirrhosis = col_logical(),
+      advanced_decompensated_cirrhosis_code = col_character(), # added to investigate codes for exclusion while treated
       decompensated_cirrhosis_icd10 = col_logical(), 
+      decompensated_cirrhosis_icd10_code = col_character(), # added to investigate codes for exclusion while treated
       ascitic_drainage_snomed = col_logical(),
       ascitic_drainage_snomed_date = col_date(format = "%Y-%m-%d"),
       liver_disease_nhsd_icd10 = col_logical(), #note subset of decompensated_cirrhosis_icd10
@@ -76,6 +79,7 @@ extract_data <- function(input_filename){
       eGFR_short_record = col_double(),
       eGFR_short_operator = col_character(),
       solid_organ_transplant_snomed = col_logical(),
+      solid_organ_transplant_snomed_code = col_character(), # added to investigate codes for exclusion while treated
       drugs_do_not_use = col_logical(),
 
       # CAUTION AGAINST ----
