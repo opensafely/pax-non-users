@@ -5,7 +5,7 @@
 # --> Of note, variable 'status_primary', ignores noncovid_hosp (assuming 
 #     outcome can still occur after noncovid hosp, so individual is still at 
 #     risk of experiencing the outcome (covid hosp/death))
-# 2. <odifies the variable 'tb_postest_treat' to 'tb_postest_treat_seq'
+# 2. Modifies the variable 'tb_postest_treat' to 'tb_postest_treat_seq'
 # --> we classify people as untreated if they experience an event before or on
 #     day of treatment and set their
 #     tb_postest_treat to NA (= time between treatment and day 0)
@@ -27,6 +27,13 @@ simplify_data <- function(data){
         NA_real_,
         tb_postest_treat),
       treatment_seq = treatment_prim,
-      fup_seq = fu_primary
+      # people treated with sotrovimab of whom it is identified that their 
+      # hospitalisation is a hospitalisation for receiving sotrovimab are 
+      # followed up 28 days
+      # FIXME: should check for second hospitalisation or death after 1st hosp
+      fup_seq = if_else(
+        sot_and_covid_hosp_same_day,
+        28,
+        fu_primary)
     )
 }
