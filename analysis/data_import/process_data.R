@@ -4,6 +4,9 @@ source(here::here("lib", "functions", "fct_case_when.R"))
 source(here::here("analysis", "data_import", "functions", "define_status_and_fu_primary.R"))
 source(here::here("analysis", "data_import", "functions", "define_status_and_fu_all.R"))
 source(here::here("analysis", "data_import", "functions", "add_kidney_vars_to_data.R"))
+source(here::here("analysis", "data_import", "functions", "define_covid_hosp_admissions.R"))
+source(here::here("analysis", "data_import", "functions", "define_allcause_hosp_admissions.R"))
+source(here::here("analysis", "data_import", "functions", "define_allcause_hosp_diagnosis.R"))
 # function
 process_data <- function(data_extracted, study_dates, treat_window_days = 4){
   data_processed <- data_extracted %>%
@@ -225,6 +228,19 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
     mutate(across(starts_with("tb_postest_vax_"), . %>% as.logical())) %>%
     # because makes logic better readable
     rename(covid_death_date = died_ons_covid_any_date) %>%
+    # add columns first admission in day 0-6, second admission etc. to be used
+    # to define hospital admissions (hosp admissions for sotro treated are
+    # different from the rest as sometimes their admission is just an admission
+    # to get the sotro infusion)
+    summarise_covid_admissions() %>%
+    # adds column covid_hosp_admission_date
+    add_covid_hosp_admission_outcome() %>%
+    # idem as explained above for all cause hospitalisation
+    summarise_allcause_admissions() %>%
+    # adds column allcause_hosp_admission_date
+    add_allcause_hosp_admission_outcome() %>%
+    # add column allcause_hosp_diagnosis
+    add_allcause_hosp_diagnosis() %>%
     mutate(
       # Outcome prep --> outcomes are added in add_*_outcome() functions below
       study_window = covid_test_positive_date + days(28),
@@ -259,45 +275,6 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
     add_status_and_fu_all() %>%
     # adds column status_primary and fu_primary
     add_status_and_fu_primary() %>%
-    # some patients have a record of a hospitalisation that we believe is 
-    # associated with sotrovimab infusion, in this study receiving sotrovimab is 
-    # a censoring event, however if there is an outcome on the same day as treat
-    # ment initiation, outcome is counted. It is therefore important to censor
-    # patients receiving sotrovimab and not count their hosp event (which is 
-    # believed to be to receive sotrovimab).
-    mutate(
-      tb_covid_hosp_admission_discharge = 
-        if_else(!is.na(covid_hosp_admission_date) & !is.na(covid_hosp_discharge_date), 
-                difftime(covid_hosp_discharge_date, 
-                         covid_hosp_admission_date, units = "days") %>% as.numeric(),
-                NA_real_),
-      sot_and_covid_hosp_same_day = 
-        if_else(any_treatment_strategy_cat == "Sotrovimab" &
-                  status_all == "covid_hosp" &
-                  ((min_date_all == any_treatment_date & 
-                     (!is.na(tb_covid_hosp_admission_discharge) &
-                     tb_covid_hosp_admission_discharge %in% c(0, 1))) |
-                     (!is.na(covid_hosp_date_mabs_procedure) &
-                       covid_hosp_date_mabs_procedure == any_treatment_date)),
-                TRUE,
-                FALSE),
-      fu_all = 
-        if_else(sot_and_covid_hosp_same_day,
-                NA_real_,
-                fu_all),
-      status_all =
-        if_else(sot_and_covid_hosp_same_day,
-                NA_character_,
-                status_all %>% as.character()) %>% factor(),
-      fu_primary = 
-        if_else(sot_and_covid_hosp_same_day,
-                NA_real_,
-                fu_primary),
-      status_primary = 
-        if_else(sot_and_covid_hosp_same_day,
-                NA_character_,
-                status_primary %>% as.character()) %>% factor()
-    ) %>%
     # some patients experience one of our outcomes (prim outcome) 
     # on or before day of treatment --> if so, patients will be categorised as 
     # untreated

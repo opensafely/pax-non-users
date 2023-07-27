@@ -111,18 +111,39 @@ extract_data <- function(input_filename){
       died_ons_covid_any_date = col_date(format = "%Y-%m-%d"),
       died_ons_covid_date = col_date(format = "%Y-%m-%d"),
       dereg_date = col_date(format = "%Y-%m-%d"),
-      covid_hosp_admission_date = col_date(format = "%Y-%m-%d"),
+      # hosp
+      # covid specific
+      covid_hosp_admission_date0 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_date1 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_date2 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_date3 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_date4 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_date5 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_date6 = col_date(format = "%Y-%m-%d"),
+      covid_hosp_admission_first_date7_28 = col_date(format = "%Y-%m-%d"),
       covid_hosp_discharge_date = col_date(format = "%Y-%m-%d"),
       covid_hosp_date_mabs_procedure = col_date(format = "%Y-%m-%d"),
-      covid_any_hosp_admission_date = col_date(format = "%Y-%m-%d"),
-      covid_any_hosp_discharge_date = col_date(format = "%Y-%m-%d"),
-      covid_any_hosp_date_mabs_procedure = col_date(format = "%Y-%m-%d"),
-      allcause_hosp_admission_date = col_date(format = "%Y-%m-%d"),
+      # all cause
+      allcause_hosp_admission_date0 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_date1 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_date2 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_date3 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_date4 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_date5 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_date6 = col_date(format = "%Y-%m-%d"),
+      allcause_hosp_admission_first_date7_28 = col_date(format = "%Y-%m-%d"),
       allcause_hosp_discharge_date = col_date(format = "%Y-%m-%d"),
       allcause_hosp_date_mabs_procedure = col_date(format = "%Y-%m-%d"),
       # cause/diagnosis
       death_cause = col_character(),
-      allcause_hosp_admission_diagnosis = col_character()
+      allcause_hosp_admission_diagnosis0 = col_character(),
+      allcause_hosp_admission_diagnosis1 = col_character(),
+      allcause_hosp_admission_diagnosis2 = col_character(),
+      allcause_hosp_admission_diagnosis4 = col_character(),
+      allcause_hosp_admission_diagnosis3 = col_character(),
+      allcause_hosp_admission_diagnosis5 = col_character(),
+      allcause_hosp_admission_diagnosis6 = col_character(),
+      allcause_hosp_admission_first_diagnosis7_28 = col_character()
     )
   )
 }
