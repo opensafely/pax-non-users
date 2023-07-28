@@ -1364,7 +1364,7 @@ study = StudyDefinition(
     date_format="YYYY-MM-DD",
     return_expectations={
       "date": {"earliest": "index_date"},
-      "incidence": 0.05
+      "incidence": 0.5
     },
   ),
 
