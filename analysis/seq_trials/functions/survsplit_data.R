@@ -1,14 +1,37 @@
 library(survival)
+source(here::here("lib", "design", "covars_seq_trials.R"))
 survsplit_data <- function(data) {
-  splits <- 1:28
-  data <-
+  data_fup_splitted <-
     data %>%
-    survSplit(cut = splits,
+    survSplit(cut = 1:28,
               end = "fup_seq",
               event = "status_seq") %>%
-    rename(tend = fup_seq)
-  ## TODO: make variable T0, T1, T2, T3, T4 0 if untreated, 1 if treated.
-  
+    rename(tend = fup_seq) %>%
+    select(-treatment_seq)
+  data_trt_splitted <-
+    data %>%
+    select(patient_id, tb_postest_treat_seq, treatment_seq) %>%
+    survSplit(cut = 1:5,
+              end = "tb_postest_treat_seq",
+              event = "treatment_seq") %>%
+    rename(tend = tb_postest_treat_seq)
+  # join tables
+  data_splitted <- 
+    data_fup_splitted %>%
+    left_join(data_trt_splitted,
+              by = c("patient_id", "tstart", "tend")) %>%
+    group_by(patient_id) %>%
+    mutate(treatment_seq = 
+             if_else(is.na(treatment_seq), sum(treatment_seq, na.rm = TRUE), treatment_seq), 
+           treatment_seq_lag1 = lag(treatment_seq, n = 1, default = 0),
+           treatment_seq_lag2 = lag(treatment_seq, n = 2, default = 0),
+           treatment_seq_lag3 = lag(treatment_seq, n = 3, default = 0),
+           treatment_seq_lag4 = lag(treatment_seq, n = 4, default = 0),
+           treatment_seq_lag5 = lag(treatment_seq, n = 5, default = 0)) %>%
+    ungroup() %>%
+    select(patient_id, tstart, tend, status_seq, starts_with("treatment_seq"),
+           all_of(covars)) # FIXME: add covars
   ## TODO: if treated with sot/mol, censor (fup_seq = tb_postest_treat_seq;
   ## status_seq = 0)
 }
+

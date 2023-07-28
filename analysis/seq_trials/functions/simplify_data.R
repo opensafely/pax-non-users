@@ -23,17 +23,14 @@ simplify_data <- function(data){
       # variable 'treatment_prim' is then 'Untreated' (see process_data.R), if so,
       # set tb_postest_treat (day of fup on which they've been treated to NA)
       tb_postest_treat_seq = if_else(
-        treatment_prim == "Untreated",
-        NA_real_,
-        tb_postest_treat),
-      treatment_seq = treatment_prim,
-      # people treated with sotrovimab of whom it is identified that their 
-      # hospitalisation is a hospitalisation for receiving sotrovimab are 
-      # followed up 28 days
-      # FIXME: should check for second hospitalisation or death after 1st hosp
-      fup_seq = if_else(
-        sot_and_covid_hosp_same_day,
-        28,
-        fu_primary)
+        treatment_strategy_cat_prim == "Paxlovid",
+        tb_postest_treat + 1,
+        5),
+      treatment_seq = if_else(
+        treatment_strategy_cat_prim == "Paxlovid",
+        1,
+        0
+      ),
+      fup_seq = fu_primary
     )
 }
