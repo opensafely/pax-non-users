@@ -153,3 +153,25 @@ actions:
         csv1: output/descriptives/postest_pop.csv
         csv2: output/descriptives/postest_pop_red.csv
     
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Sequential trials
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # #
+  data_prepare_seq_trials:
+    run: r:latest analysis/seq_trials/prepare_data.R
+    needs: [data_process]
+    outputs:
+      highly_sensitive:
+        data1: output/data/data_seq_trials_monthly.feather
+        data2: output/data/data_seq_trials_weekly.feather
+
+  describe_size_trials:
+    run: r:latest analysis/seq_trials/descriptives/describe_size_trials.R
+    needs: [data_prepare_seq_trials]
+    outputs:
+      moderately_sensitive:
+        csv1: output/seq_trials/descriptives/data_flow_seq_trials_monthly.csv
+        csv2: output/seq_trials/descriptives/data_flow_seq_trials_weekly.csv
+        csv3: output/seq_trials/descriptives/data_flow_seq_trials_monthly_red.csv
+        csv4: output/seq_trials/descriptives/data_flow_seq_trials_weekly_red.csv
