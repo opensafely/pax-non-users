@@ -21,13 +21,25 @@ simplify_data <- function(data){
         0),
       # some people have been treated on or after they experience an event,
       # variable 'treatment_prim' is then 'Untreated' (see process_data.R), if so,
-      # set tb_postest_treat (day of fup on which they've been treated to NA)
+      # set tb_postest_treat (day of fup on which they've been treated) to 5
       tb_postest_treat_seq = if_else(
         treatment_strategy_cat_prim == "Paxlovid",
         tb_postest_treat + 1,
         5),
       treatment_seq = if_else(
         treatment_strategy_cat_prim == "Paxlovid",
+        1,
+        0
+      ),
+      tb_postest_treat_seq_sotmol = if_else(
+        treatment_strategy_cat_prim %in% 
+          c("Sotrovimab", "Molnupiravir"),
+        tb_postest_treat + 1,
+        5
+      ),
+      treatment_seq_sotmol = if_else(
+        treatment_strategy_cat_prim %in% 
+          c("Sotrovimab", "Molnupiravir"),
         1,
         0
       ),
