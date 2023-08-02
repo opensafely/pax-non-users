@@ -112,6 +112,7 @@ actions:
       moderately_sensitive:
         csv1: output/descriptives/trt_contra.csv
         csv2: output/descriptives/trt_contra_red.csv
+        csvs1: output/descriptives/n_codes_*.csv
 
   describe_trt_preds_all_ci:
     run: r:latest analysis/descriptives/describe_trt_preds.R all_ci
