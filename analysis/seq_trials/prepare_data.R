@@ -42,12 +42,18 @@ data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds
 ################################################################################
 data_splitted <-
   data %>%
+  simplify_data()
+data_splitted$fup_seq %>% table() %>% print()
+data_splitted %>% filter(fup_seq == 0) %>% select(status_seq) %>% print() #debugging
+
+data_splitted <-
+  data %>%
   simplify_data() %>%
   survsplit_data() %>%
   add_period_cuts(study_dates = study_dates)
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
-  data_splitted <- 
+  data_splitted <-
     data_splitted %>%
     group_by(patient_id) %>%
     mutate(period_month = runif(1, 0, 12) %>% ceiling(),
@@ -65,7 +71,7 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
 construct_seq_trials_in_given_period <- function(data_period, treat_window){
   trial_seq <- 0:(treat_window - 1)
   construct_trial_no <- function(data_period, trial_no){
-    trial <- 
+    trial <-
       data_period %>%
       filter(tstart >= trial_no) %>%
       mutate(trial = trial_no) %>%
@@ -83,22 +89,22 @@ construct_seq_trials_in_given_period <- function(data_period, treat_window){
       # experiences the outcome (covid_hosp_death) in the first interval
       ungroup()
   }
-  trials <- 
+  trials <-
     map_dfr(.x = trial_seq,
             .f = ~ construct_trial_no(data_period, .x))
-}  
+}
 trials_monthly <-
   map_dfr(
     .x = 1:12,
-    .f = ~ 
+    .f = ~
       construct_seq_trials_in_given_period(
         data_splitted %>% filter(period_month == .x),
         5)
     )
-trials_weekly <- 
+trials_weekly <-
   map_dfr(
     .x = 1:52,
-    .f = ~ 
+    .f = ~
       construct_seq_trials_in_given_period(
         data_splitted %>% filter(period_week == .x),
         5)
