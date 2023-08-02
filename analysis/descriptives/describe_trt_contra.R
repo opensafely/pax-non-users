@@ -98,9 +98,18 @@ n_cirrhosis_icd10 <-
   summarise(n = n())
 n_organ_transplant_nhsd_snomed_new <-
   data %>%
-  filter(ci_solid_organ_highrisk & treatment_strategy_cat == "Paxlovid") %>%
+  filter(ci_solid_organ_highrisk & solid_organ_transplant_nhsd_snomed_new & treatment_strategy_cat == "Paxlovid") %>%
   group_by(solid_organ_transplant_nhsd_snomed_new_code, .drop = FALSE) %>%
   summarise(n = n())  
+n_organ_transplant_opcs4_procedures <-
+  data %>%
+  filter(ci_solid_organ_highrisk & !solid_organ_transplant_nhsd_snomed_new & treatment_strategy_cat == "Paxlovid") %>%
+  summarise(n_solid_organ_transplant_nhsd_opcs4 = sum(solid_organ_transplant_nhsd_opcs4),
+            n_transplant_thymus_opcs4 = sum(transplant_thymus_opcs4),
+            n_transplant_conjunctiva_opcs4 = sum(transplant_conjunctiva_opcs4),
+            n_transplant_stomach_opcs4 = sum(transplant_stomach_opcs4),
+            n_transplant_ileum_1_opcs4 = sum(transplant_ileum_1_opcs4),
+            n_transplant_ileum_2_opcs4 = sum(transplant_ileum_2_opcs4))  
 n_organ_transplant_snomed <-
   data %>%
   filter(ci_solid_organ_snomed & treatment_strategy_cat == "Paxlovid") %>%
@@ -110,6 +119,7 @@ n_codes_contra <-
   list(cirrhosis_snomed = n_cirrhosis_snomed,
        cirrhosis_icd10 = n_cirrhosis_icd10,
        organ_transplant_nhsd_snomed_new = n_organ_transplant_nhsd_snomed_new,
+       organ_transplant_opcs4_procedures = n_organ_transplant_opcs4_procedures,
        organ_transplant_snomed = n_organ_transplant_snomed)
 n_codes_contra_red <-
   map(.x = n_codes_contra,

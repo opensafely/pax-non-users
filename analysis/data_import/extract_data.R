@@ -41,11 +41,20 @@ extract_data <- function(input_filename){
       hiv_aids_nhsd = col_logical(),
       solid_organ_transplant_nhsd = col_logical(), 
       solid_organ_transplant_nhsd_new = col_logical(), # non-overlapping
-      solid_organ_transplant_nhsd_snomed_new_code = col_character(), # added to investigate codes for exclusion while treated
-      multiple_sclerosis_nhsd = col_logical(), 
+      multiple_sclerosis_nhsd = col_logical(),
       motor_neurone_disease_nhsd = col_logical(),
       myasthenia_gravis_nhsd = col_logical(),
       huntingtons_disease_nhsd = col_logical(), 
+      # because investigating contraindications
+      solid_organ_transplant_nhsd_snomed_new = col_logical(),
+      solid_organ_transplant_nhsd_snomed_new_code = col_character(), # added to investigate codes for exclusion while treated
+      solid_organ_transplant_nhsd_opcs4 = col_logical(),
+      transplant_thymus_opcs4 = col_logical(),
+      transplant_conjunctiva_opcs4 = col_logical(),
+      transplant_stomach_opcs4 = col_logical(),
+      transplant_ileum_1_opcs4 = col_logical(),
+      transplant_ileum_2_opcs4 = col_logical(),
+      
 
       # CONTRAINDICATIONS ----
       advanced_decompensated_cirrhosis = col_logical(),
