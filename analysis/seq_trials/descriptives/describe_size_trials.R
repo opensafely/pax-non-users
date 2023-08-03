@@ -45,11 +45,13 @@ trials_weekly <- arrow::read_feather(here("output", "data", "data_seq_trials_wee
 size_trials_monthly <-
   trials_monthly %>%
   group_by(period_month, trial, treatment_seq_baseline) %>%
-  summarise(n = length(unique(patient_id)), .groups = "keep")
+  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
+  mutate(period_month = as.integer(period_month))
 size_trials_weekly <-
   trials_weekly %>%
   group_by(period_week, trial, treatment_seq_baseline) %>%
-  summarise(n = length(unique(patient_id)), .groups = "keep")
+  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
+  mutate(period_week = as.integer(period_week))
 size_trials <- 
   list(monthly = size_trials_monthly,
        weekly = size_trials_weekly) %>%
