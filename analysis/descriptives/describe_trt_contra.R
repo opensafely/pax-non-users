@@ -123,7 +123,8 @@ n_codes_contra <-
        organ_transplant_snomed = n_organ_transplant_snomed)
 n_codes_contra_red <-
   map(.x = n_codes_contra,
-      .f = ~ .x %>% redact_trt_contra())
+      .f = ~ .x %>% filter(if_any(where(is.numeric), ~ . >= 10)) %>%
+                             redact_trt_contra())
 
 ################################################################################
 # 2.0 Save output
