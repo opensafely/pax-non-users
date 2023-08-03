@@ -116,7 +116,7 @@ redact_data_flow <- function(data_flow){
       across(starts_with("treat") | "untreated_baseline",
              ~ if_else(.x > 0 & .x <= redaction_threshold, 
                        "[REDACTED]", 
-                       .x %>% as.character()))
+                       .x %>% plyr::round_any(rounding_threshold) %>% as.character()))
     )
 }
 data_flow_red <-
