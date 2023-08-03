@@ -94,7 +94,7 @@ data_processed <-
         # same day 
         filter(treated_pax_mol_same_day  == 0 & treated_pax_sot_same_day  == 0) %>%
         # Exclude patients hospitalised on day of positive test
-        filter(!(status_all %in% c("covid_hosp", "noncovid_hosp") &
+        filter(!(status_all %in% c("covid_hosp", "noncovid_hosp", "covid_death", "noncovid_death") &
                    fu_all == 0)) %>%
         # if treated with remidesivir --> exclude
         filter(is.na(remdesivir_covid_therapeutics)))
