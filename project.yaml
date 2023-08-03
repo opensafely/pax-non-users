@@ -96,6 +96,7 @@ actions:
       moderately_sensitive:
         csv1: output/descriptives/outcomes_in_trt_window.csv
         csv2: output/descriptives/outcomes_in_trt_window_red.csv
+        csv3: output/descriptives/outcomes_day0.csv
   
   describe_prop_trt:
     run: r:latest analysis/descriptives/describe_prop_trt.R

@@ -1,9 +1,10 @@
 ################################################################################
 #
-# Distribution of outcomes during treatment window
+# Distribution of outcomes in treatment window + outcomes day 0
 # 
 # The output of this script is:
 # csv file ./output/descriptives/outcomes_in_trt_window(_red).csv
+# csv file ./output/descriptives/outcomes_day0.csv
 ################################################################################
 
 ################################################################################
@@ -33,7 +34,7 @@ args <- commandArgs(trailingOnly=TRUE)
 data <- read_rds(here("output", "data", "data_processed.rds"))
 
 ################################################################################
-# 1.0 Distribution trt init
+# 1.0 Total number of outcomes in treatment window
 ################################################################################
 total_n <- nrow(data)
 
@@ -58,9 +59,26 @@ outcomes_in_trt_window_red <-
                          as.character()))
 
 ################################################################################
-# 2.0 Save output
+# 2.0 Outcomes on day 0
+################################################################################
+outcomes_all_day0 <- 
+  data %>%
+  filter(fu_all == 0 & contraindicated == FALSE) %>%
+  count(status_all, .drop = FALSE) %>%
+  transmute(status = paste0("all_", status_all), n)
+outcomes_primary_day0 <- 
+  data %>%
+  filter(fu_primary == 0 & contraindicated == FALSE) %>%
+  count(status_primary, .drop = FALSE) %>%
+  transmute(status = paste0("primary_", status_primary), n)
+outcomes_day0 <- rbind(outcomes_all_day0, outcomes_primary_day0)
+  
+################################################################################
+# 3.0 Save output
 ################################################################################
 write_csv(x = outcomes_in_trt_window,
           path(output_dir, "outcomes_in_trt_window.csv"))
 write_csv(x = outcomes_in_trt_window_red,
           path(output_dir, "outcomes_in_trt_window_red.csv"))
+write_csv(x = outcomes_day0,
+          path(output_dir, "outcomes_day0.csv"))
