@@ -48,6 +48,7 @@ calc_trt_contra <- function(data) {
     group_by(treatment_strategy_cat, .drop = FALSE) %>%
     summarise(n_cirrhosis_snomed = sum(ci_cirrhosis_snomed),
               n_cirrhosis_icd10 = sum(ci_cirrhosis_icd10),
+              n_cirrhosis_icd10_prim_diag = sum(ci_cirrhosis_icd10_prim_diag),
               n_ascitic_drainage = sum(ci_ascitic_drainage),
               n_solid_organ_highrisk = sum(ci_solid_organ_highrisk),
               n_solid_organ_snomed = sum(ci_solid_organ_snomed),
@@ -109,7 +110,16 @@ n_organ_transplant_opcs4_procedures <-
             n_transplant_conjunctiva_opcs4 = sum(transplant_conjunctiva_opcs4),
             n_transplant_stomach_opcs4 = sum(transplant_stomach_opcs4),
             n_transplant_ileum_1_opcs4 = sum(transplant_ileum_1_opcs4),
-            n_transplant_ileum_2_opcs4 = sum(transplant_ileum_2_opcs4))  
+            n_transplant_ileum_2_opcs4 = sum(transplant_ileum_2_opcs4))
+n_organ_transplant_opc4_procedures_detailed <- 
+  data %>%
+  filter(ci_solid_organ_highrisk & !solid_organ_transplant_nhsd_snomed_new & 
+           treatment_strategy_cat == "Paxlovid" & 
+           solid_organ_transplant_nhsd_opcs4) %>%
+  summarise(across(starts_with("solid_organ_transplant_nhsd_opcs4_"),
+                   ~ sum(.))) %>%
+  tidyr::pivot_longer(-1) %>%
+  tidyr::pivot_wider(names_from = 1, values_from = value)
 n_organ_transplant_snomed <-
   data %>%
   filter(ci_solid_organ_snomed & treatment_strategy_cat == "Paxlovid") %>%
@@ -120,6 +130,7 @@ n_codes_contra <-
        cirrhosis_icd10 = n_cirrhosis_icd10,
        organ_transplant_nhsd_snomed_new = n_organ_transplant_nhsd_snomed_new,
        organ_transplant_opcs4_procedures = n_organ_transplant_opcs4_procedures,
+       organ_transplant_opcs4_procedures_detailed = n_organ_transplant_opc4_procedures_detailed,
        organ_transplant_snomed = n_organ_transplant_snomed)
 n_codes_contra_red <-
   map(.x = n_codes_contra,

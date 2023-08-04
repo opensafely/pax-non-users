@@ -50,6 +50,7 @@ data_processed <-
              # CONTRAINDICATIONS ----
              advanced_decompensated_cirrhosis = col_logical(),
              decompensated_cirrhosis_icd10 = col_logical(), 
+             decompensated_cirrhosis_icd10_prim_diag = col_logical(),
              ascitic_drainage_snomed = col_logical(),
              ascitic_drainage_snomed_date = col_date(format = "%Y-%m-%d"),
              ascitic_drainage_snomed_pre = col_logical(),

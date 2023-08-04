@@ -11,6 +11,10 @@ calc_n_excluded_contraindicated <- function(data_processed){
     data_processed %>%
     filter(decompensated_cirrhosis_icd10 == TRUE) %>%
     nrow()
+  n_cirrhosis_icd10_prim_diag <-
+    data_processed %>%
+    filter(decompensated_cirrhosis_icd10_prim_diag == TRUE) %>%
+    nrow()
   n_ascitic_drainage <-
     data_processed %>%
     filter(ascitic_drainage_snomed == TRUE) %>%
@@ -87,7 +91,7 @@ calc_n_excluded_contraindicated <- function(data_processed){
     nrow()
   n_after_exclusion_contraindications <- 
     data_processed %>% 
-    filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10 == FALSE) %>%
+    filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10_prim_diag == FALSE) %>%
     filter(ascitic_drainage_snomed == FALSE) %>%
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
@@ -106,7 +110,7 @@ calc_n_excluded_contraindicated <- function(data_processed){
     nrow()
   n_after_exclusion_contraindications_strict <- 
     data_processed %>% 
-    filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10 == FALSE) %>%
+    filter(advanced_decompensated_cirrhosis == FALSE & decompensated_cirrhosis_icd10 == FALSE & decompensated_cirrhosis_icd10_prim_diag == FALSE) %>%
     filter(ascitic_drainage_snomed == FALSE) %>%
     filter(solid_organ_transplant_nhsd_new == FALSE) %>%
     filter(solid_organ_transplant_snomed == FALSE) %>%
@@ -126,6 +130,7 @@ calc_n_excluded_contraindicated <- function(data_processed){
   out <- tibble(n_before_exclusion_contraindications,
                 n_cirrhosis_snomed,
                 n_cirrhosis_icd10,
+                n_cirrhosis_icd10_prim_diag,
                 n_ascitic_drainage,
                 n_solid_organ_highrisk,
                 n_solid_organ_snomed,
