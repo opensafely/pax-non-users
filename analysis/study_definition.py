@@ -4,6 +4,7 @@ from cohortextractor import (
   patients,
   filter_codes_by_category,
   combine_codelists,
+  codelist,
 )
 
 # Import codelists from codelist.py
@@ -17,9 +18,32 @@ start_date = study_dates["start_date"]
 end_date = study_dates["end_date"]
 
 
+# make a single variables for every code in a codelist
+def make_variable(code):
+    return {
+        f"solid_organ_transplant_nhsd_opcs4_{code}": (
+            patients.admitted_to_hospital(
+                returning="binary_flag",
+                with_these_procedures=codelist([code], system="opcs4"),
+                on_or_before="covid_test_positive_date",
+                return_expectations={
+                  "incidence": 0.01,
+                },
+            )
+        )
+    }
+
+
+def loop_over_codes(code_list):
+    variables = {}
+    for code in code_list:
+        variables.update(make_variable(code))
+    return variables
+
+
 # Function to create variable covid_hosp_admission_date
 def make_hosp_admission(day, prefix, diagnoses, primary_diagnoses):
-    return{ 
+    return {
         f"{prefix}_hosp_admission_date{day}": (
             patients.admitted_to_hospital(
                 returning="date_admitted",
@@ -48,7 +72,7 @@ def hosp_admission_loop_over_days(days, prefix, diagnoses, primary_diagnoses):
 
 # Function to create variable allcause_hosp_admission_diagnosis
 def make_hosp_admission_diagnosis(day):
-    return{
+    return {
         f"allcause_hosp_admission_diagnosis{day}": (
             patients.admitted_to_hospital(
                 returning="primary_diagnosis",
@@ -656,6 +680,8 @@ study = StudyDefinition(
     },
   ),
 
+  **loop_over_codes(codelists.replacement_of_organ_transplant_nhsd_opcs4_codes),
+
   transplant_all_y_codes_opcs4=patients.admitted_to_hospital(
     returning="date_admitted",
     with_these_procedures=codelists.replacement_of_organ_transplant_nhsd_opcs4_codes,
@@ -1025,7 +1051,7 @@ study = StudyDefinition(
       "rate": "universal",
       "category": {
           "ratios": {
-              "1": 0.4, 
+              "1": 0.4,
               "2": 0.45,
               "3": 0.05,
               "4": 0.05,
@@ -1063,7 +1089,7 @@ study = StudyDefinition(
     return_expectations={
       "incidence": 0.05,
     },
-  ),    
+  ),
 
   dialysis=patients.with_these_clinical_events(
     codelists.dialysis_codes,
