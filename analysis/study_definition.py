@@ -680,7 +680,7 @@ study = StudyDefinition(
     },
   ),
 
-  **loop_over_codes(codelists.replacement_of_organ_transplant_nhsd_opcs4_codes),
+  **loop_over_codes(codelists.solid_organ_transplant_nhsd_opcs4_codes),
 
   transplant_all_y_codes_opcs4=patients.admitted_to_hospital(
     returning="date_admitted",
