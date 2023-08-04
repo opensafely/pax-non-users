@@ -777,6 +777,13 @@ study = StudyDefinition(
     find_last_match_in_period=True,
   ),
 
+  decompensated_cirrhosis_icd10_prim_diag=patients.admitted_to_hospital(
+    with_these_primary_diagnoses=codelists.advanced_decompensated_cirrhosis_icd10_codes,
+    on_or_before="covid_test_positive_date",
+    returning="binary_flag",
+    find_last_match_in_period=True,
+  ),
+
   # regular ascitic drainage (opcs4_codes in hospital??)
   ascitic_drainage_snomed=patients.with_these_clinical_events(
     codelists.ascitic_drainage_snomed_codes,
