@@ -373,6 +373,12 @@ drugs_do_not_use_codes = codelist_from_csv(
   column = "dmd_id"
 )
 
+drugs_do_not_use_absolute_codes = codelist_from_csv(
+  "codelists/opensafely-paxlovid-nirmatrelvirritonavir-absolute-contraindications-dmd.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
+
 # CAUTION AGAINST ----
 drugs_consider_risk_codes = codelist_from_csv(
   "codelists/opensafely-nirmatrelvir-drug-interactions-dmd.csv", 

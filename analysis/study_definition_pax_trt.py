@@ -1105,6 +1105,17 @@ study = StudyDefinition(
     },
   ),
 
+  ### absolute contraindicated medication
+  drugs_do_not_use_absolute=patients.with_these_medications(
+    codelist=codelists.drugs_do_not_use_absolute_codes,
+    returning="binary_flag",
+    between=["covid_test_positive_date - 180 days", "covid_test_positive_date"],
+    find_last_match_in_period=True,
+    return_expectations={
+      "incidence": 0.05,
+    },
+  ),
+
   ###################################################################
   # CAUTION AGAINST PAXLOVID ----------------------------------------
   ###################################################################
