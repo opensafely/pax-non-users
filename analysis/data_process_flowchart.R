@@ -82,6 +82,7 @@ data_processed <-
              eGFR_short_record = col_double(),
              eGFR_short_operator = col_character(),
              drugs_do_not_use = col_logical(),
+             drugs_do_not_use_abslote = col_logical(),
              # CAUTION AGAINST ----
              drugs_consider_risk = col_logical()))
 

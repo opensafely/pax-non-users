@@ -44,6 +44,8 @@ add_contraindicated_indicator <- function(data_processed) {
                   (!is.na(egfr_short_snomed) & egfr_short_snomed < 30), TRUE, FALSE),
       ci_drugs_do_not_use =
         if_else(drugs_do_not_use, TRUE, FALSE),
+      ci_drugs_do_not_use_absolute =
+        if_else(drugs_do_not_use_absolute, TRUE, FALSE),
       # aggregated
       ci_liver_disease = 
         if_else(ci_cirrhosis_snomed | ci_cirrhosis_icd10_prim_diag | ci_ascitic_drainage, TRUE, FALSE),
@@ -55,7 +57,7 @@ add_contraindicated_indicator <- function(data_processed) {
                   ci_egfr_creat_below30, TRUE, FALSE), # not excluding ckd stage3
       contraindicated =
         if_else(ci_liver_disease | ci_solid_organ_transplant |
-                  ci_renal_disease | ci_drugs_do_not_use, TRUE, FALSE),
+                  ci_renal_disease | ci_drugs_do_not_use_absolute, TRUE, FALSE),
       contraindicated_strict =
         if_else(ci_liver_disease | ci_cirrhosis_icd10 | ci_solid_organ_transplant | 
                   ci_renal_disease | ci_ckd3_primis | ci_ckd3_icd10 |

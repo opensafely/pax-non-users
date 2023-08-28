@@ -142,6 +142,7 @@ extract_data <- function(input_filename){
       solid_organ_transplant_snomed = col_logical(),
       solid_organ_transplant_snomed_code = col_character(), # added to investigate codes for exclusion while treated
       drugs_do_not_use = col_logical(),
+      drugs_do_not_use_absolute = col_logical(),
 
       # CAUTION AGAINST ----
       drugs_consider_risk = col_logical(),

@@ -360,6 +360,12 @@
       "downloaded_at": "2023-07-04 14:10:43.865233Z",
       "sha": "1ea163397491dd6aa73fd1453a42274364bfa177"
     },
+    "opensafely-paxlovid-nirmatrelvirritonavir-absolute-contraindications-dmd.csv": {
+      "id": "opensafely/paxlovid-nirmatrelvirritonavir-absolute-contraindications-dmd/774852b7",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/paxlovid-nirmatrelvirritonavir-absolute-contraindications-dmd/774852b7/",
+      "downloaded_at": "2023-08-28 11:09:21.971422Z",
+      "sha": "9755694cd290135a4b0ccc0abd29df14fd4be957"
+    },
     "opensafely-nirmatrelvir-drug-interactions-dmd.csv": {
       "id": "opensafely/nirmatrelvir-drug-interactions-dmd/015607fe",
       "url": "https://codelists.opensafely.org/codelist/opensafely/nirmatrelvir-drug-interactions-dmd/015607fe/",
