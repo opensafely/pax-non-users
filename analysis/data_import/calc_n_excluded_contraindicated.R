@@ -151,7 +151,7 @@ calc_n_excluded_contraindicated <- function(data_processed){
                 n_egfr_creat_30_59,
                 n_egfr_creat_below30,
                 n_drugs_do_not_use,
-                n_drugs_do_not_use_absolute
+                n_drugs_do_not_use_absolute,
                 n_drugs_caution,
                 n_after_exclusion_contraindications,
                 n_after_exclusion_contraindications_strict)
