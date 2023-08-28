@@ -64,6 +64,7 @@ calc_trt_contra <- function(data) {
               n_egfr_creat_30_59 = sum(ci_egfr_creat_30_59),
               n_egfr_creat_below30 = sum(ci_egfr_creat_below30),
               n_drugs_do_not_use = sum(ci_drugs_do_not_use),
+              n_drugs_do_not_use_absolute = sum(ci_drugs_do_not_use_absolute),
               n_drugs_caution = sum(drugs_consider_risk),
               n_contraindicated = sum(contraindicated),
               n_contraindicated_strict = sum(contraindicated_strict),
