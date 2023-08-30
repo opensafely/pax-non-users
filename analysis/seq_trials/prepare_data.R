@@ -56,9 +56,9 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
            period_week = runif(1, 0, 52) %>% ceiling()) %>%
     ungroup()
   # in dummy data, everyone has pos test on same day (start of study period)
-  data_splitted <-
-    data_splitted %>%
-    select(patient_id, tstart, tend, period_month, period_2month, period_week, status_seq, starts_with("treatment_seq"))
+  #data_splitted <-
+  #  data_splitted %>%
+  #  select(patient_id, tstart, tend, period_month, period_2month, period_week, status_seq, starts_with("treatment_seq"))
 }
 
 ################################################################################
