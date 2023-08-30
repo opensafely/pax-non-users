@@ -24,7 +24,7 @@ simplify_data <- function(data){
       # set tb_postest_treat (day of fup on which they've been treated) to 5
       tb_postest_treat_seq = if_else(
         treatment_strategy_cat_prim == "Paxlovid",
-        tb_postest_treat + 1,
+        tb_postest_treat + 1, # because to make survsplit split the right intervals
         5),
       treatment_seq = if_else(
         treatment_strategy_cat_prim == "Paxlovid",
@@ -34,7 +34,7 @@ simplify_data <- function(data){
       tb_postest_treat_seq_sotmol = if_else(
         treatment_strategy_cat_prim %in% 
           c("Sotrovimab", "Molnupiravir"),
-        tb_postest_treat + 1,
+        tb_postest_treat + 1, # because to make survsplit split the right intervals
         5
       ),
       treatment_seq_sotmol = if_else(
