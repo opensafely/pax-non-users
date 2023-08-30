@@ -16,6 +16,7 @@ library(here)
 library(purrr)
 library(tidyr)
 library(ggplot2)
+library(ggpattern) 
 
 ################################################################################
 # 0.1 Create directories for output
@@ -56,15 +57,18 @@ data_flow_seq_trials <-
   pivot_longer(cols = treated_baseline:treatment_seq_sotmol,
                names_to = "type",
                values_to = "count") %>%
-  mutate(type2 = if_else(type %in% c("treated_baseline", "untreated_baseline"), 0, 1),
-         type = case_when(type == "treated_baseline" ~ "Treated at baseline",
-                          type == "untreated_baseline" ~ "Untreated at baseline",
-                          type == "treatment_seq" ~ "Treated with Paxlovid after baseline",
-                          type == "treatment_seq_sotmol" ~ "Treated with sot/mol after baseline"),
-         type = factor(type, levels = c("Treated with Paxlovid after baseline",
-                                        "Treated with sot/mol after baseline",
-                                        "Untreated at baseline",
-                                        "Treated at baseline")),
+  mutate(type2 = case_when(type %in% c("treated_baseline", "untreated_baseline") ~ 0,
+                           type == "treatment_seq" ~ 1,
+                           type == "treatment_seq_sotmol" ~ 2),
+         type3 = if_else(type == "treated_baseline", 0, 1),
+         type = case_when(type == "treated_baseline" ~ "Treated",
+                          type == "untreated_baseline" ~ "Untreated",
+                          type == "treatment_seq" ~ "Untreated, initiating Paxlovid after baseline",
+                          type == "treatment_seq_sotmol" ~ "Untreated, initiating sot/mol after baseline"),
+         type = factor(type, levels = c("Untreated, initiating Paxlovid after baseline",
+                                        "Untreated, initiating sot/mol after baseline",
+                                        "Untreated",
+                                        "Treated")),
          trial = factor(trial, levels = c(4, 3, 2, 1, 0)))
 
 ################################################################################
@@ -72,15 +76,16 @@ data_flow_seq_trials <-
 ################################################################################
 plot <-
   ggplot(data_flow_seq_trials,
-         aes(x = trial, y = count, fill = type, pattern = factor(type2))) +
-  geom_bar_pattern(stat = "identity") +
+         aes(x = trial, y = count, fill = type)) +
+  geom_bar(stat = "identity") +
   coord_flip() +
   facet_grid(rows = vars(period_month)) + 
   theme_minimal() +
-  scale_pattern_manual(values = c("1" = "stripe", "0" = "none")) +
+  scale_fill_viridis_d() + 
   labs(y = "Number of Patients",
        x = "Matched Set",
-       fill = "Treatment Type")
+       fill = "Baseline Treatment Status")
+
 
 ################################################################################
 # 2.0 Save output
