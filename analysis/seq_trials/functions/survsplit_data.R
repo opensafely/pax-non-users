@@ -40,7 +40,7 @@ survsplit_data <- function(data) {
            treatment_seq_lag4 = lag(treatment_seq, n = 4, default = 0),
            treatment_seq_lag5 = lag(treatment_seq, n = 5, default = 0)) %>%
     ungroup() %>%
-    select(patient_id, tstart, tend, status_seq, starts_with("treatment_seq"),
+    select(patient_id, tstart, tend, status_seq, starts_with("treatment_seq"), covid_test_positive_date,
            all_of(covars))
 }
 
