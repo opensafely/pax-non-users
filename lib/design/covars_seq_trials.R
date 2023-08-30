@@ -1,6 +1,5 @@
 covars <- 
-  c("covid_test_positive_date",
-    "ageband",
+  c("ageband",
     "sex",
     "ethnicity",
     "imdQ5",
