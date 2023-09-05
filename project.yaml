@@ -146,6 +146,14 @@ actions:
       moderately_sensitive:
         csv1: output/tables/table1.csv
         csv2: output/tables/table1_red.csv
+
+  describe_trt_groups:
+    run: r:latest analysis/descriptives/describe_trt_groups.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/descriptives/trt_groups.csv
+        csv2: output/descriptives/trt_groups_red.csv
   
   describe_postest_pop:
     run: r:latest analysis/descriptives/describe_postest_pop.R
