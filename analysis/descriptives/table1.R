@@ -44,9 +44,11 @@ data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds
 # Format data
 data_table <- 
   data %>%
-  select(treatment_strategy_cat_prim, all_of(covars))
+  select(treatment_strategy_cat_prim, all_of(covars)) %>%
+  mutate(treatment_strategy_cat_prim =
+           if_else(treatment_strategy_cat_prim == "Paxlovid", "Paxlovid", "Not treated with Paxlovid"))
 # Generate full and stratified table
-pop_levels = c("All", "Molnupiravir", "Sotrovimab", "Paxlovid", "Untreated")
+pop_levels = c("All", "Paxlovid", "Untreated")
 # Generate table - full and stratified populations
 table1 <- generate_table1(data_table, pop_levels)
 

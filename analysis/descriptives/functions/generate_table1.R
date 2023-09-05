@@ -7,7 +7,7 @@ generate_table1 <- function(data_table, pop_levels) {
     if (pop_level != "All"){
       data_summary <-
         data_table %>%
-        filter(treatment_strategy_cat_prim == pop_level)
+        filter(treatment_strategy_cat_prim %in% pop_level)
     } else data_summary <- data_table
     data_summary <- 
       data_summary %>% 
