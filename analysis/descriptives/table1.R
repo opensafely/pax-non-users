@@ -48,7 +48,7 @@ data_table <-
   mutate(treatment_strategy_cat_prim =
            if_else(treatment_strategy_cat_prim == "Paxlovid", "Paxlovid", "Not treated with Paxlovid"))
 # Generate full and stratified table
-pop_levels = c("All", "Paxlovid", "Untreated")
+pop_levels = c("All", "Paxlovid", "Not treated with Paxlovid")
 # Generate table - full and stratified populations
 table1 <- generate_table1(data_table, pop_levels)
 
