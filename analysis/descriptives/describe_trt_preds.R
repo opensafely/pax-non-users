@@ -39,14 +39,24 @@ print(args)
 
 if (length(args) == 0){
   population = "all_ci" # when run not via action.yaml
-} else if (length(args) != 1){
-  stop("One argument is needed")
-} else if (length(args) == 1) {
+  treatment = "Paxlovid" # when run not via action.yaml
+} else if (length(args) != 2){
+  stop("Two arguments are needed")
+} else if (length(args) == 2) {
   if (args[[1]] == "all_ci") {
     population = "all_ci"
   }
   else if (args[[1]] == "ci_drugs_dnu") {
   population = "excl_drugs_dnu"
+  }
+  if (args[[2]] == "Paxlovid") {
+    treatment = "Paxlovid"
+  }
+  else if (args[[2]] == "Sotrovimab") {
+    treatment = "Sotrovimab"
+  }
+  else if (args[[2]] == "Molnupiravir") {
+    treatment = "Molnupiravir"
   }
 }
   
@@ -55,14 +65,14 @@ if (length(args) == 0){
 ################################################################################
 if (population == "all_ci") {
   data_cohort <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
-  filter(treatment_strategy_cat %in% c("Paxlovid", "Untreated")) 
+  filter(treatment_strategy_cat %in% c(treatment, "Untreated")) 
   
 } else if (population == "excl_drugs_dnu") {
   data_cohort <- read_rds(here("output", "data", "data_processed.rds")) %>%
     mutate(contraindicated_excl_rx_dnu =
               if_else(ci_liver_disease | ci_solid_organ_transplant | 
                         ci_renal_disease, TRUE, FALSE)) %>% 
-    filter(treatment_strategy_cat %in% c("Paxlovid", "Untreated") &
+    filter(treatment_strategy_cat %in% c(treatment, "Untreated") &
              contraindicated_excl_rx_dnu == FALSE) 
 }
 
@@ -71,7 +81,6 @@ if (population == "all_ci") {
 ############################################################################
 # Create vector of variables for propensity score model
 # Note: age modelled with cubic spline with 3 knots
-
 vars <-
     c("ns(age, df=3)",
       "sex",
@@ -138,7 +147,7 @@ data_cohort$pscore <- predict(psModel, type = "response")
 # Make plot of non-trimmed propensity scores and save
 # Overlap plot 
 overlapPlot <- data_cohort %>% 
-  mutate(trtlabel = if_else(treatment_strategy_cat == "Paxlovid",
+  mutate(trtlabel = if_else(treatment_strategy_cat == treatment,
                               'Treated',
                               'Untreated')) %>%
   ggplot(aes(x = pscore, linetype = trtlabel)) +
@@ -159,6 +168,7 @@ overlapPlot <- data_cohort %>%
         panel.border = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
+
 
 ############################################################################
 # 1.3 Trimmed propensity score distributions
@@ -181,7 +191,7 @@ data_cohort_trimmed <- data_cohort %>%
 # Make plot of trimmed propensity scores and save
 # Overlap plot 
 overlapPlot2 <- data_cohort_trimmed %>% 
-  mutate(trtlabel = if_else(treatment_strategy_cat == "Paxlovid",
+  mutate(trtlabel = if_else(treatment_strategy_cat == treatment,
                              'Treated',
                              'Untreated')) %>%
   ggplot(aes(x = pscore, linetype = trtlabel)) +
@@ -259,20 +269,20 @@ desc <- rbind(desc1, desc2)
 # Save fitted model
 write_rds(psModel,
           here::here("output", "descriptives",
-                     paste0("psModel_", population, ".rds")))
+                     paste0("psModel_",treatment, "_",population, ".rds")))
 
 # Save full overlap plot
 ggsave(overlapPlot, 
        filename = 
          here::here("output", "descriptives", 
-                   paste0("psOverlap_untrimmed_",population,".png")),
+                   paste0("psOverlap_untrimmed_",treatment, "_", population,".png")),
        width = 20, height = 14, units = "cm")
 
 # Save trimmed overlap plot
 ggsave(overlapPlot2, 
        filename = 
          here::here("output", "descriptives", 
-              paste0("psOverlap_trimmed_",population,".png")),
+              paste0("psOverlap_trimmed_",treatment,"_", population,".png")),
        width = 20, height = 14, units = "cm")
 
 # Save ps model coefficient plot
@@ -280,14 +290,14 @@ ggsave(plot_combined,
        filename = 
          here::here("output", "descriptives", 
               paste0("psCoefs_",
-                     population,
+                     treatment,"_", population,
                      ".png")),
        width = 20, height = 25, units = "cm")
 
 # Save trimmed versus untrimmed descriptives
 write_csv(desc, 
             here::here("output", "descriptives",
-               paste0("trimming_descriptives_", population, ".csv"))
+               paste0("trimming_descriptives_", treatment, "_", population, ".csv"))
 )
 
           

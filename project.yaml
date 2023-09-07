@@ -115,30 +115,78 @@ actions:
         csv2: output/descriptives/trt_contra_red.csv
         csvs1: output/descriptives/n_codes_*.csv
 
-  describe_trt_preds_all_ci:
-    run: r:latest analysis/descriptives/describe_trt_preds.R all_ci
+  describe_trt_preds_all_ci_pax:
+    run: r:latest analysis/descriptives/describe_trt_preds.R all_ci Paxlovid
     needs: [data_process]
     outputs:
       highly_sensitive:
-        data1: output/descriptives/psModel_all_ci.rds     
+        data1: output/descriptives/psModel_Paxlovid_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_untrimmed_all_ci.png
-        png2: output/descriptives/psOverlap_trimmed_all_ci.png
-        png3: output/descriptives/psCoefs_all_ci.png
-        csv1: output/descriptives/trimming_descriptives_all_ci.csv
+        png1: output/descriptives/psOverlap_Paxlovid_untrimmed_all_ci.png
+        png2: output/descriptives/psOverlap_Paxlovid_trimmed_all_ci.png
+        png3: output/descriptives/psCoefs_Paxlovid_all_ci.png
+        csv1: output/descriptives/trimming_descriptives_Paxlovid_all_ci.csv
 
-  describe_trt_preds_excl_drugs_dnu:
-    run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu
+  describe_trt_preds_excl_drugs_dnu_pax:
+    run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu Paxlovid
     needs: [data_process]
     outputs:
       highly_sensitive:
-        data1: output/descriptives/psModel_excl_drugs_dnu.rds
+        data1: output/descriptives/psModel_Paxlovid_excl_drugs_dnu.rds
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_untrimmed_excl_drugs_dnu.png
-        png2: output/descriptives/psOverlap_trimmed_excl_drugs_dnu.png
-        png3: output/descriptives/psCoefs_excl_drugs_dnu.png
-        csv1: output/descriptives/trimming_descriptives_excl_drugs_dnu.csv
+        png1: output/descriptives/psOverlap_Paxlovid_untrimmed_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_Paxlovid_trimmed_excl_drugs_dnu.png
+        png3: output/descriptives/psCoefs_Paxlovid_excl_drugs_dnu.png
+        csv1: output/descriptives/trimming_descriptives_Paxlovid_excl_drugs_dnu.csv
+
+  describe_trt_preds_all_ci_sot:
+    run: r:latest analysis/descriptives/describe_trt_preds.R all_ci Sotrovimab
+    needs: [data_process]
+    outputs:
+      highly_sensitive:
+        data1: output/descriptives/psModel_Sotrovimab_all_ci.rds     
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_Sotrovimab_untrimmed_all_ci.png
+        png2: output/descriptives/psOverlap_Sotrovimab_trimmed_all_ci.png
+        png3: output/descriptives/psCoefs_Sotrovimab_all_ci.png
+        csv1: output/descriptives/trimming_descriptives_Sotrovimab_all_ci.csv
+
+  describe_trt_preds_excl_drugs_dnu_sot:
+    run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu Sotrovimab
+    needs: [data_process]
+    outputs:
+      highly_sensitive:
+        data1: output/descriptives/psModel_Sotrovimab_excl_drugs_dnu.rds
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_Sotrovimab_untrimmed_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_Sotrovimab_trimmed_excl_drugs_dnu.png
+        png3: output/descriptives/psCoefs_Sotrovimab_excl_drugs_dnu.png
+        csv1: output/descriptives/trimming_descriptives_Sotrovimab_excl_drugs_dnu.csv        
         
+  describe_trt_preds_all_ci_mol:
+    run: r:latest analysis/descriptives/describe_trt_preds.R all_ci Molnupiravir
+    needs: [data_process]
+    outputs:
+      highly_sensitive:
+        data1: output/descriptives/psModel_Molnupiravir_all_ci.rds     
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_Molnupiravir_untrimmed_all_ci.png
+        png2: output/descriptives/psOverlap_Molnupiravir_trimmed_all_ci.png
+        png3: output/descriptives/psCoefs_Molnupiravir_all_ci.png
+        csv1: output/descriptives/trimming_descriptives_Molnupiravir_all_ci.csv
+
+  describe_trt_preds_excl_drugs_dnu_mol:
+    run: r:latest analysis/descriptives/describe_trt_preds.R ci_drugs_dnu Molnupiravir
+    needs: [data_process]
+    outputs:
+      highly_sensitive:
+        data1: output/descriptives/psModel_Molnupiravir_excl_drugs_dnu.rds
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_Molnupiravir_untrimmed_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_Molnupiravir_trimmed_excl_drugs_dnu.png
+        png3: output/descriptives/psCoefs_Molnupiravir_excl_drugs_dnu.png
+        csv1: output/descriptives/trimming_descriptives_Molnupiravir_excl_drugs_dnu.csv         
+ 
   create_table1:
     run: r:latest analysis/descriptives/table1.R
     needs: [data_process]
