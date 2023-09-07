@@ -31,16 +31,6 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="region_nhsSouth East"] = "South East"
   input_table$variable[input_table$variable=="region_nhsSouth West"] = "South West"
   
-  input_table$variable[input_table$variable=="stpSTP9"] = "STP9"
-  input_table$variable[input_table$variable=="stpSTP10"] = "STP10"
-  input_table$variable[input_table$variable=="stpSTP8"] = "STP8"
-  input_table$variable[input_table$variable=="stpSTP7"] = "STP7"
-  input_table$variable[input_table$variable=="stpSTP6"] = "STP6"
-  input_table$variable[input_table$variable=="stpSTP5"] = "STP5"
-  input_table$variable[input_table$variable=="stpSTP4"] = "STP4"
-  input_table$variable[input_table$variable=="stpSTP3"] = "STP3"
-  input_table$variable[input_table$variable=="stpSTP2"] = "STP2"
-  
   input_table$variable[input_table$variable=="rural_urbanUrban - city and town"] = "Urban: City/Town"
   input_table$variable[input_table$variable=="rural_urbanRural - village and dispersed"] = "Rural: Village/Disp."
   input_table$variable[input_table$variable=="rural_urbanRural - town and fringe"] = "Rural: Town/Fringe"
@@ -55,7 +45,7 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="diabetesTRUE"] = "Diabetes"
   input_table$variable[input_table$variable=="chronic_cardiac_diseaseTRUE"] = "Chronic Cardiac Disease"
   input_table$variable[input_table$variable=="copdTRUE"] = "COPD"
-  input_table$variable[input_table$variable=="dialysis"] = "Dialysis"
+  input_table$variable[input_table$variable=="dialysisTRUE"] = "Dialysis"
   input_table$variable[input_table$variable=="serious_mental_illness_nhsdTRUE"] = "Severe mental illness"
   input_table$variable[input_table$variable=="learning_disability_primisTRUE"] = "Learning disability"
   input_table$variable[input_table$variable=="dementia_nhsdTRUE"] = "Dementia"
@@ -67,9 +57,9 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="downs_syndrome_nhsdTRUE"] = "Down's syndrome"
   input_table$variable[input_table$variable=="cancer_opensafely_snomed_newTRUE"] = "Solid cancer"
   input_table$variable[input_table$variable=="haematological_disease_nhsdTRUE"] = "Haematological diseases"
-  input_table$variable[input_table$variable=="ckd_stage_5_nhsd"] = "Renal disease"
+  input_table$variable[input_table$variable=="ckd_stage_5_nhsdTRUE"] = "Renal disease"
   input_table$variable[input_table$variable=="liver_disease_nhsdTRUE"] = "Liver disease"
-  input_table$variable[input_table$variable=="imid_nhsdTRUE"] = "IMID)"
+  input_table$variable[input_table$variable=="imid_nhsdTRUE"] = "IMID"
   input_table$variable[input_table$variable=="immunosupression_nhsd_new"] = "Immune deficiencies"
   input_table$variable[input_table$variable=="hiv_aids_nhsdTRUE"] = "HIV/AIDs"
   input_table$variable[input_table$variable=="solid_organ_transplant_nhsd_new"] = "Solid organ transplant"
@@ -94,7 +84,7 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="ns(study_week, df = 3)1"] = "Study week: term1"
   
   input_table$variable[input_table$variable=="treatment_strategy_cat"] = "Treatment variable"
-  input_table$variable[input_table$Variable=="N"] = "N"
+  input_table$variable[input_table$variable=="N"] = "N"
   
   
   return(input_table)
