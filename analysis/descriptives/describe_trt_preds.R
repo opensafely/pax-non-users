@@ -85,8 +85,7 @@ vars <-
     c("ns(age, df=3)",
       "sex",
       "ethnicity",
-      "imdQ5" ,
-      "stp",
+      "imdQ5",
       "rural_urban",
       "region_nhs",
       # other comorbidities/clinical characteristics
@@ -147,7 +146,7 @@ data_cohort$pscore <- predict(psModel, type = "response")
 # Make plot of non-trimmed propensity scores and save
 # Overlap plot 
 overlapPlot <- data_cohort %>% 
-  mutate(trtlabel = if_else(treatment_strategy_cat == treatment,
+  mutate(trtlabel = if_else(treatment_strategy_cat == !!treatment,
                               'Treated',
                               'Untreated')) %>%
   ggplot(aes(x = pscore, linetype = trtlabel)) +
@@ -191,7 +190,7 @@ data_cohort_trimmed <- data_cohort %>%
 # Make plot of trimmed propensity scores and save
 # Overlap plot 
 overlapPlot2 <- data_cohort_trimmed %>% 
-  mutate(trtlabel = if_else(treatment_strategy_cat == treatment,
+  mutate(trtlabel = if_else(treatment_strategy_cat == !!treatment,
                              'Treated',
                              'Untreated')) %>%
   ggplot(aes(x = pscore, linetype = trtlabel)) +
@@ -216,23 +215,22 @@ overlapPlot2 <- data_cohort_trimmed %>%
 ############################################################################
 # 2.0 Propensity score model coefficients
 ############################################################################
-
-coefs <- as.data.frame(coefficients(summary(psModel))) %>% 
-  mutate(estimate = exp(Estimate),
-         lci = exp(Estimate - 1.96*`Std. Error`),
-         uci = exp(Estimate + 1.96*`Std. Error`),
-  )
-
-coefs$variable = rownames(coefs)
+coefs <- broom::tidy(psModel) %>% 
+  mutate(estimate = exp(estimate),
+         lci = exp(estimate - 1.96 * std.error),
+         uci = exp(estimate + 1.96 * std.error),
+  ) %>%
+  rename(variable = term)
 
 coefs_plot <- coefs %>% 
   filter(variable!= "(Intercept)") %>% 
   arrange(estimate) %>% 
   mutate(abs_estimate = abs(estimate-1))
   
-coefs_plot_clean = clean_coef_names(coefs_plot)  
+coefs_plot_clean = clean_coef_names(coefs_plot) 
+coefs_plot_clean$variable %>% print()
   
-plot <- coefs_plot_clean %>% ggplot(aes(estimate,reorder(variable, estimate))) +
+plot <- coefs_plot_clean %>% ggplot(aes(estimate, reorder(variable, estimate))) +
   geom_segment(aes(yend = variable, x = lci, xend = uci), colour="blue") +
   geom_point(colour="blue", fill = "blue") +
   geom_vline(xintercept = 1, lty = 2) + 
@@ -275,14 +273,14 @@ write_rds(psModel,
 ggsave(overlapPlot, 
        filename = 
          here::here("output", "descriptives", 
-                   paste0("psOverlap_untrimmed_",treatment, "_", population,".png")),
+                   paste0("psOverlap_untrimmed_", treatment, "_", population,".png")),
        width = 20, height = 14, units = "cm")
 
 # Save trimmed overlap plot
 ggsave(overlapPlot2, 
        filename = 
          here::here("output", "descriptives", 
-              paste0("psOverlap_trimmed_",treatment,"_", population,".png")),
+              paste0("psOverlap_trimmed_", treatment,"_", population,".png")),
        width = 20, height = 14, units = "cm")
 
 # Save ps model coefficient plot

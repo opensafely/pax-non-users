@@ -120,10 +120,10 @@ actions:
     needs: [data_process]
     outputs:
       highly_sensitive:
-        data1: output/descriptives/psModel_Paxlovid_all_ci.rds     
+        model1: output/descriptives/psModel_Paxlovid_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_Paxlovid_untrimmed_all_ci.png
-        png2: output/descriptives/psOverlap_Paxlovid_trimmed_all_ci.png
+        png1: output/descriptives/psOverlap_untrimmed_Paxlovid_all_ci.png
+        png2: output/descriptives/psOverlap_trimmed_Paxlovid_all_ci.png
         png3: output/descriptives/psCoefs_Paxlovid_all_ci.png
         csv1: output/descriptives/trimming_descriptives_Paxlovid_all_ci.csv
 
@@ -134,8 +134,8 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Paxlovid_excl_drugs_dnu.rds
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_Paxlovid_untrimmed_excl_drugs_dnu.png
-        png2: output/descriptives/psOverlap_Paxlovid_trimmed_excl_drugs_dnu.png
+        png1: output/descriptives/psOverlap_untrimmed_Paxlovid_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_trimmed_Paxlovid_excl_drugs_dnu.png
         png3: output/descriptives/psCoefs_Paxlovid_excl_drugs_dnu.png
         csv1: output/descriptives/trimming_descriptives_Paxlovid_excl_drugs_dnu.csv
 
@@ -146,8 +146,8 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Sotrovimab_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_Sotrovimab_untrimmed_all_ci.png
-        png2: output/descriptives/psOverlap_Sotrovimab_trimmed_all_ci.png
+        png1: output/descriptives/psOverlap_untrimmed_Sotrovimab_all_ci.png
+        png2: output/descriptives/psOverlap_trimmed_Sotrovimab_all_ci.png
         png3: output/descriptives/psCoefs_Sotrovimab_all_ci.png
         csv1: output/descriptives/trimming_descriptives_Sotrovimab_all_ci.csv
 
@@ -158,8 +158,8 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Sotrovimab_excl_drugs_dnu.rds
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_Sotrovimab_untrimmed_excl_drugs_dnu.png
-        png2: output/descriptives/psOverlap_Sotrovimab_trimmed_excl_drugs_dnu.png
+        png1: output/descriptives/psOverlap_untrimmed_Sotrovimab_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_trimmed_Sotrovimab_excl_drugs_dnu.png
         png3: output/descriptives/psCoefs_Sotrovimab_excl_drugs_dnu.png
         csv1: output/descriptives/trimming_descriptives_Sotrovimab_excl_drugs_dnu.csv        
         
@@ -170,8 +170,8 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Molnupiravir_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_Molnupiravir_untrimmed_all_ci.png
-        png2: output/descriptives/psOverlap_Molnupiravir_trimmed_all_ci.png
+        png1: output/descriptives/psOverlap_untrimmed_Molnupiravir_all_ci.png
+        png2: output/descriptives/psOverlap_trimmed_Molnupiravir_all_ci.png
         png3: output/descriptives/psCoefs_Molnupiravir_all_ci.png
         csv1: output/descriptives/trimming_descriptives_Molnupiravir_all_ci.csv
 
@@ -182,8 +182,8 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Molnupiravir_excl_drugs_dnu.rds
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_Molnupiravir_untrimmed_excl_drugs_dnu.png
-        png2: output/descriptives/psOverlap_Molnupiravir_trimmed_excl_drugs_dnu.png
+        png1: output/descriptives/psOverlap_untrimmed_Molnupiravir_excl_drugs_dnu.png
+        png2: output/descriptives/psOverlap_trimmed_Molnupiravir_excl_drugs_dnu.png
         png3: output/descriptives/psCoefs_Molnupiravir_excl_drugs_dnu.png
         csv1: output/descriptives/trimming_descriptives_Molnupiravir_excl_drugs_dnu.csv         
  
