@@ -83,9 +83,8 @@ plot <-
   theme_minimal() +
   scale_fill_viridis_d() + 
   labs(y = "Number of Patients",
-       x = "Matched Set",
+       x = "Trial",
        fill = "Baseline Treatment Status")
-
 
 ################################################################################
 # 2.0 Save output
