@@ -170,6 +170,13 @@ actions:
       moderately_sensitive:
         csv1: output/descriptives/trt_groups.csv
         csv2: output/descriptives/trt_groups_red.csv
+
+  describe_fup_outcomes:
+    run: r:latest analysis/descriptives/describe_fup_outcomes.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/descriptives/overview_fup_outcomes.csv
   
   describe_postest_pop:
     run: r:latest analysis/descriptives/describe_postest_pop.R
