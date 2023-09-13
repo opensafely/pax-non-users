@@ -42,15 +42,28 @@ data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds
 # 1 Make table 1
 ################################################################################
 # Format data
-data_table <- 
+data_table_full <- 
+  data %>%
+  select(treatment_strategy_cat_prim, all_of(covars))
+data_table <-
+  data_table_full %>%
+  filter(treatment_strategy_cat_prim %in% c("Paxlovid", "Untreated"))
+data_table_trt_untrt <- 
   data %>%
   select(treatment_strategy_cat_prim, all_of(covars)) %>%
   mutate(treatment_strategy_cat_prim =
            if_else(treatment_strategy_cat_prim == "Paxlovid", "Paxlovid", "Not treated with Paxlovid"))
 # Generate full and stratified table
-pop_levels = c("All", "Paxlovid", "Not treated with Paxlovid")
-# Generate table - full and stratified populations
+# exclude mol/sot treated
+pop_levels <- c("All", "Paxlovid", "Untreated")
 table1 <- generate_table1(data_table, pop_levels)
+# all levels
+pop_levels_full <- c("All", "Paxlovid", "Sotrovimab", "Molnupiravir", "Untreated")
+table1_full <- generate_table1(data_table_full, pop_levels_full)
+# paxlovid / paxlovid untreated
+pop_levels_trt_untrt = c("All", "Paxlovid", "Not treated with Paxlovid")
+# Generate table - full and stratified populations
+table1_trt_untrt <- generate_table1(data_table_trt_untrt, pop_levels_trt_untrt)
 
 ################################################################################
 # 2 Save table
@@ -59,3 +72,11 @@ write_csv(table1$table1,
           fs::path(output_dir, "table1.csv"))
 write_csv(table1$table1_red,
           fs::path(output_dir, "table1_red.csv"))
+write_csv(table1_full$table1,
+          fs::path(output_dir, "table1_full.csv"))
+write_csv(table1_full$table1_red,
+          fs::path(output_dir, "table1_full_red.csv"))
+write_csv(table1_trt_untrt$table1,
+          fs::path(output_dir, "table1_trt_untrt.csv"))
+write_csv(table1_trt_untrt$table1_red,
+          fs::path(output_dir, "table1_trt_untrt_red.csv"))
