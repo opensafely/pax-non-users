@@ -64,15 +64,15 @@ if (length(args) == 0){
 # 0.3 Import data
 ################################################################################
 if (population == "all_ci") {
-  data_cohort <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
-  filter(treatment_strategy_cat %in% c(treatment, "Untreated")) 
-  
+  data_cohort <- 
+    read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
+    filter(treatment_strategy_cat %in% c(!!treatment, "Untreated")) 
 } else if (population == "excl_drugs_dnu") {
   data_cohort <- read_rds(here("output", "data", "data_processed.rds")) %>%
     mutate(contraindicated_excl_rx_dnu =
               if_else(ci_liver_disease | ci_solid_organ_transplant | 
                         ci_renal_disease, TRUE, FALSE)) %>% 
-    filter(treatment_strategy_cat %in% c(treatment, "Untreated") &
+    filter(treatment_strategy_cat %in% c(!!treatment, "Untreated") &
              contraindicated_excl_rx_dnu == FALSE) 
 }
 
@@ -228,7 +228,6 @@ coefs_plot <- coefs %>%
   mutate(abs_estimate = abs(estimate-1))
   
 coefs_plot_clean = clean_coef_names(coefs_plot) 
-coefs_plot_clean$variable %>% print()
   
 plot <- coefs_plot_clean %>% ggplot(aes(estimate, reorder(variable, estimate))) +
   geom_segment(aes(yend = variable, x = lci, xend = uci), colour="blue") +
