@@ -158,10 +158,13 @@ actions:
       moderately_sensitive:
         csv1: output/tables/table1.csv
         csv2: output/tables/table1_red.csv
-        csv3: output/tables/table1_full.csv
-        csv4: output/tables/table1_full_red.csv
-        csv5: output/tables/table1_trt_untrt.csv
-        csv6: output/tables/table1_trt_untrt_red.csv
+        csv3: output/tables/table1_red_unf.csv
+        csv4: output/tables/table1_full.csv
+        csv5: output/tables/table1_full_red.csv
+        csv6: output/tables/table1_full_red_unf.csv
+        csv7: output/tables/table1_trt_untrt.csv
+        csv8: output/tables/table1_trt_untrt_red.csv
+        csv9: output/tables/table1_trt_untrt_red_unf.csv
 
   describe_trt_groups:
     run: r:latest analysis/descriptives/describe_trt_groups.R

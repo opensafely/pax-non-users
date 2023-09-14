@@ -72,11 +72,17 @@ write_csv(table1$table1,
           fs::path(output_dir, "table1.csv"))
 write_csv(table1$table1_red,
           fs::path(output_dir, "table1_red.csv"))
+write_csv(table1$table1_red_unf,
+          fs::path(output_dir, "table1_red_unf.csv"))
 write_csv(table1_full$table1,
           fs::path(output_dir, "table1_full.csv"))
 write_csv(table1_full$table1_red,
           fs::path(output_dir, "table1_full_red.csv"))
+write_csv(table1_full$table1_red_unf,
+          fs::path(output_dir, "table1_full_red_unf.csv"))
 write_csv(table1_trt_untrt$table1,
           fs::path(output_dir, "table1_trt_untrt.csv"))
 write_csv(table1_trt_untrt$table1_red,
           fs::path(output_dir, "table1_trt_untrt_red.csv"))
+write_csv(table1_trt_untrt$table1_red_unf,
+          fs::path(output_dir, "table1_trt_untrt_red_unf.csv"))
