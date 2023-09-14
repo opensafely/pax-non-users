@@ -17,6 +17,7 @@ library('glue')
 library('gt')
 library('gtsummary')
 library('fs')
+source(here::here("lib", "design", "redaction.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -50,9 +51,17 @@ overview_fup_outcomes <-
          fup_iqr1,
          fup_iqr3,
          n_outcome)
+overview_fup_outcomes_red <-
+  overview_fup_outcomes %>%
+  mutate(n_total = plyr::round_any(n_total, rounding_threshold),
+         fup_sum = plyr::round_any(fup_sum, rounding_threshold),
+         fup_mean = (fup_sum / n_total) %>% round(1),
+         n_outcome = plyr::round_any(n_outcome, rounding_threshold))
 
 ################################################################################
 # 2 Save overview
 ################################################################################
 write_csv(overview_fup_outcomes,
           fs::path(output_dir, "overview_fup_outcomes.csv"))
+write_csv(overview_fup_outcomes_red,
+          fs::path(output_dir, "overview_fup_outcomes_red.csv"))
