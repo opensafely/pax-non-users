@@ -3,7 +3,8 @@
 # Data wrangling seq trials
 # 
 # The output of this script is:
-# csv file ./output/data/data_seq_trial.rds
+# feather file ./output/data/data_seq_trials_*.feather
+# where * \in (monthly, bimonthly, weekly)
 ################################################################################
 
 ################################################################################
@@ -42,12 +43,6 @@ data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds
 ################################################################################
 data_splitted <-
   data %>%
-  simplify_data()
-data_splitted$fup_seq %>% table() %>% print()
-data_splitted %>% filter(fup_seq == 0) %>% select(status_seq) %>% print() #debugging
-
-data_splitted <-
-  data %>%
   simplify_data() %>%
   survsplit_data() %>%
   add_period_cuts(study_dates = study_dates)
@@ -57,16 +52,17 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
     data_splitted %>%
     group_by(patient_id) %>%
     mutate(period_month = runif(1, 0, 12) %>% ceiling(),
+           period_2month = runif(1, 0, 6) %>% ceiling(),
            period_week = runif(1, 0, 52) %>% ceiling()) %>%
     ungroup()
   # in dummy data, everyone has pos test on same day (start of study period)
   data_splitted <-
     data_splitted %>%
-    select(patient_id, tstart, tend, period_month, period_week, status_seq, starts_with("treatment_seq"))
+    select(patient_id, tstart, tend, period_month, period_2month, period_week, status_seq, starts_with("treatment_seq"))
 }
 
 ################################################################################
-# 1.0 Construct trials (monthly and weekly)
+# 1.0 Construct trials (monthly, bimonthly and weekly)
 ################################################################################
 construct_seq_trials_in_given_period <- function(data_period, treat_window){
   trial_seq <- 0:(treat_window - 1)
@@ -101,6 +97,14 @@ trials_monthly <-
         data_splitted %>% filter(period_month == .x),
         5)
     )
+trials_bimonthly <-
+  map_dfr(
+    .x = 1:6,
+    .f = ~
+      construct_seq_trials_in_given_period(
+        data_splitted %>% filter(period_2month == .x),
+        5)
+  )
 trials_weekly <-
   map_dfr(
     .x = 1:52,
@@ -114,6 +118,7 @@ trials_weekly <-
 # 2.0 Save output
 ################################################################################.
 iwalk(.x = list(trials_monthly = trials_monthly,
+                trials_bimonthly = trials_bimonthly,
                 trials_weekly = trials_weekly),
       .f = ~
         arrow::write_feather(

@@ -5,7 +5,7 @@
 # 
 # The output of this script is:
 # csv file ./output/seq_trials/descriptives/data_flow_seq_trials_*.csv
-# where * is monthly or weekly (_red for redacted file)
+# where * is monthly, bimonthly or weekly (_red for redacted file)
 ################################################################################
 
 ################################################################################
@@ -37,6 +37,7 @@ study_dates <-
 # 0.3 Import data
 ################################################################################
 trials_monthly <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
+trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_bimonthly.feather"))
 trials_weekly <- arrow::read_feather(here("output", "data", "data_seq_trials_weekly.feather"))
 
 ################################################################################
@@ -47,6 +48,11 @@ size_trials_monthly <-
   group_by(period_month, trial, treatment_seq_baseline) %>%
   summarise(n = length(unique(patient_id)), .groups = "keep") %>%
   mutate(period_month = as.integer(period_month))
+size_trials_bimonthly <-
+  trials_bimonthly %>%
+  group_by(period_2month, trial, treatment_seq_baseline) %>%
+  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
+  mutate(period_month = as.integer(period_2month))
 size_trials_weekly <-
   trials_weekly %>%
   group_by(period_week, trial, treatment_seq_baseline) %>%
@@ -54,6 +60,7 @@ size_trials_weekly <-
   mutate(period_week = as.integer(period_week))
 size_trials <- 
   list(monthly = size_trials_monthly,
+       bimonthly = size_trials_bimonthly,
        weekly = size_trials_weekly) %>%
   map(.f = ~ .x %>%
         pivot_wider(
@@ -95,11 +102,15 @@ n_init_trt_untrt_all_trials <- function(trials, period_name, period_no){
 n_init_trt_in_untrt_arm_monthly <- 
   map_dfr(.x = 1:12,
           .f = ~ n_init_trt_untrt_all_trials(trials_monthly, "period_month", .x))
+n_init_trt_in_untrt_arm_bimonthly <- 
+  map_dfr(.x = 1:6,
+          .f = ~ n_init_trt_untrt_all_trials(trials_bimonthly, "period_2month", .x))
 n_init_trt_in_untrt_arm_weekly <- 
   map_dfr(.x = 1:52,
           .f = ~ n_init_trt_untrt_all_trials(trials_weekly, "period_week", .x))
 n_init_trt_untrt_arm <- 
   list(monthly = n_init_trt_in_untrt_arm_monthly,
+       bimonthly = n_init_trt_in_untrt_arm_bimonthly,
        weekly = n_init_trt_in_untrt_arm_weekly)
 
 ################################################################################
