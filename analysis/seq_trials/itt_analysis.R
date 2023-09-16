@@ -39,6 +39,7 @@ study_dates <-
 # 0.3 Import data
 ################################################################################
 trials_monthly <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
+trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_bimonthly.feather"))
 #trials_weekly <- arrow::read_feather(here("output", "data", "data_seq_trials_weekly.feather"))
 
 ################################################################################
