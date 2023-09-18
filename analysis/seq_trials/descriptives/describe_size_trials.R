@@ -52,7 +52,7 @@ size_trials_bimonthly <-
   trials_bimonthly %>%
   group_by(period_2month, trial, treatment_seq_baseline) %>%
   summarise(n = length(unique(patient_id)), .groups = "keep") %>%
-  mutate(period_month = as.integer(period_2month))
+  mutate(period_2month = as.integer(period_2month))
 size_trials_weekly <-
   trials_weekly %>%
   group_by(period_week, trial, treatment_seq_baseline) %>%
