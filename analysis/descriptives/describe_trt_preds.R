@@ -145,6 +145,7 @@ coefs <- broom::tidy(psModel, conf.int = TRUE) %>%
   ) %>%
   rename(variable = term) %>%
   select(-c(conf.low, conf.high, statistic)) %>%
+  filter(!is.na(estimate)) %>%
   clean_coef_names()
 
 ############################################################################
