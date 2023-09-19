@@ -118,6 +118,10 @@ dens <- calc_dens(data_cohort, treatment, "Untrimmed")
 size <- calc_size(data_cohort, "Untrimmed")
 # trimmed
 # Identify lowest and highest propensity score in each group
+data_cohort %>% 
+  select(treatment_strategy_cat, pscore) %>% 
+  group_by(treatment_strategy_cat) %>% 
+  summarise(min = min(pscore), max = max(pscore)) %>% print()
 ps_trim <- data_cohort %>% 
   select(treatment_strategy_cat, pscore) %>% 
   group_by(treatment_strategy_cat) %>% 
