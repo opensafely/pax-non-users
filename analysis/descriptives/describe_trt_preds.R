@@ -9,21 +9,15 @@
 ################################################################################
 # 0.0 Import libraries + functions
 ################################################################################
-library('here')
-library('tidyverse')
-library('readr')
-library('tidyr')
-library('glue')
-library('gt')
-library('gtsummary')
-library('kableExtra')
-library('cowplot')
-library('splines')
-library('fs')
-library('purrr')
-
+library(here)
+library(dplyr)
+library(readr)
+library(splines)
+library(fs)
+library(purrr)
 # Import custom user functions
-source(here::here("lib", "functions", "clean_coef_names.R"))
+source(here::here("analysis", "descriptives", "functions", "clean_coef_names.R"))
+source(here::here("lib", "design", "covars_psmodels.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -36,7 +30,6 @@ fs::dir_create(output_dir)
 ################################################################################
 args <- commandArgs(trailingOnly=TRUE)
 print(args)
-
 if (length(args) == 0){
   population = "all_ci" # when run not via action.yaml
   treatment = "Paxlovid" # when run not via action.yaml
@@ -79,222 +72,98 @@ if (population == "all_ci") {
 ############################################################################
 # 1.0 Specify model for treatment status at day 5
 ############################################################################
-# Create vector of variables for propensity score model
-# Note: age modelled with cubic spline with 3 knots
-vars <-
-    c("ns(age, df=3)",
-      "sex",
-      "ethnicity",
-      "imdQ5",
-      "rural_urban",
-      "region_nhs",
-      # other comorbidities/clinical characteristics
-      "diabetes",
-      "smoking_status",
-      "copd",
-      "dialysis",
-      "autism_nhsd",
-      "care_home_primis",
-      "housebound_opensafely",
-      "obese",
-      "serious_mental_illness_nhsd",
-      "chronic_cardiac_disease",
-      "dementia_nhsd",
-      "hypertension",
-      "learning_disability_primis",
-      # high risk group
-      "huntingtons_disease_nhsd" ,
-      "myasthenia_gravis_nhsd" ,
-      "motor_neurone_disease_nhsd" ,
-      "multiple_sclerosis_nhsd"  ,
-      "hiv_aids_nhsd" ,
-      "imid_nhsd" ,
-      "liver_disease_nhsd",
-      "ckd_stage_5_nhsd",
-      "haematological_disease_nhsd",
-      "cancer_opensafely_snomed_new",
-      "downs_syndrome_nhsd",
-      # vax vars
-      "vaccination_status",
-      "pfizer_most_recent_cov_vac",
-      "az_most_recent_cov_vac",
-      "moderna_most_recent_cov_vac",
-      # calendar time
-      "ns(study_week, df=3)")
-
+psModelFunction <- as.formula(
+  paste("treatment_strategy_cat", 
+        paste(covars, collapse = " + "), 
+        sep = " ~ "))
 
 ############################################################################
 # 1.1 Fit Propensity Score Model
 ############################################################################
-# Specify model
-psModelFunction <- as.formula(
-  paste("treatment_strategy_cat", 
-        paste(vars, collapse = " + "), 
-        sep = " ~ "))
-
 # Fit PS model
 psModel <- glm(psModelFunction,
                family = binomial(link = "logit"),
                data = data_cohort)
-
 # Calculate patient-level predicted probability of being assigned to cohort
 data_cohort$pscore <- predict(psModel, type = "response")
 
 ############################################################################
-# 1.2 Visually inspect propensity score distributions
+# 1.2 Functions for density and size
 ############################################################################
-# Make plot of non-trimmed propensity scores and save
-# Overlap plot 
-overlapPlot <- data_cohort %>% 
-  mutate(trtlabel = if_else(treatment_strategy_cat == !!treatment,
-                              'Treated',
-                              'Untreated')) %>%
-  ggplot(aes(x = pscore, linetype = trtlabel)) +
-  scale_linetype_manual(values=c("solid", "dotted")) +
-  geom_density(alpha = 0.5) +
-  xlab('Probability of receiving treatment') +
-  ylab('Density') +
-  scale_fill_discrete('') +
-  scale_color_discrete('') +
-  theme(strip.text = element_text(colour ='black')) +
-  theme_bw() +
-  scale_x_continuous(breaks=seq(0,1,0.1), limits=c(0,1)) +
-  theme(legend.title = element_blank()) +
-  theme(legend.position = c(0.1,.9),
-        legend.direction = 'vertical', 
-        panel.background = element_rect(fill = "white", colour = "white"),
-        axis.line = element_line(colour = "black"),
-        panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
+calc_dens <- function(data, treatment, type){
+  dens <- data %>%
+    mutate(
+      trtlabel = if_else(treatment_strategy_cat == !!treatment, 'Treated', 'Untreated')
+      ) %>%
+    select(trtlabel, pscore) %>%
+    group_by(trtlabel) %>%
+    summarise(dens_x = density(pscore)$x,
+              dens_y = density(pscore)$y,
+              .groups = "drop") %>%
+    filter(dens_x >= 0 & dens_x <= 1) %>%
+    mutate(analysis = type)
+}
+calc_size <- function(data, type){
+  data %>% 
+    group_by(treatment_strategy_cat) %>%
+    count() %>%
+    mutate(analysis = type)
+}
 
 ############################################################################
-# 1.3 Trimmed propensity score distributions
+# 1.4 Density and size for trimmed and untrimmed analysis
 ############################################################################
-# Check overlap
+# density and size untrimmed
+dens <- calc_dens(data_cohort, treatment, "Untrimmed")
+size <- calc_size(data_cohort, "Untrimmed")
+# trimmed
 # Identify lowest and highest propensity score in each group
 ps_trim <- data_cohort %>% 
   select(treatment_strategy_cat, pscore) %>% 
   group_by(treatment_strategy_cat) %>% 
-  summarise(min = min(pscore), max= max(pscore)) %>% 
+  summarise(min = min(pscore), max = max(pscore)) %>% 
   ungroup() %>% 
-  summarise(min = max(min), max = min(max)) 
+  summarise(min = max(min), max = min(max))
 # Restricted to observations within a PS range common to both treated and 
 # untreated persons—
 # (i.e. exclude all patients in the non-overlapping parts of the PS 
 # distribution)
 data_cohort_trimmed <- data_cohort %>% 
   filter(pscore >= ps_trim$min[1] & pscore <= ps_trim$max[1])
-
-# Make plot of trimmed propensity scores and save
-# Overlap plot 
-overlapPlot2 <- data_cohort_trimmed %>% 
-  mutate(trtlabel = if_else(treatment_strategy_cat == !!treatment,
-                             'Treated',
-                             'Untreated')) %>%
-  ggplot(aes(x = pscore, linetype = trtlabel)) +
-  scale_linetype_manual(values=c("solid", "dotted")) +
-  geom_density(alpha = 0.5) +
-  xlab('Probability of receiving treatment') +
-  ylab('Density') +
-  scale_fill_discrete('') +
-  scale_color_discrete('') +
-  scale_x_continuous(breaks=seq(0, 1, 0.1), limits=c(0,1)) +
-  theme(strip.text = element_text(colour ='black')) +
-  theme_bw() +
-  theme(legend.title = element_blank()) +
-  theme(legend.position = c(0.82,.8),
-        legend.direction = 'vertical', 
-        panel.background = element_rect(fill = "white", colour = "white"),
-        axis.line = element_line(colour = "black"),
-        panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+# density and size trimmed
+dens_trimmed <- calc_dens(data_cohort_trimmed, treatment, "Trimmed")
+size <- size %>% bind_rows(calc_size(data_cohort_trimmed, "Trimmed"))
 
 ############################################################################
-# 2.0 Propensity score model coefficients
+# 1.5 Propensity score model coefficients
 ############################################################################
-coefs <- broom::tidy(psModel) %>% 
+coefs <- broom::tidy(psModel, conf.int = TRUE) %>% 
   mutate(estimate = exp(estimate),
-         lci = exp(estimate - 1.96 * std.error),
-         uci = exp(estimate + 1.96 * std.error),
+         lci = exp(conf.low),
+         uci = exp(conf.high),
+         abs_estimate = abs(estimate - 1)
   ) %>%
-  rename(variable = term)
-
-coefs_plot <- coefs %>% 
-  filter(variable!= "(Intercept)") %>% 
-  arrange(estimate) %>% 
-  mutate(abs_estimate = abs(estimate-1))
-  
-coefs_plot_clean = clean_coef_names(coefs_plot) 
-  
-plot <- coefs_plot_clean %>% ggplot(aes(estimate, reorder(variable, estimate))) +
-  geom_segment(aes(yend = variable, x = lci, xend = uci), colour="blue") +
-  geom_point(colour="blue", fill = "blue") +
-  geom_vline(xintercept = 1, lty = 2) + 
-  theme_bw() +
-  xlab('Odds ratio') +
-  ylab('Variable') 
-
-plot2 <- coefs_plot_clean %>% ggplot(aes(abs_estimate,reorder(variable, abs_estimate))) +
-  geom_point(colour="darkorange", fill = "darkorange") +
-  theme_bw() +
-  xlab('|1-Odds ratio|') +
-  ylab('') 
-
-plot_combined <- plot_grid(plot, plot2, labels = c('A', 'B'))
+  rename(variable = term) %>%
+  select(-c(conf.low, conf.high, statistic)) %>%
+  clean_coef_names()
 
 ############################################################################
-# 3.0 Descriptives
-############################################################################
-desc1 <- data_cohort %>% 
-  group_by(treatment_strategy_cat) %>%
-  count() %>%
-  mutate(analysis = "Untrimmed")
-
-desc2 <- data_cohort_trimmed %>% 
-  group_by(treatment_strategy_cat) %>%
-  count() %>%
-  mutate(analysis = "Trimmed")
-
-desc <- rbind(desc1, desc2)
-
-############################################################################
-# 4.0 Save outputs
+# 2.0 Save outputs
 ############################################################################  
 # Save fitted model
 write_rds(psModel,
-          here::here("output", "descriptives",
-                     paste0("psModel_",treatment, "_",population, ".rds")))
-
-# Save full overlap plot
-ggsave(overlapPlot, 
-       filename = 
-         here::here("output", "descriptives", 
-                   paste0("psOverlap_untrimmed_", treatment, "_", population,".png")),
-       width = 20, height = 14, units = "cm")
-
-# Save trimmed overlap plot
-ggsave(overlapPlot2, 
-       filename = 
-         here::here("output", "descriptives", 
-              paste0("psOverlap_trimmed_", treatment,"_", population,".png")),
-       width = 20, height = 14, units = "cm")
-
-# Save ps model coefficient plot
-ggsave(plot_combined, 
-       filename = 
-         here::here("output", "descriptives", 
-              paste0("psCoefs_",
-                     treatment,"_", population,
-                     ".png")),
-       width = 20, height = 25, units = "cm")
-
-# Save trimmed versus untrimmed descriptives
-write_csv(desc, 
-            here::here("output", "descriptives",
-               paste0("trimming_descriptives_", treatment, "_", population, ".csv"))
-)
-
-          
+          fs::path(output_dir, 
+                   paste0("psModel_",treatment, "_",population, ".rds")))
+# save density
+iwalk(.x = list(Dens_untrimmed_ = dens, Dens_trimmed_ = dens_trimmed),
+      .f = ~ write_csv(.x,
+                       fs::path(output_dir,
+                               paste0("ps", .y, treatment, "_", population, ".csv"))))
+# save coefs
+write_csv(coefs,
+          fs::path(output_dir, 
+                   paste0("psCoefs_", treatment, "_", population, ".csv")))
+# save trimmed versus untrimmed descriptives
+write_csv(size, 
+          fs::path(output_dir, 
+                   paste0("trimming_descriptives_", treatment, "_", population, ".csv")))

@@ -60,7 +60,7 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="ckd_stage_5_nhsdTRUE"] = "Renal disease"
   input_table$variable[input_table$variable=="liver_disease_nhsdTRUE"] = "Liver disease"
   input_table$variable[input_table$variable=="imid_nhsdTRUE"] = "IMID"
-  input_table$variable[input_table$variable=="immunosupression_nhsd_new"] = "Immune deficiencies"
+  input_table$variable[input_table$variable=="immunosupression_nhsd_newTRUE"] = "Immune deficiencies"
   input_table$variable[input_table$variable=="hiv_aids_nhsdTRUE"] = "HIV/AIDs"
   input_table$variable[input_table$variable=="solid_organ_transplant_nhsd_new"] = "Solid organ transplant"
   input_table$variable[input_table$variable=="multiple_sclerosis_nhsdTRUE"] = "Multiple sclerosis"
@@ -72,6 +72,7 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="vaccination_statusUn-vaccinated"] = "Unvaccinated"
   input_table$variable[input_table$variable=="vaccination_statusTwo vaccinations"] = "Two vaccinations"
   input_table$variable[input_table$variable=="vaccination_statusThree or more vaccinations"] = "Three or more vaccinations"
+  input_table$variable[input_table$variable=="vaccination_statusUnknown"] = "Unknown vaccination status"
   
   #input_table$variable[input_table$variable=="tb_postest_vacc_cat"] = "Time-between test since last vaccination"
   #input_table$variable[input_table$variable=="most_recent_vax_cat"] = "Most recent: vaccination"
