@@ -149,7 +149,15 @@ actions:
         csv1: output/descriptives/psDens_untrimmed_Molnupiravir_all_ci.csv
         csv2: output/descriptives/psDens_trimmed_Molnupiravir_all_ci.csv
         csv3: output/descriptives/psCoefs_Molnupiravir_all_ci.csv
-        csv4: output/descriptives/trimming_descriptives_Molnupiravir_all_ci.csv  
+        csv4: output/descriptives/trimming_descriptives_Molnupiravir_all_ci.csv
+
+  visualise_trt_preds_dens:
+    run: r:latest analysis/descriptives/visualise_trt_preds_dens.R
+    needs: [describe_trt_preds_all_ci_pax, describe_trt_preds_all_ci_sot, describe_trt_preds_all_ci_mol]
+    outputs:   
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_untrimmed_*_all_ci.png
+        png2: output/descriptives/psOverlap_trimmed_*_all_ci.png
  
   create_table1:
     run: r:latest analysis/descriptives/table1.R
