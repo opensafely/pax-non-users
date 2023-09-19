@@ -74,11 +74,10 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="vaccination_statusThree or more vaccinations"] = "Three or more vaccinations"
   input_table$variable[input_table$variable=="vaccination_statusUnknown"] = "Unknown vaccination status"
   
-  #input_table$variable[input_table$variable=="tb_postest_vacc_cat"] = "Time-between test since last vaccination"
-  #input_table$variable[input_table$variable=="most_recent_vax_cat"] = "Most recent: vaccination"
-  input_table$variable[input_table$variable=="pfizer_most_recent_cov_vacTRUE"] = "Most recent: Pfizer"
-  input_table$variable[input_table$variable=="az_most_recent_cov_vacTRUE"] = "Most recent: AstraZeneca"
-  input_table$variable[input_table$variable=="moderna_most_recent_cov_vacTRUE"] = "Most recent: Moderna"
+  input_table$variable[input_table$variable=="tb_postest_vacc_cat< 7 days"] = "Time-between test since last vaccination: < 7 days"
+  input_table$variable[input_table$variable=="tb_postest_vacc_cat7-27 days"] = "Time-between test since last vaccination: 7-27 days"
+  input_table$variable[input_table$variable=="tb_postest_vacc_cat>= 84 days"] = "Time-between test since last vaccination: >= 84 days"
+  input_table$variable[input_table$variable=="tb_postest_vacc_catUnknown"] = "Time-between test since last vaccination: not-vaccinated"
   #else
   input_table$variable[input_table$variable=="ns(study_week, df = 3)3"] = "Study week: term3"
   input_table$variable[input_table$variable=="ns(study_week, df = 3)2"] = "Study week: term2"
