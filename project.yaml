@@ -173,6 +173,21 @@ actions:
         csv7: output/tables/table1_trt_untrt.csv
         csv8: output/tables/table1_trt_untrt_red.csv
         csv9: output/tables/table1_trt_untrt_red_unf.csv
+  
+  create_table1_stratified_by_3months:
+    run: r:latest analysis/descriptives/table1_subsets.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/tables/stratified_3months/table1.csv
+        csv2: output/tables/stratified_3months/table1_red.csv
+        csv3: output/tables/stratified_3months/table1_red_unf.csv
+        csv4: output/tables/stratified_3months/table1_full.csv
+        csv5: output/tables/stratified_3months/table1_full_red.csv
+        csv6: output/tables/stratified_3months/table1_full_red_unf.csv
+        csv7: output/tables/stratified_3months/table1_trt_untrt.csv
+        csv8: output/tables/stratified_3months/table1_trt_untrt_red.csv
+        csv9: output/tables/stratified_3months/table1_trt_untrt_red_unf.csv
 
   describe_trt_groups:
     run: r:latest analysis/descriptives/describe_trt_groups.R
