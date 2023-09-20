@@ -18,6 +18,7 @@ library('gt')
 library('gtsummary')
 library('fs')
 # Import custom user functions
+source(here::here("analysis", "seq_trials", "functions", "add_period_cuts.R"))
 source(here::here("lib", "design", "covars_table.R"))
 source(here::here("analysis", "descriptives", "functions", "generate_table1.R"))
 source(here::here("analysis", "descriptives", "functions", "table1_helpers.R"))
@@ -26,6 +27,9 @@ source(here::here("analysis", "descriptives", "functions", "table1_helpers.R"))
 # 0.1 Import command-line arguments
 ################################################################################
 args <- commandArgs(trailingOnly=TRUE)
+study_dates <-
+  jsonlite::read_json(path = here::here("lib", "design", "study-dates.json")) %>%
+  map(as.Date)
 
 ################################################################################
 # 0.2 Create directories for output
@@ -37,6 +41,9 @@ fs::dir_create(output_dir)
 # 0.3 Import data
 ################################################################################
 data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds"))
+data <-
+  data %>%
+  add_period_cuts(study_dates = study_dates)
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   # in dummy data, everyone has pos test on same day (start of study period),
