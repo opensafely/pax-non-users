@@ -65,8 +65,8 @@ plot_density <- function(dens){
     theme(strip.text = element_text(colour ='black')) +
     theme_bw() +
     scale_x_continuous(breaks=seq(0,1,0.1), limits=c(0,1)) +
-    theme(legend.title = element_blank()) +
-    theme(legend.position = c(0.1,.9),
+    theme(legend.title = element_blank(),
+          legend.position = c(.9,.9),
           legend.direction = 'vertical', 
           panel.background = element_rect(fill = "white", colour = "white"),
           axis.line = element_line(colour = "black"),
@@ -89,7 +89,7 @@ iwalk(
   .f = ~ ggsave(
     .x,
     filename = fs::path(output_dir, paste0("psOverlap_untrimmed_", .y, "_all_ci.png")),
-    width = 20, height = 14, units = "cm"
+    width = 12, height = 10, units = "cm"
   )
 )
 iwalk(
@@ -97,6 +97,6 @@ iwalk(
   .f = ~ ggsave(
     .x,
     filename = fs::path(output_dir, paste0("psOverlap_trimmed_", .y, "_all_ci.png")),
-    width = 20, height = 14, units = "cm"
+    width = 12, height = 8, units = "cm"
   )
 )
