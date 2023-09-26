@@ -15,9 +15,10 @@ library(dplyr)
 library(fs)
 library(here)
 library(purrr)
+library(optparse)
 source(here::here("analysis", "seq_trials", "functions", "simplify_data.R"))
-source(here::here("analysis", "seq_trials", "functions", "survsplit_data.R"))
-source(here::here("analysis", "seq_trials", "functions", "add_period_cuts.R"))
+source(here::here("analysis", "seq_trials", "functions", "split_data.R"))
+source(here::here("analysis", "seq_trials", "functions", "construct_trials.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -29,6 +30,24 @@ fs::dir_create(output_dir)
 # 0.2 Import command-line arguments
 ################################################################################
 args <- commandArgs(trailingOnly=TRUE)
+if(length(args)==0){
+  # use for interactive testing
+  period <- "month"
+  period_colname <- paste0("period_", period)
+} else {
+  
+  option_list <- list(
+    make_option("--period", type = "character", default = "month",
+                help = "Subsets in wich data is cut, options are 'month', '2month', '3month' and 'week' [default %default]. ",
+                metavar = "period")
+  )
+  
+  opt_parser <- OptionParser(usage = "prepare_data:[version] [options]", option_list = option_list)
+  opt <- parse_args(opt_parser)
+  
+  period <- opt$period
+  period_colname <- paste0("period_", period)
+}
 study_dates <-
   jsonlite::read_json(path = here::here("lib", "design", "study-dates.json")) %>%
   map(as.Date)
@@ -36,7 +55,9 @@ study_dates <-
 ################################################################################
 # 0.3 Import data
 ################################################################################
-data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds"))
+data <- 
+  read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
+  mutate(period = .data[[period_colname]])
 
 ################################################################################
 # 0.4 Data manipulation
@@ -44,85 +65,29 @@ data <- read_rds(here("output", "data", "data_processed_excl_contraindicated.rds
 data_splitted <-
   data %>%
   simplify_data() %>%
-  survsplit_data() %>%
-  add_period_cuts(study_dates = study_dates)
+  split_data()
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   data_splitted <-
     data_splitted %>%
-    group_by(patient_id) %>%
-    mutate(period_month = runif(1, 0, 12) %>% ceiling(),
-           period_2month = runif(1, 0, 6) %>% ceiling(),
-           period_week = runif(1, 0, 52) %>% ceiling()) %>%
-    ungroup()
-  # in dummy data, everyone has pos test on same day (start of study period)
-  data_splitted <-
-    data_splitted %>%
-    select(patient_id, tstart, tend, period_month, period_2month, period_week, status_seq, starts_with("treatment_seq"))
+    select(patient_id, tstart, tend, period, status_seq, starts_with("treatment_seq"))
 }
 
 ################################################################################
-# 1.0 Construct trials (monthly, bimonthly and weekly)
+# 1.0 Construct trials (eg monthly, bimonthly and weekly, depending on input args)
 ################################################################################
-construct_seq_trials_in_given_period <- function(data_period, treat_window){
-  trial_seq <- 0:(treat_window - 1)
-  construct_trial_no <- function(data_period, trial_no){
-    trial <-
-      data_period %>%
-      filter(tstart >= trial_no) %>%
-      mutate(trial = trial_no) %>%
-      group_by(patient_id) %>%
-      mutate(rownum = row_number(),
-             treatment_seq_baseline = first(treatment_seq),
-             treatment_seq_lag1_baseline = first(treatment_seq_lag1),
-             tstart = tstart - trial_no,
-             tend = tend - trial_no) %>%
-      filter(treatment_seq_lag1_baseline == 0) %>% #restrict to those not previously treated at the start of the trial
-      filter(first(status_seq) == 0,
-             first(treatment_seq_sotmol) == 0) %>% # restrict to those not experiencing an outcome in first interval of trial &
-      # restrict to those not treated with sot/mol in the first interval
-      # note that individuals censored (dereg/non covid death) in a given interval, are not filtered out; we just want to make sure no-one
-      # experiences the outcome (covid_hosp_death) in the first interval
-      ungroup()
-  }
-  trials <-
-    map_dfr(.x = trial_seq,
-            .f = ~ construct_trial_no(data_period, .x))
-}
-trials_monthly <-
+cuts <- data %>% pull(period) %>% unique() %>% sort()
+trials <-
   map_dfr(
-    .x = 1:12,
+    .x = cuts,
     .f = ~
-      construct_seq_trials_in_given_period(
-        data_splitted %>% filter(period_month == .x),
-        5)
-    )
-trials_bimonthly <-
-  map_dfr(
-    .x = 1:6,
-    .f = ~
-      construct_seq_trials_in_given_period(
-        data_splitted %>% filter(period_2month == .x),
-        5)
-  )
-trials_weekly <-
-  map_dfr(
-    .x = 1:52,
-    .f = ~
-      construct_seq_trials_in_given_period(
-        data_splitted %>% filter(period_week == .x),
+      construct_trials(
+        data_splitted %>% filter(period == .x),
         5)
     )
 
 ################################################################################
 # 2.0 Save output
 ################################################################################.
-iwalk(.x = list(trials_monthly = trials_monthly,
-                trials_bimonthly = trials_bimonthly,
-                trials_weekly = trials_weekly),
-      .f = ~
-        arrow::write_feather(
-          .x,
-          fs::path(output_dir,
-                   paste0("data_seq_", .y, ".feather"))
-        ))
+file_name <- paste0("data_seq_trials_", period, "ly.feather")
+arrow::write_feather(trials, fs::path(output_dir, file_name))
