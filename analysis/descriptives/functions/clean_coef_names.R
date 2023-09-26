@@ -79,9 +79,9 @@ clean_coef_names = function(input_table) {
   input_table$variable[input_table$variable=="tb_postest_vacc_cat>= 84 days"] = "Time-between test since last vaccination: >= 84 days"
   input_table$variable[input_table$variable=="tb_postest_vacc_catUnknown"] = "Time-between test since last vaccination: not-vaccinated"
   #else
-  input_table$variable[input_table$variable=="ns(study_week, df = 3)3"] = "Study week: term3"
-  input_table$variable[input_table$variable=="ns(study_week, df = 3)2"] = "Study week: term2"
-  input_table$variable[input_table$variable=="ns(study_week, df = 3)1"] = "Study week: term1"
+  input_table$variable[input_table$variable=="ns(period_week, df = 3)3"] = "Study week: term3"
+  input_table$variable[input_table$variable=="ns(period_week, df = 3)2"] = "Study week: term2"
+  input_table$variable[input_table$variable=="ns(period_week, df = 3)1"] = "Study week: term1"
   
   input_table$variable[input_table$variable=="treatment_strategy_cat"] = "Treatment variable"
   input_table$variable[input_table$variable=="N"] = "N"

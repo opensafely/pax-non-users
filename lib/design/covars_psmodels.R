@@ -34,4 +34,4 @@ covars <-
     "vaccination_status",
     "tb_postest_vacc_cat",
     # calendar time
-    "ns(study_week, df = 3)")
+    "ns(period_week, df = 3)")

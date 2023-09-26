@@ -79,7 +79,12 @@ names(data_processed) <- c("grace5", "grace6", "grace7", "grace8")
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   data_processed <- 
     map(.x = data_processed,
-        .f = ~ .x %>% mutate(study_week = runif(nrow(.x), 1, 52) %>% round()))
+        .f = ~ .x %>% group_by(patient_id) %>%
+          mutate(period_month = runif(1, 0, 12) %>% ceiling(),
+                 period_2month = runif(1, 0, 6) %>% ceiling(),
+                 period_3month = runif(1, 0, 4) %>% ceiling(), 
+                 period_week = runif(1, 0, 52) %>% ceiling()) %>%
+          ungroup())
 }
 
 ################################################################################
