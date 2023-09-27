@@ -18,6 +18,7 @@ library(purrr)
 library(optparse)
 source(here::here("analysis", "seq_trials", "functions", "simplify_data.R"))
 source(here::here("analysis", "seq_trials", "functions", "split_data.R"))
+source(here::here("analysis", "seq_trials", "functions", "add_trt_lags.R"))
 source(here::here("analysis", "seq_trials", "functions", "construct_trials.R"))
 
 ################################################################################
@@ -65,7 +66,8 @@ data <-
 data_splitted <-
   data %>%
   simplify_data() %>%
-  split_data()
+  split_data() %>%
+  add_trt_lags()
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   data_splitted <-

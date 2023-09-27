@@ -4,7 +4,6 @@ construct_trial_no <- function(data, trial_no){
     mutate(trial = trial_no) %>%
     group_by(patient_id) %>%
     mutate(arm = first(treatment_seq),
-           treatment_seq_lag1 = lag(treatment_seq, n = 1, default = 0),
            treatment_seq_lag1_baseline = first(treatment_seq_lag1),
            tstart = tstart - trial_no,
            tend = tend - trial_no) %>%
