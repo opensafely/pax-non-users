@@ -42,19 +42,23 @@ coefs <- map(.x = create_names("psCoefs_"),
                                uci = col_double(),
                                abs_estimate = col_double())) %>% 
                filter(variable != "(Intercept)") %>%
-               arrange(estimate))
+               arrange(estimate) %>% 
+               mutate(logestimate = log(estimate),
+                      loglci = log(lci),
+                      loguci = log(uci)
+                      ))
 
 ################################################################################
 # 1.0 Plot coefs
 ################################################################################
 plot_coefs <- function(coefs){
   plot <- coefs %>% 
-    ggplot(aes(estimate, reorder(variable, estimate))) +
-    geom_segment(aes(yend = variable, x = lci, xend = uci), colour="blue") +
+    ggplot(aes(logestimate, reorder(variable, estimate))) +
+    geom_segment(aes(yend = variable, x = loglci, xend = loguci), colour="blue") +
     geom_point(colour="blue", fill = "blue") +
-    geom_vline(xintercept = 1, lty = 2) + 
+    geom_vline(xintercept = 0, lty = 2) + 
     theme_bw() +
-    xlab('Odds ratio') +
+    xlab('log(Odds ratio)') +
     ylab('Variable') 
   plot_abs <- coefs %>% 
     ggplot(aes(abs_estimate,reorder(variable, abs_estimate))) +
