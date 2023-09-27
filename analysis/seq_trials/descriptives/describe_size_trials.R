@@ -94,10 +94,10 @@ n_init_trt_untrt_given_trial_period <- function(trials, period_no, trial_no){
 
 }
 n_init_trt_untrt_all_trials <- function(trials, period_no){
-  map_dfr(.x = 0:4,
+  map_dfr(.x = 0L:4L,
           .f = ~ n_init_trt_untrt_given_trial_period(trials, period_no, .x))
 }
-cuts <- trials %>% pull(period) %>% unique() %>% sort()
+cuts <- trials %>% pull(period) %>% unique() %>% sort() %>% as.integer()
 n_init_trt_in_untrt_arm <- 
   map_dfr(.x = cuts,
           .f = ~ n_init_trt_untrt_all_trials(trials, .x))
