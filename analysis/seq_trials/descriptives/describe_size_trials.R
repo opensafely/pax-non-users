@@ -77,11 +77,11 @@ sense_check_size_trials <-
             n_sotmol3 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 3),
             n_sotmol4 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 4),
             n_event0 = sum(status_primary == "covid_hosp_death" & fu_primary == 0), # should be 0
-            n_event1 = sum(status_primary == "covid_hosp_death" & fu_primary == 1),
-            n_event2 = sum(status_primary == "covid_hosp_death" & fu_primary == 2),
-            n_event3 = sum(status_primary == "covid_hosp_death" & fu_primary == 3),
-            n_event4 = sum(status_primary == "covid_hosp_death" & fu_primary == 4),
-            n_event5 = sum(status_primary == "covid_hosp_death" & fu_primary == 5), # 5 as in fifth trial (=trial 4) people experiencing outcome at end of interval are excluded
+            n_event1 = sum(status_primary == "covid_hosp_death" & fu_primary == 1 & !(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 0)),
+            n_event2 = sum(status_primary == "covid_hosp_death" & fu_primary == 2 & !(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 1)),
+            n_event3 = sum(status_primary == "covid_hosp_death" & fu_primary == 3 & !(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 2)),
+            n_event4 = sum(status_primary == "covid_hosp_death" & fu_primary == 4 & !(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 3)),
+            n_event5 = sum(status_primary == "covid_hosp_death" & fu_primary == 5 & !(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 4)), # 5 as in fifth trial (=trial 4) people experiencing outcome at end of interval are excluded
             n_censor0 = sum(status_primary != "covid_hosp_death" & fu_primary == 0),
             n_censor1 =  sum(status_primary!= "covid_hosp_death" & fu_primary == 1),
             n_censor2 =  sum(status_primary != "covid_hosp_death" & fu_primary == 2),
