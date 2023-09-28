@@ -83,10 +83,10 @@ sense_check_size_trials <-
             n_event4 = sum(status_primary == "covid_hosp_death" & fu_primary == 4 & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat <= 3)),
             n_event5 = sum(status_primary == "covid_hosp_death" & fu_primary == 5 & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat <= 4)), # 5 as in fifth trial (=trial 4) people experiencing outcome at end of interval are excluded
             n_censor0 = sum(status_primary != "covid_hosp_death" & fu_primary == 0),
-            n_censor1 =  sum(status_primary!= "covid_hosp_death" & fu_primary == 1) & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 1),
-            n_censor2 =  sum(status_primary != "covid_hosp_death" & fu_primary == 2) & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 2),
-            n_censor3 = sum(status_primary != "covid_hosp_death" & fu_primary == 3) & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 3),
-            n_censor4 = sum(status_primary != "covid_hosp_death" & fu_primary == 4) & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 4),
+            n_censor1 = sum(status_primary!= "covid_hosp_death" & fu_primary == 1 & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 1)),
+            n_censor2 = sum(status_primary != "covid_hosp_death" & fu_primary == 2 & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 2)),
+            n_censor3 = sum(status_primary != "covid_hosp_death" & fu_primary == 3 & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 3)),
+            n_censor4 = sum(status_primary != "covid_hosp_death" & fu_primary == 4 & !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 4)),
             )
 
 ################################################################################
