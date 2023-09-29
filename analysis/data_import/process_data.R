@@ -7,6 +7,7 @@ source(here::here("analysis", "data_import", "functions", "add_kidney_vars_to_da
 source(here::here("analysis", "data_import", "functions", "define_covid_hosp_admissions.R"))
 source(here::here("analysis", "data_import", "functions", "define_allcause_hosp_admissions.R"))
 source(here::here("analysis", "data_import", "functions", "define_allcause_hosp_diagnosis.R"))
+source(here::here("analysis", "data_import", "functions", "add_period_cuts.R"))
 # function
 process_data <- function(data_extracted, study_dates, treat_window_days = 4){
   data_processed <- data_extracted %>%
@@ -84,14 +85,6 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
       
       # STP
       stp = as.factor(stp), 
-      
-      # Calendar Time
-      study_week = difftime(
-        covid_test_positive_date,
-        study_dates$start_date,
-        units = "weeks") %>% 
-        as.numeric() %>%
-        floor(),
       
       # Time-between positive test and last vaccination
       tb_postest_vacc = 
@@ -300,5 +293,6 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
       # Treatment date
       treatment_date_prim = 
         if_else(treatment_prim == "Treated", treatment_date, NA_Date_),
-    )
+    ) %>%
+    add_period_cuts(study_dates = study_dates)
 }

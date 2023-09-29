@@ -11,6 +11,8 @@ add_period_cuts <- function(data, study_dates){
     seq(study_dates$start_date, study_dates$end_date + 1, by = "1 month")
   seq_dates_start_interval_2month <- 
     seq(study_dates$start_date, study_dates$end_date + 1, by = "2 months")
+  seq_dates_start_interval_3month <- 
+    seq(study_dates$start_date, study_dates$end_date + 1, by = "3 months")
   data <-
     data %>%
     mutate(period_week = cut(covid_test_positive_date, 
@@ -27,5 +29,10 @@ add_period_cuts <- function(data, study_dates){
                               breaks = seq_dates_start_interval_2month, 
                               include.lowest = TRUE,
                               right = FALSE,
-                              labels = 1:6))
+                              labels = 1:6),
+           period_3month = cut(covid_test_positive_date, 
+                               breaks = seq_dates_start_interval_3month, 
+                               include.lowest = TRUE,
+                               right = FALSE,
+                               labels = 1:4))
 }

@@ -17,6 +17,7 @@ library(tidyr)
 library(fs)
 library(here)
 library(purrr)
+library(optparse)
 source(here::here("lib", "design", "redaction.R"))
 
 ################################################################################
@@ -29,6 +30,24 @@ fs::dir_create(output_dir)
 # 0.2 Import command-line arguments
 ################################################################################
 args <- commandArgs(trailingOnly=TRUE)
+if(length(args)==0){
+  # use for interactive testing
+  period <- "month"
+  period_colname <- paste0("period_", period)
+} else {
+  
+  option_list <- list(
+    make_option("--period", type = "character", default = "month",
+                help = "Subsets of data used, options are 'month', '2month', '3month' and 'week' [default %default]. ",
+                metavar = "period")
+  )
+  
+  opt_parser <- OptionParser(usage = "prepare_data:[version] [options]", option_list = option_list)
+  opt <- parse_args(opt_parser)
+  
+  period <- opt$period
+  period_colname <- paste0("period_", period)
+}
 study_dates <-
   jsonlite::read_json(path = here::here("lib", "design", "study-dates.json")) %>%
   map(as.Date)
@@ -36,114 +55,123 @@ study_dates <-
 ################################################################################
 # 0.3 Import data
 ################################################################################
-trials_monthly <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
-trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_bimonthly.feather"))
-trials_weekly <- arrow::read_feather(here("output", "data", "data_seq_trials_weekly.feather"))
+data <- 
+  read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
+  mutate(period = .data[[period_colname]])
+file_name <- paste0("data_seq_trials_", period, "ly.feather")
+trials <- arrow::read_feather(here::here("output", "data", file_name))
 
 ################################################################################
-# 1.0 Number of unique patients included in each arm of trials
+# 1.0 Sense check size of trials based on data
 ################################################################################
-size_trials_monthly <-
-  trials_monthly %>%
-  group_by(period_month, trial, treatment_seq_baseline) %>%
-  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
-  mutate(period_month = as.integer(period_month))
-size_trials_bimonthly <-
-  trials_bimonthly %>%
-  group_by(period_2month, trial, treatment_seq_baseline) %>%
-  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
-  mutate(period_month = as.integer(period_2month))
-size_trials_weekly <-
-  trials_weekly %>%
-  group_by(period_week, trial, treatment_seq_baseline) %>%
-  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
-  mutate(period_week = as.integer(period_week))
-size_trials <- 
-  list(monthly = size_trials_monthly,
-       bimonthly = size_trials_bimonthly,
-       weekly = size_trials_weekly) %>%
-  map(.f = ~ .x %>%
-        pivot_wider(
-          names_from = treatment_seq_baseline,
-          values_from = n, 
-          names_prefix = "n_") %>%
-        relocate(n_1, .before = n_0) %>%
-        mutate(across(c("n_0", "n_1"), .f = ~ if_else(is.na(.x), 0L, .x))) %>%
-        rename(treated_baseline = n_1, untreated_baseline = n_0)
-  )
+sense_check_size_trials <-
+  data %>%
+  group_by(period) %>%
+  summarise(n_total = n(),
+            n_pax = sum(treatment_strategy_cat_prim == "Paxlovid"),
+            n_sotmol = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir")),
+            n_notrt = sum(treatment_strategy_cat_prim == "Untreated"),
+            n_sotmol0 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 0),
+            n_sotmol1 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 1),
+            n_sotmol2 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 2),
+            n_sotmol3 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 3),
+            n_sotmol4 = sum(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 4),
+            n_event0 = sum(status_primary == "covid_hosp_death" & fu_primary == 0), # should be 0
+            n_event1 = sum(status_primary == "covid_hosp_death" & fu_primary == 1 & 
+                             !(treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat == 0)),
+            n_event2 = sum(status_primary == "covid_hosp_death" & fu_primary == 2 &
+                             !((treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat <= 1) |
+                                 (treatment_strategy_cat_prim == "Paxlovid" & tb_postest_treat < 1))),
+            n_event3 = sum(status_primary == "covid_hosp_death" & fu_primary == 3 & 
+                             !((treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat <= 2) |
+                                 (treatment_strategy_cat_prim == "Paxlovid" & tb_postest_treat < 2))),
+            n_event4 = sum(status_primary == "covid_hosp_death" & fu_primary == 4 & 
+                             !((treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat <= 3) |
+                                 (treatment_strategy_cat_prim == "Paxlovid" & tb_postest_treat < 3))),
+            n_event5 = sum(status_primary == "covid_hosp_death" & fu_primary == 5 & 
+                             !((treatment_strategy_cat_prim %in% c("Sotrovimab", "Molnupiravir") & tb_postest_treat <= 4) |
+                                 (treatment_strategy_cat_prim == "Paxlovid" & tb_postest_treat < 4))), # 5 as in fifth trial (=trial 4) people experiencing outcome at end of interval are excluded
+            n_censor0 = sum(status_primary != "covid_hosp_death" & fu_primary == 0),
+            n_censor1 = sum(status_primary!= "covid_hosp_death" & fu_primary == 1 & 
+                              !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 1)),
+            n_censor2 = sum(status_primary != "covid_hosp_death" & fu_primary == 2 & 
+                              !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 2)),
+            n_censor3 = sum(status_primary != "covid_hosp_death" & fu_primary == 3 & 
+                              !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 3)),
+            n_censor4 = sum(status_primary != "covid_hosp_death" & fu_primary == 4 & 
+                              !(treatment_strategy_cat_prim != c("Untreated") & tb_postest_treat < 4)),
+            )
 
 ################################################################################
-# 2.0 Number of patients in untrt arm initiating treatment
+# 2.0 Number of unique patients included in each arm of trials
 ################################################################################
-n_init_trt_untrt_given_trial_period <- function(trials, period_name, period_no, trial_no){
-  n_init_trt <- function(trials, period_name, period_no, trial_no, column_name){
-    trials <-
-      trials %>% mutate(period = .data[[period_name]])
+size_trials <-
+  trials %>%
+  group_by(period, trial, arm) %>%
+  summarise(n = length(unique(patient_id)), .groups = "keep") %>%
+  mutate(period = as.integer(period)) %>%
+  pivot_wider(
+    names_from = arm,
+    values_from = n, 
+    names_prefix = "n_") %>%
+  relocate(n_1, .before = n_0) %>%
+  mutate(across(c("n_0", "n_1"), .f = ~ if_else(is.na(.x), 0L, .x))) %>%
+  rename(treated_baseline = n_1, untreated_baseline = n_0)
+
+################################################################################
+# 3.0 Number of patients in untrt arm initiating treatment
+################################################################################
+n_init_trt_untrt_given_trial_period <- function(trials, period_no, trial_no){
+  n_init_trt <- function(trials, period_no, trial_no, column_name){
     trials %>%
       group_by(patient_id) %>%
       filter(period == {{ period_no }} & trial == {{ trial_no }} &
-               treatment_seq_baseline == 0 & 
+               arm == 0 & 
                any(.data[[column_name]] == 1)) %>%
       pull(patient_id) %>% unique() %>% length() %>%
       as_tibble() %>%
-      transmute({{ period_name }} := period_no, 
+      transmute(period = period_no, 
                 trial = trial_no, 
                 {{ column_name }} := value)
   }
-  n_init_trt(trials, period_name, period_no, trial_no, "treatment_seq") %>%
-    left_join(n_init_trt(trials, period_name, period_no, trial_no, "treatment_seq_sotmol"),
-              by = c(all_of(period_name), "trial"))
+  n_init_trt(trials, period_no, trial_no, "treatment_seq") %>%
+    left_join(n_init_trt(trials, period_no, trial_no, "treatment_seq_sotmol"),
+              by = c("period", "trial"))
 
 }
-n_init_trt_untrt_all_trials <- function(trials, period_name, period_no){
-  map_dfr(.x = 0:4,
-          .f = ~ n_init_trt_untrt_given_trial_period(trials, period_name, period_no, .x))
+n_init_trt_untrt_all_trials <- function(trials, period_no){
+  map_dfr(.x = 0L:4L,
+          .f = ~ n_init_trt_untrt_given_trial_period(trials, period_no, .x))
 }
-n_init_trt_in_untrt_arm_monthly <- 
-  map_dfr(.x = 1:12,
-          .f = ~ n_init_trt_untrt_all_trials(trials_monthly, "period_month", .x))
-n_init_trt_in_untrt_arm_bimonthly <- 
-  map_dfr(.x = 1:6,
-          .f = ~ n_init_trt_untrt_all_trials(trials_bimonthly, "period_2month", .x))
-n_init_trt_in_untrt_arm_weekly <- 
-  map_dfr(.x = 1:52,
-          .f = ~ n_init_trt_untrt_all_trials(trials_weekly, "period_week", .x))
-n_init_trt_untrt_arm <- 
-  list(monthly = n_init_trt_in_untrt_arm_monthly,
-       bimonthly = n_init_trt_in_untrt_arm_bimonthly,
-       weekly = n_init_trt_in_untrt_arm_weekly)
+cuts <- trials %>% pull(period) %>% unique() %>% sort() %>% as.integer()
+n_init_trt_in_untrt_arm <- 
+  map_dfr(.x = cuts,
+          .f = ~ n_init_trt_untrt_all_trials(trials, .x))
 
 ################################################################################
-# 3.0 Join two tables from step 1 and 2
+# 4.0 Join two tables from step 1 and 2
 ################################################################################
 data_flow <-
-  map2(.x = size_trials,
-       .y = n_init_trt_untrt_arm,
-       .f = ~ .x %>% left_join(.y))
-redact_data_flow <- function(data_flow){
-  data_flow <-
-    data_flow %>%
-    mutate(
-      across(starts_with("treat") | "untreated_baseline",
-             ~ if_else(.x > 0 & .x <= redaction_threshold, 
-                       "[REDACTED]", 
-                       .x %>% plyr::round_any(rounding_threshold) %>% as.character()))
-    )
-}
+  size_trials %>%
+  left_join(n_init_trt_in_untrt_arm,
+            by = c("period", "trial"))
 data_flow_red <-
-  map(.x = data_flow,
-      .f = ~ redact_data_flow(.x))
+  data_flow %>%
+  mutate(
+    across(starts_with("treat") | "untreated_baseline",
+           ~ if_else(.x > 0 & .x <= redaction_threshold, 
+                     "[REDACTED]", 
+                     .x %>% plyr::round_any(rounding_threshold) %>% as.character()))
+  )
 
 ################################################################################
-# 4.0 Save output
+# 5.0 Save output
 ################################################################################
-iwalk(.x = data_flow,
-      .f = ~ write_csv(
-        .x,
-        path(output_dir, paste0("data_flow_seq_trials_", .y, ".csv"))
-      ))
-iwalk(.x = data_flow_red,
-      .f = ~ write_csv(
-        .x,
-        path(output_dir, paste0("data_flow_seq_trials_", .y, "_red.csv"))
-      ))
+write_csv(sense_check_size_trials,
+          fs::path(output_dir, "sense_check_for_data_flow.csv"))
+file_name <- paste0("data_flow_seq_trials_", period, "ly.csv")
+file_name_red <- paste0("data_flow_seq_trials_", period, "ly_red.csv")
+write_csv(data_flow,
+          fs::path(output_dir, file_name))
+write_csv(data_flow_red,
+          fs::path(output_dir, file_name_red))

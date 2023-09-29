@@ -1,10 +1,11 @@
-covars <- 
-  c("ageband",
+# Note: age modelled with cubic spline with 3 knots
+covars <-
+  c("ns(age, df = 3)",
     "sex",
     "ethnicity",
     "imdQ5",
-    "region_nhs",
     "rural_urban",
+    "region_nhs",
     # other comorbidities/clinical characteristics
     "obese",
     "smoking_status",
@@ -31,4 +32,6 @@ covars <-
     "huntingtons_disease_nhsd",
     # vax vars
     "vaccination_status",
-    "tb_postest_vacc_cat")
+    "tb_postest_vacc_cat",
+    # calendar time
+    "ns(period_week, df = 3)")

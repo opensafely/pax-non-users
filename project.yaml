@@ -122,10 +122,10 @@ actions:
       highly_sensitive:
         model1: output/descriptives/psModel_Paxlovid_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_untrimmed_Paxlovid_all_ci.png
-        png2: output/descriptives/psOverlap_trimmed_Paxlovid_all_ci.png
-        png3: output/descriptives/psCoefs_Paxlovid_all_ci.png
-        csv1: output/descriptives/trimming_descriptives_Paxlovid_all_ci.csv
+        csv1: output/descriptives/psDens_untrimmed_Paxlovid_all_ci.csv
+        csv2: output/descriptives/psDens_trimmed_Paxlovid_all_ci.csv
+        csv3: output/descriptives/psCoefs_Paxlovid_all_ci.csv
+        csv4: output/descriptives/trimming_descriptives_Paxlovid_all_ci.csv
 
   describe_trt_preds_all_ci_sot:
     run: r:latest analysis/descriptives/describe_trt_preds.R all_ci Sotrovimab
@@ -134,10 +134,10 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Sotrovimab_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_untrimmed_Sotrovimab_all_ci.png
-        png2: output/descriptives/psOverlap_trimmed_Sotrovimab_all_ci.png
-        png3: output/descriptives/psCoefs_Sotrovimab_all_ci.png
-        csv1: output/descriptives/trimming_descriptives_Sotrovimab_all_ci.csv    
+        csv1: output/descriptives/psDens_untrimmed_Sotrovimab_all_ci.csv
+        csv2: output/descriptives/psDens_trimmed_Sotrovimab_all_ci.csv
+        csv3: output/descriptives/psCoefs_Sotrovimab_all_ci.csv
+        csv4: output/descriptives/trimming_descriptives_Sotrovimab_all_ci.csv    
         
   describe_trt_preds_all_ci_mol:
     run: r:latest analysis/descriptives/describe_trt_preds.R all_ci Molnupiravir
@@ -146,10 +146,18 @@ actions:
       highly_sensitive:
         data1: output/descriptives/psModel_Molnupiravir_all_ci.rds     
       moderately_sensitive:
-        png1: output/descriptives/psOverlap_untrimmed_Molnupiravir_all_ci.png
-        png2: output/descriptives/psOverlap_trimmed_Molnupiravir_all_ci.png
-        png3: output/descriptives/psCoefs_Molnupiravir_all_ci.png
-        csv1: output/descriptives/trimming_descriptives_Molnupiravir_all_ci.csv  
+        csv1: output/descriptives/psDens_untrimmed_Molnupiravir_all_ci.csv
+        csv2: output/descriptives/psDens_trimmed_Molnupiravir_all_ci.csv
+        csv3: output/descriptives/psCoefs_Molnupiravir_all_ci.csv
+        csv4: output/descriptives/trimming_descriptives_Molnupiravir_all_ci.csv
+
+  visualise_trt_preds_dens:
+    run: r:latest analysis/descriptives/visualise_trt_preds_dens.R
+    needs: [describe_trt_preds_all_ci_pax, describe_trt_preds_all_ci_sot, describe_trt_preds_all_ci_mol]
+    outputs:   
+      moderately_sensitive:
+        png1: output/descriptives/psOverlap_untrimmed_*_all_ci.png
+        png2: output/descriptives/psOverlap_trimmed_*_all_ci.png
  
   create_table1:
     run: r:latest analysis/descriptives/table1.R
@@ -165,6 +173,21 @@ actions:
         csv7: output/tables/table1_trt_untrt.csv
         csv8: output/tables/table1_trt_untrt_red.csv
         csv9: output/tables/table1_trt_untrt_red_unf.csv
+  
+  create_table1_stratified_by_3months:
+    run: r:latest analysis/descriptives/table1_subsets.R
+    needs: [data_process]
+    outputs:
+      moderately_sensitive:
+        csv1: output/tables/stratified_3months/table1.csv
+        csv2: output/tables/stratified_3months/table1_red.csv
+        csv3: output/tables/stratified_3months/table1_red_unf.csv
+        csv4: output/tables/stratified_3months/table1_full.csv
+        csv5: output/tables/stratified_3months/table1_full_red.csv
+        csv6: output/tables/stratified_3months/table1_full_red_unf.csv
+        csv7: output/tables/stratified_3months/table1_trt_untrt.csv
+        csv8: output/tables/stratified_3months/table1_trt_untrt_red.csv
+        csv9: output/tables/stratified_3months/table1_trt_untrt_red_unf.csv
 
   describe_trt_groups:
     run: r:latest analysis/descriptives/describe_trt_groups.R
@@ -195,23 +218,18 @@ actions:
   ## Sequential trials
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # #
-  data_prepare_seq_trials:
-    run: r:latest analysis/seq_trials/prepare_data.R
+  data_prepare_seq_trials_month:
+    run: r:latest analysis/seq_trials/prepare_data.R --period=month
     needs: [data_process]
     outputs:
       highly_sensitive:
         data1: output/data/data_seq_trials_monthly.feather
-        data2: output/data/data_seq_trials_bimonthly.feather
-        data3: output/data/data_seq_trials_weekly.feather
 
-  describe_size_trials:
-    run: r:latest analysis/seq_trials/descriptives/describe_size_trials.R
-    needs: [data_prepare_seq_trials]
+  describe_size_trials_month:
+    run: r:latest analysis/seq_trials/descriptives/describe_size_trials.R --period=month
+    needs: [data_process, data_prepare_seq_trials_month]
     outputs:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/data_flow_seq_trials_monthly.csv
-        csv2: output/seq_trials/descriptives/data_flow_seq_trials_bimonthly.csv
-        csv3: output/seq_trials/descriptives/data_flow_seq_trials_weekly.csv
-        csv4: output/seq_trials/descriptives/data_flow_seq_trials_monthly_red.csv
-        csv5: output/seq_trials/descriptives/data_flow_seq_trials_bimonthly_red.csv
-        csv6: output/seq_trials/descriptives/data_flow_seq_trials_weekly_red.csv
+        csv2: output/seq_trials/descriptives/data_flow_seq_trials_monthly_red.csv
+        csv3: output/seq_trials/descriptives/sense_check_for_data_flow.csv
