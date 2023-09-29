@@ -39,7 +39,7 @@ study_dates <-
 # 0.3 Import data
 ################################################################################
 trials_monthly <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
-trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_bimonthly.feather"))
+#trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_bimonthly.feather"))
 #trials_weekly <- arrow::read_feather(here("output", "data", "data_seq_trials_weekly.feather"))
 
 ################################################################################
@@ -47,22 +47,22 @@ trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_
 ################################################################################
 f_simple <- 
   paste0("status_seq ~ ",
-         paste0(c("treatment_seq_baseline + ns(tend, 4) + period_month + trial", covars),
+         paste0(c("arm + ns(tend, 4) + period + trial", covars),
                 collapse = " + ")) %>%  
   as.formula()  
 f_interaction_period <- 
   paste0("status_seq ~ ",
-         paste0(c("treatment_seq_baseline + ns(tend, 4) + period_month + trial + treatment_seq * period_month", covars),
+         paste0(c("arm + ns(tend, 4) + period + trial + treatment_seq * period_month", covars),
                 collapse = " + ")) %>%  
   as.formula()  
 f_interaction_trial <- 
   paste0("status_seq ~ ",
-         paste0(c("treatment_seq_baseline + ns(tend, 4) + period_month + trial + treatment_seq * trial", covars),
+         paste0(c("arm + ns(tend, 4) + period + trial + treatment_seq * trial", covars),
                 collapse = " + ")) %>%  
   as.formula()
 f_interaction_all <- 
   paste0("status_seq ~ ",
-         paste0(c("treatment_seq_baseline + ns(tend, 4) + period_month + trial + treatment_seq * period_month + treatment_seq * trial", covars),
+         paste0(c("arm + ns(tend, 4) + period + trial + treatment_seq * period_month + treatment_seq * trial", covars),
                 collapse = " + ")) %>%  
   as.formula()
 formulas <-
