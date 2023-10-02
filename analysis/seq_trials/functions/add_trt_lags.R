@@ -1,6 +1,5 @@
 add_trt_lags <- function(data){
   data %>%
-    group_by(patient_id) %>%
     mutate(treatment_seq_lag1 = lag(treatment_seq, n = 1, default = 0),
            treatment_seq_lag2 = lag(treatment_seq, n = 2, default = 0),
            treatment_seq_lag3 = lag(treatment_seq, n = 3, default = 0),
@@ -10,6 +9,5 @@ add_trt_lags <- function(data){
            treatment_seq_sotmol_lag2 = lag(treatment_seq_sotmol, n = 2, default = 0),
            treatment_seq_sotmol_lag3 = lag(treatment_seq_sotmol, n = 3, default = 0),
            treatment_seq_sotmol_lag4 = lag(treatment_seq_sotmol, n = 4, default = 0),
-           treatment_seq_sotmol_lag5 = lag(treatment_seq_sotmol, n = 5, default = 0)) %>%
-    ungroup()
+           treatment_seq_sotmol_lag5 = lag(treatment_seq_sotmol, n = 5, default = 0))
 }

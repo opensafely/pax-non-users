@@ -12,6 +12,9 @@
 library(readr)
 library(here)
 library(arrow)
+library(dplyr)
+source(here::here("analysis", "seq_trials", "functions", "simplify_data.R"))
+source(here::here("lib", "design", "covars_seq_trials.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -24,7 +27,17 @@ fs::dir_create(output_dir)
 ################################################################################
 file_name <- "data_processed_excl_contraindicated"
 data <- 
-  read_rds(here("output", "data", paste0(file_name, ".rds"))) 
+  read_rds(here("output", "data", paste0(file_name, ".rds"))) %>%
+  simplify_data() %>%
+  select(patient_id,
+         status_seq,
+         tb_postest_treat_seq,
+         treatment_seq,
+         tb_postest_treat_seq_sotmol,
+         treatment_seq_sotmol,
+         fup_seq,
+         all_of(covars),
+         dplyr::starts_with("period_"))
 
 ################################################################################
 # 2.0 Save output

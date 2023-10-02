@@ -18,12 +18,16 @@ library(purrr)
 library(optparse)
 library(arrow)
 library(tictoc)
+library(doParallel)
+library(foreach)
+library(magrittr)
 print("Sourcing functions")
 tic()
-source(here::here("analysis", "seq_trials", "functions", "simplify_data.R"))
 source(here::here("analysis", "seq_trials", "functions", "split_data.R"))
 source(here::here("analysis", "seq_trials", "functions", "add_trt_lags.R"))
+source(here::here("analysis", "seq_trials", "functions", "construct_trial_no.R"))
 source(here::here("analysis", "seq_trials", "functions", "construct_trials.R"))
+source(here::here("analysis", "seq_trials", "functions", "construct_trial2.R"))
 toc()
 
 ################################################################################
@@ -72,6 +76,7 @@ tic()
 data <- 
   read_feather(here("output", "data", "data_processed_excl_contraindicated.feather")) %>%
   mutate(period = .data[[period_colname]])
+cuts <- data %>% pull(period) %>% unique() %>% sort()
 toc()
 
 ################################################################################
@@ -81,12 +86,19 @@ print("Split data")
 tic()
 data_splitted <-
   data %>%
-  simplify_data() %>%
+  group_by(patient_id) %>%
   split_data() %>%
-  add_trt_lags()
+  add_trt_lags() %>%
+  ungroup()
 toc()
 size_data_splitted <- object.size(data_splitted)
 format(size_data_splitted, units = "Mb", standard = "SI")
+
+print("Remove data to clean up memory")
+tic()
+rm(data)
+toc()
+
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   data_splitted <-
@@ -99,16 +111,34 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
 ################################################################################
 print("Construct trials")
 tic()
-cuts <- data %>% pull(period) %>% unique() %>% sort()
+nCores <- detectCores() - 1
+print(nCores)
+cl <- makeCluster(nCores)
+registerDoParallel(cl)
+trials <-
+  foreach(i = cuts, .combine = rbind, .packages = "magrittr") %:%
+  foreach(j = 0:4, .combine = rbind, .packages = "magrittr") %dopar% {
+    construct_trial2(
+      data = data_splitted,
+      period = i,
+      trial_no = j
+    )}
+stopCluster(cl)
+toc()
+print("Construct trials 2")
+tic()
 trials <-
   map_dfr(
     .x = cuts,
     .f = ~
       construct_trials(
-        data_splitted %>% filter(period == .x),
-        5)
+        data = data_splitted,
+        period = .x,
+        5,
+        construct_trial_no = construct_trial_no)
     )
 toc()
+
 size_trials <- object.size(trials)
 format(size_trials, units = "Mb", standard = "SI")
 

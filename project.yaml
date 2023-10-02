@@ -218,8 +218,8 @@ actions:
   ## Sequential trials
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # #
-  data_select:
-    run: r:latest analysis/seq_trials/select_data.R
+  data_select_and_simplify:
+    run: r:latest analysis/seq_trials/select_and_simplify_data.R
     needs: [data_process]
     outputs:
       highly_sensitive:
@@ -227,7 +227,7 @@ actions:
 
   data_prepare_seq_trials_month:
     run: r:latest analysis/seq_trials/prepare_data.R --period=month
-    needs: [data_select]
+    needs: [data_select_and_simplify]
     outputs:
       highly_sensitive:
         data1: output/data/data_seq_trials_monthly.feather
