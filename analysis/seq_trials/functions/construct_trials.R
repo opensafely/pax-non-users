@@ -2,8 +2,8 @@ construct_trials <- function(data, period, treat_window, censor = FALSE, constru
   data %<>%
     dplyr::filter(period == !!period)
   trials <-
-    purrr::map_dfr(.x = 0:{treat_window - 1},
-                  .f = ~ construct_trial_no(data, .x))
+    lapply(X = 0:{treat_window - 1},
+           FUN = construct_trial_no, data = data) %>% bind_rows()
   if (censor == TRUE) {
     trials %<>%
       dplyr::group_by(patient_id, trial) %>%
