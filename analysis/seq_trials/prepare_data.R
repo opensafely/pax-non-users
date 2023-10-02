@@ -16,6 +16,7 @@ library(fs)
 library(here)
 library(purrr)
 library(optparse)
+library(arrow)
 source(here::here("analysis", "seq_trials", "functions", "simplify_data.R"))
 source(here::here("analysis", "seq_trials", "functions", "split_data.R"))
 source(here::here("analysis", "seq_trials", "functions", "add_trt_lags.R"))
@@ -57,7 +58,7 @@ study_dates <-
 # 0.3 Import data
 ################################################################################
 data <- 
-  read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
+  read_feather(here("output", "data", "data_processed_excl_contraindicated.feather")) %>%
   mutate(period = .data[[period_colname]])
 
 ################################################################################
@@ -92,4 +93,4 @@ trials <-
 # 2.0 Save output
 ################################################################################.
 file_name <- paste0("data_seq_trials_", period, "ly.feather")
-arrow::write_feather(trials, fs::path(output_dir, file_name))
+write_feather(trials, fs::path(output_dir, file_name))
