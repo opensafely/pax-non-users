@@ -111,10 +111,11 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
 ################################################################################
 print("Construct trials")
 tic()
-nCores <- detectCores() - 1
+nCores <- detectCores()
 print(nCores)
-cl <- makeCluster(nCores)
-registerDoParallel(cl)
+cluster <- parallel::makeForkCluster(cores = nCores)
+registerDoParallel(cluster)
+getDoParWorkers() %>% print()
 trials <-
   foreach(i = cuts, .combine = rbind, .packages = "magrittr") %:%
   foreach(j = 0:4, .combine = rbind, .packages = "magrittr") %dopar% {
@@ -123,7 +124,7 @@ trials <-
       period = i,
       trial_no = j
     )}
-stopCluster(cl)
+stopCluster(cluster)
 toc()
 print("Construct trials 2")
 tic()
