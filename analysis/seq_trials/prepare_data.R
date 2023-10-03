@@ -109,23 +109,23 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
 ################################################################################
 # 1.0 Construct trials (eg monthly, bimonthly and weekly, depending on input args)
 ################################################################################
-print("Construct trials")
-tic()
-nCores <- detectCores() - 1
-print(nCores)
-cluster <- parallel::makeForkCluster(cores = nCores)
-registerDoParallel(cluster)
-getDoParWorkers() %>% print()
-trials <-
-  foreach(i = cuts, .combine = rbind, .packages = "magrittr") %:%
-  foreach(j = 0:4, .combine = rbind, .packages = "magrittr") %dopar% {
-    construct_trial2(
-      data = data_splitted,
-      period = i,
-      trial_no = j
-    )}
-stopCluster(cluster)
-toc()
+# print("Construct trials")
+# tic()
+# nCores <- detectCores() - 1
+# print(nCores)
+# cluster <- parallel::makeForkCluster(cores = nCores)
+# registerDoParallel(cluster)
+# getDoParWorkers() %>% print()
+# trials <-
+#   foreach(i = cuts, .combine = rbind, .packages = "magrittr") %:%
+#   foreach(j = 0:4, .combine = rbind, .packages = "magrittr") %dopar% {
+#     construct_trial2(
+#       data = data_splitted,
+#       period = i,
+#       trial_no = j
+#     )}
+# stopCluster(cluster)
+# toc()
 print("Construct trials 2")
 tic()
 nCores <- detectCores() - 1
@@ -143,19 +143,19 @@ trials <-
     )}
 stopCluster(cluster)
 toc()
-print("Construct trials 3")
-tic()
-trials <-
-  map_dfr(
-    .x = cuts,
-    .f = ~
-      construct_trials(
-        data = data_splitted,
-        period = .x,
-        5,
-        construct_trial_no = construct_trial_no)
-    )
-toc()
+# print("Construct trials 3")
+# tic()
+# trials <-
+#   map_dfr(
+#     .x = cuts,
+#     .f = ~
+#       construct_trials(
+#         data = data_splitted,
+#         period = .x,
+#         5,
+#         construct_trial_no = construct_trial_no)
+#     )
+# toc()
 
 size_trials <- object.size(trials)
 format(size_trials, units = "Mb", standard = "SI")
