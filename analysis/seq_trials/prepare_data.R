@@ -128,11 +128,8 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
 # toc()
 print("Construct trials 2")
 tic()
-nCores <- detectCores() - 1
-print(nCores)
-cluster <- parallel::makeForkCluster(cores = nCores)
+cluster <- parallel::makeForkCluster(cores = 4)
 registerDoParallel(cluster)
-getDoParWorkers() %>% print()
 trials <-
   foreach(i = cuts, .combine = rbind, .packages = "magrittr") %dopar% {
     construct_trials(
