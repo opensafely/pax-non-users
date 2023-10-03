@@ -16,20 +16,34 @@ library(fs)
 library(here)
 library(purrr)
 library(optparse)
-source(here::here("analysis", "seq_trials", "functions", "simplify_data.R"))
+library(arrow)
+library(tictoc)
+library(doParallel)
+library(foreach)
+library(magrittr)
+print("Sourcing functions")
+tic()
 source(here::here("analysis", "seq_trials", "functions", "split_data.R"))
 source(here::here("analysis", "seq_trials", "functions", "add_trt_lags.R"))
+source(here::here("analysis", "seq_trials", "functions", "construct_trial_no.R"))
 source(here::here("analysis", "seq_trials", "functions", "construct_trials.R"))
+source(here::here("analysis", "seq_trials", "functions", "construct_trial2.R"))
+toc()
 
 ################################################################################
 # 0.1 Create directories for output
 ################################################################################
+print("Create output directory")
+tic()
 output_dir <- here::here("output", "data")
 fs::dir_create(output_dir)
+toc()
 
 ################################################################################
 # 0.2 Import command-line arguments
 ################################################################################
+print("Import command-line arguments")
+tic()
 args <- commandArgs(trailingOnly=TRUE)
 if(length(args)==0){
   # use for interactive testing
@@ -52,22 +66,39 @@ if(length(args)==0){
 study_dates <-
   jsonlite::read_json(path = here::here("lib", "design", "study-dates.json")) %>%
   map(as.Date)
+toc()
 
 ################################################################################
 # 0.3 Import data
 ################################################################################
+print("Import data")
+tic()
 data <- 
-  read_rds(here("output", "data", "data_processed_excl_contraindicated.rds")) %>%
+  read_feather(here("output", "data", "data_processed_excl_contraindicated.feather")) %>%
   mutate(period = .data[[period_colname]])
+cuts <- data %>% pull(period) %>% unique() %>% sort()
+toc()
 
 ################################################################################
 # 0.4 Data manipulation
 ################################################################################
+print("Split data")
+tic()
 data_splitted <-
   data %>%
-  simplify_data() %>%
+  group_by(patient_id) %>%
   split_data() %>%
-  add_trt_lags()
+  add_trt_lags() %>%
+  ungroup()
+toc()
+size_data_splitted <- object.size(data_splitted)
+format(size_data_splitted, units = "Mb", standard = "SI")
+
+print("Remove data to clean up memory")
+tic()
+rm(data)
+toc()
+
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
   # data_splitted <-
@@ -78,18 +109,59 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
 ################################################################################
 # 1.0 Construct trials (eg monthly, bimonthly and weekly, depending on input args)
 ################################################################################
-cuts <- data %>% pull(period) %>% unique() %>% sort()
+# print("Construct trials")
+# tic()
+# nCores <- detectCores() - 1
+# print(nCores)
+# cluster <- parallel::makeForkCluster(cores = nCores)
+# registerDoParallel(cluster)
+# getDoParWorkers() %>% print()
+# trials <-
+#   foreach(i = cuts, .combine = rbind, .packages = "magrittr") %:%
+#   foreach(j = 0:4, .combine = rbind, .packages = "magrittr") %dopar% {
+#     construct_trial2(
+#       data = data_splitted,
+#       period = i,
+#       trial_no = j
+#     )}
+# stopCluster(cluster)
+# toc()
+print("Construct trials 2")
+tic()
+cluster <- parallel::makeForkCluster(cores = 4)
+registerDoParallel(cluster)
 trials <-
-  map_dfr(
-    .x = cuts,
-    .f = ~
-      construct_trials(
-        data_splitted %>% filter(period == .x),
-        5)
-    )
+  foreach(i = cuts, .combine = rbind, .packages = "magrittr") %dopar% {
+    construct_trials(
+      data = data_splitted,
+      period = i,
+      treat_window = 5,
+      construct_trial_no = construct_trial_no
+    )}
+stopCluster(cluster)
+toc()
+# print("Construct trials 3")
+# tic()
+# trials <-
+#   map_dfr(
+#     .x = cuts,
+#     .f = ~
+#       construct_trials(
+#         data = data_splitted,
+#         period = .x,
+#         5,
+#         construct_trial_no = construct_trial_no)
+#     )
+# toc()
+
+size_trials <- object.size(trials)
+format(size_trials, units = "Mb", standard = "SI")
 
 ################################################################################
 # 2.0 Save output
-################################################################################.
+################################################################################
+print("Save output")
+tic()
 file_name <- paste0("data_seq_trials_", period, "ly.feather")
-arrow::write_feather(trials, fs::path(output_dir, file_name))
+write_feather(trials, fs::path(output_dir, file_name))
+toc()
