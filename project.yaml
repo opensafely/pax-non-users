@@ -234,9 +234,17 @@ actions:
 
   describe_size_trials_month:
     run: r:latest analysis/seq_trials/descriptives/describe_size_trials.R --period=month
-    needs: [data_process, data_prepare_seq_trials_month]
+    needs: [data_prepare_seq_trials_month]
     outputs:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/data_flow_seq_trials_monthly.csv
         csv2: output/seq_trials/descriptives/data_flow_seq_trials_monthly_red.csv
-        csv3: output/seq_trials/descriptives/sense_check_for_data_flow.csv
+
+  create_flow_diagram:
+    run: r:latest analysis/seq_trials/descriptives/create_flow_diagram.R
+    needs: [data_select_and_simplify, data_prepare_seq_trials_month]
+    outputs:
+      moderately_sensitive:
+        csv1: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly.csv
+        csv2: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly_red.csv
+
