@@ -1,6 +1,5 @@
 covars <- 
-  c("covid_test_positive_date",
-    "ageband",
+  c("ageband",
     "sex",
     "ethnicity",
     "imdQ5",
@@ -32,5 +31,4 @@ covars <-
     "huntingtons_disease_nhsd",
     # vax vars
     "vaccination_status",
-    "tb_postest_vacc_cat",
-    "most_recent_vax_cat")
+    "tb_postest_vacc_cat")
