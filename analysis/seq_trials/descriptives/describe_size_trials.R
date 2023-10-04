@@ -12,6 +12,7 @@
 # 0.0 Import libraries + functions
 ################################################################################
 library(readr)
+library(data.table)
 library(dplyr)
 library(tidyr)
 library(fs)
@@ -125,7 +126,7 @@ data_flow_red <-
 ################################################################################
 file_name <- paste0("data_flow_seq_trials_", period, "ly.csv")
 file_name_red <- paste0("data_flow_seq_trials_", period, "ly_red.csv")
-write_csv(data_flow,
-          fs::path(output_dir, file_name))
-write_csv(data_flow_red,
-          fs::path(output_dir, file_name_red))
+data.table::fwrite(data_flow,
+                   fs::path(output_dir, file_name))
+data.table::fwrite(data_flow_red,
+                   fs::path(output_dir, file_name_red))
