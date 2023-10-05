@@ -12,6 +12,7 @@
 # 0.0 Import libraries + functions
 ################################################################################
 library(readr)
+library(magrittr)
 library(dplyr)
 library(tidyr)
 library(fs)
@@ -19,6 +20,11 @@ library(here)
 library(purrr)
 library(splines)
 library(broom)
+library(sandwich)
+library(lmtest)
+library(data.table)
+library(optparse)
+library(tictoc)
 source(here::here("lib", "design", "covars_seq_trials.R"))
 
 ################################################################################
@@ -31,65 +37,93 @@ fs::dir_create(output_dir)
 # 0.2 Import command-line arguments
 ################################################################################
 args <- commandArgs(trailingOnly=TRUE)
-study_dates <-
-  jsonlite::read_json(path = here::here("lib", "design", "study-dates.json")) %>%
-  map(as.Date)
+if(length(args)==0){
+  # use for interactive testing
+  model <- "simple"
+} else {
+  
+  option_list <- list(
+    make_option("--model", type = "character", default = "simple",
+                help = "Outcome model fitted. Choice between simple (main effects arm, period and trial), interaction_period (introducing interaction between arm and period), interaction_trial (introducing interaction between arm and trial), interaction_all (introducing interaction between arm and period; arm and trial) [default %simple]. ",
+                metavar = "model")
+  )
+  
+  opt_parser <- OptionParser(usage = "prepare_data:[version] [options]", option_list = option_list)
+  opt <- parse_args(opt_parser)
+  
+  model <- opt$model
+}
 
 ################################################################################
 # 0.3 Import data
 ################################################################################
 trials_monthly <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
-#trials_bimonthly <- arrow::read_feather(here("output", "data", "data_seq_trials_bimonthly.feather"))
-#trials_weekly <- arrow::read_feather(here("output", "data", "data_seq_trials_weekly.feather"))
+trials_monthly %<>%
+  mutate(trial = factor(trial, levels = 0:4),
+         period = factor(period, levels = 1:12))
 
 ################################################################################
 # 1.0 Outcome model
 ################################################################################
-f_simple <- 
-  paste0("status_seq ~ ",
-         paste0(c("arm + ns(tend, 4) + period + trial", covars),
-                collapse = " + ")) %>%  
-  as.formula()  
-f_interaction_period <- 
-  paste0("status_seq ~ ",
-         paste0(c("arm + ns(tend, 4) + period + trial + treatment_seq * period_month", covars),
-                collapse = " + ")) %>%  
-  as.formula()  
-f_interaction_trial <- 
-  paste0("status_seq ~ ",
-         paste0(c("arm + ns(tend, 4) + period + trial + treatment_seq * trial", covars),
-                collapse = " + ")) %>%  
-  as.formula()
-f_interaction_all <- 
-  paste0("status_seq ~ ",
-         paste0(c("arm + ns(tend, 4) + period + trial + treatment_seq * period_month + treatment_seq * trial", covars),
-                collapse = " + ")) %>%  
-  as.formula()
-formulas <-
-  list(f_simple,
-       f_interaction_period,
-       f_interaction_trial,
-       f_interaction_all)
+if (model == "simple"){
+  f <- 
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4) + period + trial", covars),
+                  collapse = " + ")) %>%  
+    as.formula()
+} else if (model == "interaction_period"){
+  f <-
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4) + period + trial + arm:period", covars),
+                  collapse = " + ")) %>%  
+    as.formula()
+} else if (model == "interaction_trial"){
+  f <-
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4) + period + trial + arm:trial", covars),
+                  collapse = " + ")) %>%  
+    as.formula()
+} else if (model == "interaction_all"){
+  f <-
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4) + period + trial + arm:period + arm:trial", covars),
+                  collapse = " + ")) %>%  
+    as.formula()
+}
+print("Fit outcome model")
+tic()
 om_fit <-
-  map(.x = formulas,
-      .f = ~ glm(.x, 
-                 family = binomial(link = "logit"),
-                 data = trials_monthly))
-names(om_fit) <- c("simple", "interaction_period", "interaction_trial", "interaction_all") 
-om_fit_tidy <-
-  map(.x = om_fit,
-      .f = ~ .x %>% tidy())
+  glm(f, 
+      family = binomial(link = "logit"),
+      data = trials_monthly)
+toc()
+print("Estimate robust standard errors")
+tic()
+om_fit_robust <-
+  coeftest(om_fit,
+           vcovHC)
+toc()
+print("Tidy output")
+tic()
+om_fit_robust_tidy <- 
+  om_fit_robust %>%
+  tidy(conf.int = TRUE) %>%
+  mutate(OR = exp(estimate),
+         OR_lci = exp(conf.low),
+         OR_hci = exp(conf.high))
+toc()
 
 ################################################################################
 # 2.0 Save output
 ################################################################################
-iwalk(.x = om_fit,
-      .f = ~ saveRDS(
-        .x,
-        path(output_dir, paste0("itt_fit_", .y, ".rds"))
-      ))
-iwalk(.x = om_fit_tidy,
-      .f = ~ write_csv(
-        .x,
-        path(output_dir, paste0("itt_fit_", .y, ".csv"))
-      ))
+print("Write output")
+tic()
+saveRDS(
+  om_fit,
+  fs::path(output_dir, paste0("itt_fit_", model, ".rds"))
+)
+data.table::fwrite(
+  om_fit_robust_tidy,
+  fs::path(output_dir, paste0("itt_fit_", model, ".csv"))
+)
+toc()

@@ -254,12 +254,39 @@ actions:
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # #
 
-  run_itt_analysis:
-    run: r:latest analysis/seq_trials/itt_analysis.R
+  run_itt_analysis_simple:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=simple
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds: output/seq_trials/itt/itt_fit_*.rds
+        rds: output/seq_trials/itt/itt_fit_simple.rds
       moderately_sensitive:
-        csv: output/seq_trials/itt/itt_fit_*.csv
+        csv: output/seq_trials/itt/itt_fit_simple.csv
+
+  run_itt_analysis_interaction_period:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_period
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds: output/seq_trials/itt/itt_fit_interaction_period.rds
+      moderately_sensitive:
+        csv: output/seq_trials/itt/itt_fit_interaction_period.csv
+
+  run_itt_analysis_interaction_trial:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_trial
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds: output/seq_trials/itt/itt_fit_interaction_trial.rds
+      moderately_sensitive:
+        csv: output/seq_trials/itt/itt_fit_interaction_trial.csv
+
+  run_itt_analysis_interaction_all:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_all
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds: output/seq_trials/itt/itt_fit_interaction_all.rds
+      moderately_sensitive:
+        csv: output/seq_trials/itt/itt_fit_interaction_all.csv
 
