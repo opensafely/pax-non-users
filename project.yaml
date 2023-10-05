@@ -215,7 +215,7 @@ actions:
     
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # # 
-  ## Sequential trials
+  ## Sequential trials - DATA PREP
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # #
   data_select_and_simplify:
@@ -239,7 +239,7 @@ actions:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/data_flow_seq_trials_monthly.csv
         csv2: output/seq_trials/descriptives/data_flow_seq_trials_monthly_red.csv
-
+  
   create_flow_diagram:
     run: r:latest analysis/seq_trials/descriptives/create_flow_diagram.R
     needs: [data_select_and_simplify, data_prepare_seq_trials_month]
@@ -247,4 +247,19 @@ actions:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly.csv
         csv2: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly_red.csv
+
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Sequential trials - ITT
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # #
+
+  run_itt_analysis:
+    run: r:latest analysis/seq_trials/itt_analysis.R
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds: output/seq_trials/itt/itt_fit_*.rds
+      moderately_sensitive:
+        csv: output/seq_trials/itt/itt_fit_*.csv
 

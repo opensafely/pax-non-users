@@ -101,9 +101,9 @@ toc()
 
 # make dummy data better
 if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
-  data_splitted <-
-    data_splitted %>%
-    select(patient_id, tstart, tend, period, status_seq, starts_with("treatment_seq"))
+  # data_splitted <-
+  #   data_splitted %>%
+  #   select(patient_id, tstart, tend, period, status_seq, starts_with("treatment_seq"))
 }
 
 ################################################################################
