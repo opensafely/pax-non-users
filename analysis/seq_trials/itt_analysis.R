@@ -11,9 +11,8 @@
 ################################################################################
 # 0.0 Import libraries + functions
 ################################################################################
-library(readr)
 library(magrittr)
-library(dplyr)
+library(dplyr, quietly = TRUE)
 library(tidyr)
 library(fs)
 library(here)
@@ -25,13 +24,20 @@ library(lmtest)
 library(data.table)
 library(optparse)
 library(tictoc)
+library(parglm)
+library(glue)
 source(here::here("lib", "design", "covars_seq_trials.R"))
+source(here::here("analysis", "seq_trials", "functions", "glance_plr.R"))
+source(here::here("analysis", "seq_trials", "functions", "tidy_plr.R"))
+source(here::here("analysis", "seq_trials", "functions", "plr_process.R"))
 
 ################################################################################
 # 0.1 Create directories for output
 ################################################################################
 output_dir <- here::here("output", "seq_trials", "itt")
 fs::dir_create(output_dir)
+log_dir <- here::here("output", "seq_trials", "itt", "log")
+fs::dir_create(log_dir)
 
 ################################################################################
 # 0.2 Import command-line arguments
@@ -53,14 +59,19 @@ if(length(args)==0){
   
   model <- opt$model
 }
+## create special log file ----
+cat(glue("## script info for the itt analysis, using model: {model} ##"), 
+    "  \n", 
+    file = fs::path(log_dir, glue("itt_log_{model}.txt")), append = FALSE)
+## function to pass additional log text
+logoutput <- function(...){
+  cat(..., file = fs::path(log_dir, glue("itt_log_{model}.txt")), sep = "\n  ", append = TRUE)
+}
 
 ################################################################################
 # 0.3 Import data
 ################################################################################
-trials_monthly <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
-trials_monthly %<>%
-  mutate(trial = factor(trial, levels = 0:4),
-         period = factor(period, levels = 1:12))
+trials <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
 
 ################################################################################
 # 1.0 Outcome model
@@ -90,27 +101,31 @@ if (model == "simple"){
                   collapse = " + ")) %>%  
     as.formula()
 }
+# Settings for parglm fitting
+parglm_control <-
+  parglm.control(maxit = 40,
+                 nthreads = 4)
+
 print("Fit outcome model")
 tic()
 om_fit <-
-  glm(f, 
-      family = binomial(link = "logit"),
-      data = trials_monthly)
+  parglm(f, 
+         family = binomial(link = "logit"),
+         data = trials,
+         control = parglm_control,
+         na.action = "na.fail",
+         model = FALSE)
 toc()
-print("Estimate robust standard errors")
+print("Process outcome model")
 tic()
-om_fit_robust <-
-  coeftest(om_fit,
-           vcovHC)
-toc()
-print("Tidy output")
-tic()
-om_fit_robust_tidy <- 
-  om_fit_robust %>%
-  tidy(conf.int = TRUE) %>%
-  mutate(OR = exp(estimate),
-         OR_lci = exp(conf.low),
-         OR_hci = exp(conf.high))
+om_processed <-
+  plr_process(
+    plrmod = om_fit,
+    model = model,
+    cluster = trials$patient_id,
+    glance_plr,
+    tidy_plr
+  )
 toc()
 
 ################################################################################
@@ -122,8 +137,16 @@ saveRDS(
   om_fit,
   fs::path(output_dir, paste0("itt_fit_", model, ".rds"))
 )
+saveRDS(
+  om_processed$vcov,
+  fs::path(output_dir, paste0("itt_vcov_", model, ".rds"))
+)
 data.table::fwrite(
-  om_fit_robust_tidy,
+  om_processed$tidy,
   fs::path(output_dir, paste0("itt_fit_", model, ".csv"))
+)
+data.table::fwrite(
+  om_processed$glance,
+  fs::path(output_dir, paste0("itt_glance_", model, ".csv"))
 )
 toc()

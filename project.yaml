@@ -259,34 +259,46 @@ actions:
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds: output/seq_trials/itt/itt_fit_simple.rds
+        rds1: output/seq_trials/itt/itt_fit_simple.rds
+        rds2: output/seq_trials/itt/itt_vcov_simple.rds
       moderately_sensitive:
-        csv: output/seq_trials/itt/itt_fit_simple.csv
+        csv1: output/seq_trials/itt/itt_fit_simple.csv
+        csv2: output/seq_trials/itt/itt_glance_simple.csv
+        txt: output/seq_trials/itt/log/itt_log_simple.txt
 
   run_itt_analysis_interaction_period:
     run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_period
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds: output/seq_trials/itt/itt_fit_interaction_period.rds
+        rds1: output/seq_trials/itt/itt_fit_interaction_period.rds
+        rds2: output/seq_trials/itt/itt_vcov_interaction_period.rds
       moderately_sensitive:
-        csv: output/seq_trials/itt/itt_fit_interaction_period.csv
+        csv1: output/seq_trials/itt/itt_fit_interaction_period.csv
+        csv2: output/seq_trials/itt/itt_glance_interaction_period.csv
+        txt: output/seq_trials/itt/log/itt_log_interaction_period.txt
 
   run_itt_analysis_interaction_trial:
     run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_trial
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds: output/seq_trials/itt/itt_fit_interaction_trial.rds
+        rds1: output/seq_trials/itt/itt_fit_interaction_trial.rds
+        rds2: output/seq_trials/itt/itt_vcov_interaction_trial.rds
       moderately_sensitive:
-        csv: output/seq_trials/itt/itt_fit_interaction_trial.csv
+        csv1: output/seq_trials/itt/itt_fit_interaction_trial.csv
+        csv2: output/seq_trials/itt/itt_glance_interaction_trial.csv
+        txt: output/seq_trials/itt/log/itt_log_interaction_trial.txt
 
   run_itt_analysis_interaction_all:
     run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_all
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds: output/seq_trials/itt/itt_fit_interaction_all.rds
+        rds1: output/seq_trials/itt/itt_fit_interaction_all.rds
+        rds2: output/seq_trials/itt/itt_vcov_interaction_all.rds
       moderately_sensitive:
-        csv: output/seq_trials/itt/itt_fit_interaction_all.csv
+        csv1: output/seq_trials/itt/itt_fit_interaction_all.csv
+        csv2: output/seq_trials/itt/itt_glance_interaction_all.csv
+        txt: output/seq_trials/itt/log/itt_log_interaction_all.txt
 
