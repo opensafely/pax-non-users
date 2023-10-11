@@ -39,7 +39,7 @@ summarise_covid_admissions <- function(data){
   rowwise() %>%
   mutate(
     covid_hosp_admission_first =
-      first(na.omit(c(covid_hosp_admission_date0,
+      dplyr::first(na.omit(c(covid_hosp_admission_date0,
                       covid_hosp_admission_date1,
                       covid_hosp_admission_date2,
                       covid_hosp_admission_date3,
@@ -48,7 +48,7 @@ summarise_covid_admissions <- function(data){
                       covid_hosp_admission_date6,
                       covid_hosp_admission_first_date7_28))),
     covid_hosp_admission_first_date0_6 = 
-      first(na.omit(c(covid_hosp_admission_date0,
+      dplyr::first(na.omit(c(covid_hosp_admission_date0,
                       covid_hosp_admission_date1,
                       covid_hosp_admission_date2,
                       covid_hosp_admission_date3,
