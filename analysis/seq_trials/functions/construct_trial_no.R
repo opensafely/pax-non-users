@@ -10,6 +10,6 @@ construct_trial_no <- function(data, trial_no){
     dplyr::filter(treatment_seq_lag1_baseline == 0, #restrict to those not previously treated at the start of the trial
                   dplyr::first(treatment_seq_sotmol) == 0) %>% # restrict to those not treated with sot/mol in the first interval
     dplyr::ungroup() %>%
-    dplyr::select(- c(treatment_seq_lag1_baseline, treatment_seq_lag1)) %>%
+    dplyr::select(- c(treatment_seq_lag1_baseline)) %>%
     dplyr::relocate(patient_id, starts_with("period_"), trial, tstart, tend, arm)
 }
