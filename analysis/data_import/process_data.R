@@ -104,6 +104,13 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
         levels = c("28-83 days", "< 7 days", "7-27 days", ">= 84 days", "Unknown")
       ),
       
+      vaccination_status = factor(vaccination_status,
+                                  levels = c("Un-vaccinated",
+                                             "One vaccination",
+                                             "Two vaccinations",
+                                             "Three or more vaccinations",
+                                             "Un-vaccinated (declined)")),
+      
       # because want to add dummy var
       tb_postest_vax = 
         fct_recode(tb_postest_vacc_cat,
