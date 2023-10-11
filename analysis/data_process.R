@@ -84,7 +84,9 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
                  period_2month = runif(1, 0, 6) %>% ceiling(),
                  period_3month = runif(1, 0, 4) %>% ceiling(), 
                  period_week = runif(1, 0, 52) %>% ceiling()) %>%
-          ungroup())
+          ungroup() %>%
+          mutate(ageband = if_else(is.na(ageband), "18-39", ageband %>% as.character()) %>%
+                   factor(levels = c("18-39", "40-59", "60-79", "80+"))))
 }
 
 ################################################################################
