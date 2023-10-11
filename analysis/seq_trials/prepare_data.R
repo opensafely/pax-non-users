@@ -11,6 +11,7 @@
 # 0.0 Import libraries + functions
 ################################################################################
 library(readr)
+library(magrittr)
 library(dplyr)
 library(fs)
 library(here)
@@ -75,7 +76,8 @@ print("Import data")
 tic()
 data <- 
   read_feather(here("output", "data", "data_processed_excl_contraindicated.feather")) %>%
-  mutate(period = .data[[period_colname]])
+  mutate(period = .data[[period_colname]]) %>%
+  select(-starts_with("period_"))
 cuts <- data %>% pull(period) %>% unique() %>% sort()
 toc()
 
@@ -153,6 +155,11 @@ toc()
 #         construct_trial_no = construct_trial_no)
 #     )
 # toc()
+trials %<>%
+  mutate(arm = factor(arm, levels = c(0, 1)),
+         trial = factor(trial, levels = 0:4),
+         period = factor(period, levels = 1:12))
+
 
 size_trials <- object.size(trials)
 format(size_trials, units = "Mb", standard = "SI")
