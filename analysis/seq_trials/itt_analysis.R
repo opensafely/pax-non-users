@@ -4,8 +4,8 @@
 # 
 # 
 # The output of this script is:
-# csv file ./output/seq_trials/itt/data_flow_seq_trials_*.csv
-# where * is monthly or weekly (_red for redacted file)
+# csv file ./output/seq_trials/itt/itt_fit_*.csv
+# where * is simple or interaction_*
 ################################################################################
 
 ################################################################################
