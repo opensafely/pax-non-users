@@ -66,7 +66,8 @@ size_trials <-
   trials %>%
   group_by(period, trial, arm) %>%
   summarise(n = length(unique(patient_id)), .groups = "keep") %>%
-  mutate(period = as.integer(period)) %>%
+  mutate(period = as.integer(period),
+         trial = as.integer(trial)) %>%
   pivot_wider(
     names_from = arm,
     values_from = n, 
