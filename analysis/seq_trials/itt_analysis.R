@@ -12,7 +12,7 @@
 # 0.0 Import libraries + functions
 ################################################################################
 library(magrittr)
-library(dplyr, quietly = TRUE)
+library(dplyr)
 library(tidyr)
 library(fs)
 library(here)
