@@ -123,7 +123,7 @@ om_processed <-
   plr_process(
     plrmod = om_fit,
     model = model,
-    cluster = list(trials$patient_id, trials$trial),
+    cluster = ~ patient_id:tend + patient_id:trial,
     glance_plr,
     tidy_plr
   )
