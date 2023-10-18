@@ -115,6 +115,7 @@ om_fit <-
          control = parglm_control,
          na.action = "na.fail",
          model = FALSE)
+om_fit$data <- NULL
 toc()
 print("Process outcome model")
 tic()
@@ -122,7 +123,7 @@ om_processed <-
   plr_process(
     plrmod = om_fit,
     model = model,
-    cluster = trials$patient_id,
+    cluster = list(trials$patient_id, trials$trial),
     glance_plr,
     tidy_plr
   )
