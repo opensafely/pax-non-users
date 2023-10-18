@@ -302,3 +302,10 @@ actions:
         csv2: output/seq_trials/itt/itt_glance_interaction_all.csv
         txt: output/seq_trials/itt/log/itt_log_interaction_all.txt
 
+  create_surv_curves_itt_simple:
+    run: r:latest analysis/seq_trials/itt_curves.R --model=simple
+    needs: [data_prepare_seq_trials_month, run_itt_analysis_simple]
+    outputs:
+      moderately_sensitive:
+        csv1: output/seq_trials/itt/curves/itt_survcurves_simple.csv
+        csv2: output/seq_trials/itt/curves/itt_diffcurve_simple.csv

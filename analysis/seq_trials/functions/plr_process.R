@@ -12,7 +12,7 @@ plr_process <- function(plrmod,
   )
 
   # cluster vcov
-  vcov <- vcovCL(plrmod, cluster = cluster, type = "HC0")
+  vcov <- vcovCL(plrmod, cluster = cluster, fix = TRUE, type = "HC0")
   
   # one row glance of model
   glance <-
