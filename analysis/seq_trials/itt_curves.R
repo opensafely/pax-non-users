@@ -1,7 +1,6 @@
 ################################################################################
 #
-# INTENTION TO TREAT ANALYSIS
-# 
+# INTENTION TO TREAT ANALYSIS - CUM INC CURVES
 # 
 # The output of this script is:
 # csv file ./output/seq_trials/itt/itt_survcurves_*.csv and
@@ -64,8 +63,9 @@ if(length(args)==0){
 ################################################################################
 fit <- readRDS(here("output", "seq_trials", "itt", glue("itt_fit_{model}.rds")))
 vcov <- readRDS(here("output", "seq_trials", "itt", glue("itt_vcov_{model}.rds")))
-data_trt1 <- fit$data %>% mutate(arm = factor(1, levels = c("0", "1")), w = 1)
-data_trt0 <- fit$data %>% mutate(arm = factor(0, levels = c("0", "1")), w = 1)
+trials <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
+data_trt1 <- trials %>% mutate(arm = factor(1, levels = c("0", "1")), w = 1)
+data_trt0 <- trials %>% mutate(arm = factor(0, levels = c("0", "1")), w = 1)
 
 ################################################################################
 # 1.0 Outcome model
@@ -77,6 +77,7 @@ survcurves <-
                                vcov = vcov,
                                cuminc_variance = cuminc_variance,
                                id = "patient_id",
+                               trial = "trial",
                                time = "tend",
                                weights = "w") %>%
          mutate(arm = as.integer(stringr::str_extract(.y, "\\d+")),
@@ -91,6 +92,7 @@ diffcurve <-
                    vcov = vcov,
                    riskdiff_variance = riskdiff_variance,
                    id = "patient_id",
+                   trial = "trial",
                    time = "tend",
                    weights = "w")
 

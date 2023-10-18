@@ -7,6 +7,7 @@ create_diffcurve <- function(
     vcov,
     riskdiff_variance, # function to estimate variance risk difference
     id,
+    trial,
     time,
     weights){
   
@@ -27,6 +28,7 @@ create_diffcurve <- function(
         newdata0 = data_counterfact0,
         newdata1 = data_counterfact1,
         id = id,
+        trial = trial,
         time = time,
         weights = weights
       ) %>% sqrt(),

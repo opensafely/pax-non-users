@@ -1,12 +1,13 @@
-riskdiff_variance <- function(plrmod, vcov, newdata0, newdata1, id, time, weights){
+riskdiff_variance <- function(plrmod, vcov, newdata0, newdata1, id, trial, time, weights){
   
   # calculate variance of adjusted survival / adjusted cumulative incidence
   # needs plrmod object, cluster-vcov, input data, plrmod weights, and indices for patient and time
   
   tt <- terms(plrmod) # this helpfully grabs the correct spline basis from the plrmod, rather than recalculating based on `newdata`
-  Terms <- delete.response(tt)
-  m.mat0 <- model.matrix(Terms, data = newdata0)
-  m.mat1 <- model.matrix(Terms, data = newdata1)
+  newdata0 <- newdata0 %>% arrange(.data[[id]], .data[[time]])
+  newdata1 <- newdata1 %>% arrange(.data[[id]], .data[[time]])
+  m.mat0 <- model.matrix(tt, data = newdata0)
+  m.mat1 <- model.matrix(tt, data = newdata1)
   m.coef <- plrmod$coef
   
   N <- nrow(m.mat0)
@@ -33,7 +34,7 @@ riskdiff_variance <- function(plrmod, vcov, newdata0, newdata1, id, time, weight
   # cumulative sum of summand, by patient_id  # t_i x k
   cmlsum <- matrix(0, nrow = N, ncol = K)
   for (k in seq_len(K)){
-    cmlsum[,k] <- ave(summand1[,k] - summand0[,k], newdata0[[id]], FUN = cumsum)
+    cmlsum[,k] <- ave(summand1[,k] - summand0[,k], newdata0[[id]], newdata0[[trial]], FUN = cumsum)
   }
   
   ## multiply by plrmod weights (weights are normalised here so we can use `sum` later, not `weighted.mean`)

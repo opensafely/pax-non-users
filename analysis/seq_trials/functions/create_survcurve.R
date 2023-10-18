@@ -5,6 +5,7 @@ create_survcurve <-  function(
     vcov, 
     cuminc_variance, # function to estimate variance cuminc
     id,
+    trial,
     time,
     weights){
   
@@ -23,9 +24,10 @@ create_survcurve <-  function(
     mutate(
       survival = cumprod(1 - prob),
       survival_se = cuminc_variance(plrmod, 
-                                    vcov, 
+                                    vcov,
                                     data_counterfact, 
-                                    id, 
+                                    id,
+                                    trial,
                                     time, 
                                     weights) %>% sqrt()
     ) %>%
