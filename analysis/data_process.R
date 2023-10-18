@@ -84,8 +84,8 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
                  period_2month = runif(1, 0, 6) %>% ceiling(),
                  period_3month = runif(1, 0, 4) %>% ceiling(), 
                  period_week = runif(1, 0, 52) %>% ceiling(),
-                 tb_postest_vacc_cat = sample(c("28-83 days", "< 7 days", "7-27 days", ">= 84 days", "Unknown"), 1) %>%
-                   factor(levels = c("28-83 days", "< 7 days", "7-27 days", ">= 84 days", "Unknown"))) %>%
+                 tb_postest_vacc_cat = sample(c(">= 84 days or unknown", "< 7 days", "7-27 days", "28-83 days"), 1) %>%
+                   factor(levels = c(">= 84 days or unknown", "< 7 days", "7-27 days", "28-83 days"))) %>%
           ungroup() %>%
           mutate(ageband = if_else(is.na(ageband), "18-39", ageband %>% as.character()) %>%
                    factor(levels = c("18-39", "40-59", "60-79", "80+"))))

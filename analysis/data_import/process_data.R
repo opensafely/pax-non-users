@@ -95,13 +95,12 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
                 NA_real_),
       
       tb_postest_vacc_cat = case_when(
-        is.na(tb_postest_vacc) ~ "Unknown",
         tb_postest_vacc < 7 ~ "< 7 days",
         tb_postest_vacc >=7 & tb_postest_vacc < 28 ~ "7-27 days",
         tb_postest_vacc >= 28 & tb_postest_vacc < 84 ~ "28-83 days",
-        tb_postest_vacc >= 84 ~ ">= 84 days"
+        (tb_postest_vacc >= 84 | is.na(tb_postest_vacc)) ~ ">= 84 days or unknown"
       ) %>% factor(
-        levels = c("28-83 days", "< 7 days", "7-27 days", ">= 84 days", "Unknown")
+        levels = c(">= 84 days or unknown", "< 7 days", "7-27 days", "28-83 days")
       ),
       
       vaccination_status = factor(vaccination_status,
@@ -117,7 +116,7 @@ process_data <- function(data_extracted, study_dates, treat_window_days = 4){
                    "7" = "< 7 days",
                    "7_27" = "7-27 days",
                    "28_83" = "28-83 days",
-                   "84" = ">= 84 days"),
+                   "84_unkonwn" = ">= 84 days or unknown"),
       
       most_recent_vax_cat = fct_case_when(
         pfizer_most_recent_cov_vac == TRUE ~ "Pfizer",
