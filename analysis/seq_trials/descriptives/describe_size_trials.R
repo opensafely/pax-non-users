@@ -67,7 +67,7 @@ size_trials <-
   group_by(period, trial, arm) %>%
   summarise(n = length(unique(patient_id)), .groups = "keep") %>%
   mutate(period = as.integer(period),
-         trial = as.integer(trial)) %>%
+         trial = trial) %>%
   pivot_wider(
     names_from = arm,
     values_from = n, 
@@ -104,7 +104,7 @@ n_init_trt_untrt_all_trials <- function(trials, period_no){
 cuts <- trials %>% pull(period) %>% unique() %>% sort() %>% as.integer()
 n_init_trt_in_untrt_arm <- 
   map_dfr(.x = cuts,
-          .f = ~ n_init_trt_untrt_all_trials(trials, .x))
+          .f = ~ n_init_trt_untrt_all_trials(trials, .x) %>% mutate(trial = factor(trial, levels = c("0", "1", "2", "3", "4"))))
 
 ################################################################################
 # 4.0 Join two tables from step 1 and 2

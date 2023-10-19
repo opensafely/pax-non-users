@@ -42,5 +42,5 @@ calc_n_excluded_in_each_trial2 <- function(data){
                  names_pattern = "(n_.*)(.)") %>% 
     relocate(trial, .after = period) %>%
     mutate(period = period %>% as.integer(),
-           trial = trial %>% as.integer())
+           trial = factor(trial, levels = c("0", "1", "2", "3", "4")))
 }
