@@ -32,8 +32,8 @@ create_diffcurve <- function(
         time = time,
         weights = weights
       ) %>% sqrt(),
-      diff_ll = pmax(0, diff + qnorm(0.025) * diff_se) - pmax(0, diff + qnorm(0.975) * diff_se - 1),
-      diff_ul = pmin(1, diff + qnorm(0.975) * diff_se) + pmin(0, diff + qnorm(0.025) * diff_se),
+      diff_ll = diff + qnorm(0.025) * diff_se,
+      diff_ul = diff + qnorm(0.975) * diff_se,
     ) %>%
     add_row(
       tend = 0,
