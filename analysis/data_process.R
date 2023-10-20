@@ -84,6 +84,7 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
                  period_2month = runif(1, 0, 6) %>% ceiling(),
                  period_3month = runif(1, 0, 4) %>% ceiling(), 
                  period_week = runif(1, 0, 52) %>% ceiling(),
+                 covid_test_positive_date = sample(seq(ymd("20220210"), ymd("20230209"), by = 1), 1),
                  tb_postest_vacc_cat = sample(c(">= 84 days or unknown", "< 7 days", "7-27 days", "28-83 days"), 1) %>%
                    factor(levels = c(">= 84 days or unknown", "< 7 days", "7-27 days", "28-83 days"))) %>%
           ungroup() %>%
