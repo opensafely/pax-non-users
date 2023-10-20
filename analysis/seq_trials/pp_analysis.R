@@ -26,6 +26,7 @@ library(data.table)
 library(optparse)
 library(tictoc)
 source(here::here("lib", "design", "covars_seq_trials.R"))
+source(here::here("analysis", "seq_trials", "functions", "add_ipacw.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -58,50 +59,11 @@ if(length(args)==0){
 # 0.3 Import data
 ################################################################################
 trials <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
-trials %<>%
-  mutate(trial = factor(trial, levels = 0:4),
-         period = factor(period, levels = 1:12))
 
 ################################################################################
 # 1.0 IPACW
-################################################################################
-trials_arm0_treatmentwindow <-
-  trials %>%
-  filter(arm == 0, tend <=4)  %>%
-  group_by(patient_id, trial) %>%
-  mutate(treatment_seq_lead1 = lead(treatment_seq, n = 1L, default = 1L), 
-         treatment_seq_next_equal_to_arm = if_else(treatment_seq_lead1 == arm, 1L, 0L)) %>%
-  ungroup()
-fit_num <- glm(treatment_seq_next_equal_to_arm ~ factor(tend),
-               family = binomial(link = "logit"),
-               data = trials_arm0_treatmentwindow)
-formula_denom <- 
-  paste0("treatment_seq_next_equal_to_arm ~ ",
-         paste0(c("factor(tend) + period + trial", covars), 
-                collapse = " + ")) %>%  
-  as.formula()
-fit_denom <- glm(formula_denom,
-                 family = binomial(link = "logit"),
-                 data = trials_arm0_treatmentwindow)
-trials_arm0_treatmentwindow <-
-  trials_arm0_treatmentwindow %>%
-  mutate(ipacw_num = predict(fit_num, type = "response", newdata = .),
-         ipacw_denom = predict(fit_denom, type = "response", newdata = .)) %>%
-  select(patient_id, tstart, tend, trial, ipacw_num, ipacw_denom, treatment_seq_lead1, treatment_seq_next_equal_to_arm)
-
-trials <-
-  trials %>%
-  left_join(trials_arm0_treatmentwindow,
-            by = c("patient_id", "tstart", "tend", "trial")) %>%
-  mutate(
-    ipacw = case_when(arm == 1 ~ 1,
-                      arm == 0 & tend > 4 ~ 1,
-                      arm == 0 & tend <= 4 ~ ipacw_num / ipacw_denom)) %>%
-  group_by(patient_id, trial) %>%
-  mutate(
-    ipacw_lag1 = lag(ipacw, n = 1L, default = 1),
-    ipacw_cum = cumprod(ipacw_lag1)) %>%
-  ungroup()
+# trials_ipacw_added <- 
+#   add_ipacw(trials, covars) TO FIX: MAKE THIS WORK!!!
 
 ################################################################################
 # 1.0 Outcome model
