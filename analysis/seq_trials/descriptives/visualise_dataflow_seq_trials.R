@@ -35,7 +35,7 @@ args <- commandArgs(trailingOnly=TRUE)
 data_flow_seq_trials <- 
   read_csv(here("output", "seq_trials", "descriptives", "data_flow_seq_trials_monthly_red.csv"),
            col_types = cols(
-             period_month = col_integer(),
+             period = col_integer(),
              trial = col_integer(),
              treated_baseline = col_character(),
              untreated_baseline = col_character(),
@@ -79,7 +79,7 @@ plot <-
          aes(x = trial, y = count, fill = type)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  facet_grid(rows = vars(period_month)) + 
+  facet_grid(rows = vars(period)) + 
   theme_minimal() +
   scale_fill_viridis_d() + 
   labs(y = "Number of Patients",
