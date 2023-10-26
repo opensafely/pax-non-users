@@ -50,7 +50,7 @@ if(length(args)==0){
   
   option_list <- list(
     make_option("--model", type = "character", default = "simple",
-                help = "Outcome model fitted. Choice between simple (main effects arm, period and trial), interaction_period (introducing interaction between arm and period), interaction_trial (introducing interaction between arm and trial), interaction_all (introducing interaction between arm and period; arm and trial) [default %simple]. ",
+                help = "Outcome model fitted. Choice between simple (main effects arm, period and trial), interaction_period (introducing interaction between arm and period), interaction_trial (introducing interaction between arm and trial), interaction_all (introducing interaction between arm and period; arm and trial), crude, crude_period and crude_trial [default %simple]. ",
                 metavar = "model")
   )
   
@@ -98,6 +98,24 @@ if (model == "simple"){
   f <-
     paste0("status_seq ~ ",
            paste0(c("arm + ns(tend, 4) + period + trial + arm:period + arm:trial", covars),
+                  collapse = " + ")) %>%  
+    as.formula()
+} else if (model == "crude"){
+  f <-
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4)"),
+                  collapse = " + ")) %>%  
+    as.formula()
+} else if (model == "crude_period"){
+  f <-
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4) + period"),
+                  collapse = " + ")) %>%  
+    as.formula()
+} else if (model == "crude_trial"){
+  f <-
+    paste0("status_seq ~ ",
+           paste0(c("arm + ns(tend, 4) + trial"),
                   collapse = " + ")) %>%  
     as.formula()
 }

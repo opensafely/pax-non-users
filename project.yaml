@@ -317,6 +317,42 @@ actions:
         csv2: output/seq_trials/itt/itt_glance_interaction_all.csv
         txt: output/seq_trials/itt/log/itt_log_interaction_all.txt
 
+  run_itt_analysis_crude:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=crude
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds1: output/seq_trials/itt/itt_fit_crude.rds
+        rds2: output/seq_trials/itt/itt_vcov_crude.rds
+      moderately_sensitive:
+        csv1: output/seq_trials/itt/itt_fit_crude.csv
+        csv2: output/seq_trials/itt/itt_glance_crude.csv
+        txt: output/seq_trials/itt/log/itt_log_crude.txt
+
+  run_itt_analysis_crude_period:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=crude_period
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds1: output/seq_trials/itt/itt_fit_crude_period.rds
+        rds2: output/seq_trials/itt/itt_vcov_crude_period.rds
+      moderately_sensitive:
+        csv1: output/seq_trials/itt/itt_fit_crude_period.csv
+        csv2: output/seq_trials/itt/itt_glance_crude_period.csv
+        txt: output/seq_trials/itt/log/itt_log_crude_period.txt
+
+  run_itt_analysis_crude_trial:
+    run: r:latest analysis/seq_trials/itt_analysis.R --model=crude_trial
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds1: output/seq_trials/itt/itt_fit_crude_trial.rds
+        rds2: output/seq_trials/itt/itt_vcov_crude_trial.rds
+      moderately_sensitive:
+        csv1: output/seq_trials/itt/itt_fit_crude_trial.csv
+        csv2: output/seq_trials/itt/itt_glance_crude_trial.csv
+        txt: output/seq_trials/itt/log/itt_log_crude_trial.txt
+
   create_surv_curves_itt_simple:
     run: r:latest analysis/seq_trials/itt_curves.R --model=simple
     needs: [data_prepare_seq_trials_month, run_itt_analysis_simple]
