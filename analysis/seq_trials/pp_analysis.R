@@ -62,8 +62,8 @@ trials <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.fe
 
 ################################################################################
 # 1.0 IPACW
-# trials_ipacw_added <- 
-#   add_ipacw(trials, covars) TO FIX: MAKE THIS WORK!!!
+trials_ipacw_added <-
+  add_ipacw(trials = trials, covars = covars)
 
 ################################################################################
 # 1.0 Outcome model
