@@ -232,6 +232,12 @@ actions:
       highly_sensitive:
         data1: output/data/data_seq_trials_monthly.feather
 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Sequential trials - DESCRIPTIVES
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # #
+
   describe_size_trials_month:
     run: r:latest analysis/seq_trials/descriptives/describe_size_trials.R --period=month
     needs: [data_prepare_seq_trials_month]
@@ -247,6 +253,15 @@ actions:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly.csv
         csv2: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly_red.csv
+  
+  estimate_crude_survival:
+    run: r:latest analysis/seq_trials/descriptives/estimate_crude_survival.R
+    needs: [data_select_and_simplify, data_prepare_seq_trials_month]
+    outputs:
+      moderately_sensitive:
+        csv1: output/seq_trials/descriptives/survival/surv_main.csv
+        csv2: output/seq_trials/descriptives/survival/surv_by_period.csv
+        csv3: output/seq_trials/descriptives/survival/surv_by_trial.csv
 
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # # 
