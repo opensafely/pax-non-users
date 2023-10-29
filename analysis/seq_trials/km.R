@@ -290,7 +290,7 @@ for (subgroup_i in subgroups) {
   
   data_surv_rounded_red <-
     data_surv_rounded %>%
-    select(-c(n.risk, n.event, cml.event,
+    select(-c(N, n.risk, n.event, cml.event,
               n.censor, cml.censor, estimate, 
               std.error, conf.high, conf.low,
               surv.se, surv.low, surv.high,
