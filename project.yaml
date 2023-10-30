@@ -276,6 +276,7 @@ actions:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/survival/km_estimates.csv
         csv2: output/seq_trials/descriptives/survival/km_estimates_red.csv
+        csv3: output/seq_trials/descriptives/survival/km_estimates_red2.csv
         plot1: output/seq_trials/descriptives/survival/km_estimates.png
         plot2: output/seq_trials/descriptives/survival/km_estimates_red.png
 
@@ -288,6 +289,7 @@ actions:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/survival/km_estimates_period.csv
         csv2: output/seq_trials/descriptives/survival/km_estimates_period_red.csv
+        csv3: output/seq_trials/descriptives/survival/km_estimates_period_red2.csv
         plot1: output/seq_trials/descriptives/survival/km_estimates_period.png
         plot2: output/seq_trials/descriptives/survival/km_estimates_period_red.png
 
