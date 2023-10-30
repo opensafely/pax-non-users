@@ -173,7 +173,8 @@ data_patients <-
             tstart = .data[[tstart]],
             tend = .data[[tend]],
             event_indicator = .data[[event_indicator]],
-            weight = .data[[weight]])
+            weight = .data[[weight]],
+            patient_id2 = paste0(patient_id, trial))
 if(is.null(subgroups)) subgroups <- list("all")
 
 # Get KM estimates ------
@@ -191,7 +192,7 @@ for (subgroup_i in subgroups) {
       surv_obj = purrr::map(data, ~ {
         survival::survfit(survival::Surv(tstart, tend, event_indicator) ~ 1, 
                           data = .x, 
-                          id = patient_id, 
+                          id = patient_id2, 
                           conf.type="log-log", 
                           weights = weight)
       }),
@@ -268,7 +269,9 @@ for (subgroup_i in subgroups) {
         .subgroup_var = subgroup_i,
         .subgroup,
         !!exposure_sym,
-        time, lagtime, interval,
+        tstart = lagtime,
+        tend = time,
+        interval_length = interval,
         #cml.event, cml.censor,
         N,
         n.risk, n.risk.r,
@@ -296,6 +299,10 @@ for (subgroup_i in subgroups) {
               surv.se, surv.low, surv.high,
               risk.se, risk.low, risk.high))
   write_csv(data_surv_rounded_red, fs::path(dir_output, paste0(file_name, "_red.csv")))
+  data_surv_rounded_red2 <- 
+    data_surv_rounded_red %>%
+    select(-c(n.censor.r, cml.censor.r, risk, risk.se.approx, risk.low.approx, risk.high.approx, surv.se.approx))
+  write_csv(data_surv_rounded_red2, fs::path(dir_output, paste0(file_name, "_red2.csv")))
   
   if(plot){
     
@@ -304,8 +311,8 @@ for (subgroup_i in subgroups) {
         group_modify(
           ~ add_row(
             .x,
-            time = 0, # assumes time origin is zero
-            lagtime = 0,
+            tstart = 0, # assumes time origin is zero
+            tend = 0,
             estimate = 1,
             conf.low = 1,
             conf.high = 1,
@@ -313,9 +320,9 @@ for (subgroup_i in subgroups) {
           )
         ) %>%
         ggplot(aes(group = !!exposure_sym, colour = !!exposure_sym, fill = !!exposure_sym)) +
-        geom_step(aes(x = time, y = estimate), direction = "vh") +
-        geom_step(aes(x = time, y = estimate), direction = "vh", linetype = "dashed", alpha = 0.5) +
-        geom_rect(aes(xmin = lagtime, xmax = time, ymin = conf.high, ymax = conf.low), alpha = 0.1, colour = "transparent") +
+        geom_step(aes(x = tend, y = estimate), direction = "vh") +
+        geom_step(aes(x = tend, y = estimate), direction = "vh", linetype = "dashed", alpha = 0.5) +
+        geom_rect(aes(xmin = tstart, xmax = tend, ymin = conf.high, ymax = conf.low), alpha = 0.1, colour = "transparent") +
         facet_grid(rows = vars(.subgroup)) +
         scale_color_brewer(type = "qual", palette = "Set1", na.value = "grey") +
         scale_fill_brewer(type = "qual", palette = "Set1", guide = "none", na.value = "grey") +
@@ -341,8 +348,8 @@ for (subgroup_i in subgroups) {
         group_modify(
           ~ add_row(
             .x,
-            time = 0, # assumes time origin is zero
-            lagtime = 0,
+            tstart = 0, # assumes time origin is zero
+            tend = 0,
             surv = 1,
             surv.low.approx = 1,
             surv.high.approx = 1,
@@ -353,9 +360,9 @@ for (subgroup_i in subgroups) {
           )
         ) %>%
         ggplot(aes(group = !!exposure_sym, colour = !!exposure_sym, fill = !!exposure_sym)) +
-        geom_step(aes(x = time, y = surv), direction = "vh") +
-        geom_step(aes(x = time, y = surv), direction = "vh", linetype = "dashed", alpha = 0.5) +
-        geom_rect(aes(xmin = lagtime, xmax = time, ymin = surv.low.approx, ymax = surv.high.approx), alpha = 0.1, colour = "transparent") +
+        geom_step(aes(x = tend, y = surv), direction = "vh") +
+        geom_step(aes(x = tend, y = surv), direction = "vh", linetype = "dashed", alpha = 0.5) +
+        geom_rect(aes(xmin = tstart, xmax = tend, ymin = surv.low.approx, ymax = surv.high.approx), alpha = 0.1, colour = "transparent") +
         facet_grid(rows = vars(.subgroup)) +
         scale_color_brewer(type = "qual", palette = "Set1", na.value = "grey") +
         scale_fill_brewer(type = "qual", palette = "Set1", guide = "none", na.value = "grey") +
