@@ -25,14 +25,21 @@ library(lmtest)
 library(data.table)
 library(optparse)
 library(tictoc)
+library(parglm)
+library(glue)
 source(here::here("lib", "design", "covars_seq_trials.R"))
 source(here::here("analysis", "seq_trials", "functions", "add_ipacw.R"))
+source(here::here("analysis", "seq_trials", "functions", "glance_plr.R"))
+source(here::here("analysis", "seq_trials", "functions", "tidy_plr.R"))
+source(here::here("analysis", "seq_trials", "functions", "plr_process.R"))
 
 ################################################################################
 # 0.1 Create directories for output
 ################################################################################
 output_dir <- here::here("output", "seq_trials", "pp")
 fs::dir_create(output_dir)
+log_dir <- here::here("output", "seq_trials", "pp", "log")
+fs::dir_create(log_dir)
 
 ################################################################################
 # 0.2 Import command-line arguments
@@ -53,6 +60,14 @@ if(length(args)==0){
   opt <- parse_args(opt_parser)
   
   model <- opt$model
+}
+## create special log file ----
+cat(glue("## script info for the per-protool analysis, using model: {model} ##"), 
+    "  \n", 
+    file = fs::path(log_dir, glue("pp_log_{model}.txt")), append = FALSE)
+## function to pass additional log text
+logoutput <- function(...){
+  cat(..., file = fs::path(log_dir, glue("pp_log_{model}.txt")), sep = "\n  ", append = TRUE)
 }
 
 ################################################################################
@@ -93,27 +108,32 @@ if (model == "simple"){
                   collapse = " + ")) %>%  
     as.formula()
 }
+# Settings for parglm fitting
+parglm_control <-
+  parglm.control(maxit = 40,
+                 nthreads = 4)
 print("Fit outcome model")
 tic()
 om_fit <-
-  glm(f, 
-      family = binomial(link = "logit"),
-      data = trials_monthly)
+  parglm(f, 
+         family = binomial(link = "logit"),
+         data = trials_ipacw_added,
+         weights = w,
+         control = parglm_control,
+         na.action = "na.fail",
+         model = FALSE)
+om_fit$data <- NULL
 toc()
-print("Estimate robust standard errors")
+print("Process outcome model")
 tic()
-om_fit_robust <-
-  coeftest(om_fit,
-           vcovHC)
-toc()
-print("Tidy output")
-tic()
-om_fit_robust_tidy <- 
-  om_fit_robust %>%
-  tidy(conf.int = TRUE) %>%
-  mutate(OR = exp(estimate),
-         OR_lci = exp(conf.low),
-         OR_hci = exp(conf.high))
+om_processed <-
+  plr_process(
+    plrmod = om_fit,
+    model = model,
+    cluster = ~ patient_id:tend + patient_id:trial,
+    glance_plr,
+    tidy_plr
+  )
 toc()
 
 ################################################################################
@@ -123,10 +143,18 @@ print("Write output")
 tic()
 saveRDS(
   om_fit,
-  fs::path(output_dir, paste0("itt_fit_", model, ".rds"))
+  fs::path(output_dir, paste0("pp_fit_", model, ".rds"))
+)
+saveRDS(
+  om_processed$vcov,
+  fs::path(output_dir, paste0("pp_vcov_", model, ".rds"))
 )
 data.table::fwrite(
-  om_fit_robust_tidy,
-  fs::path(output_dir, paste0("itt_fit_", model, ".csv"))
+  om_processed$tidy,
+  fs::path(output_dir, paste0("pp_fit_", model, ".csv"))
+)
+data.table::fwrite(
+  om_processed$glance,
+  fs::path(output_dir, paste0("pp_glance_", model, ".csv"))
 )
 toc()
