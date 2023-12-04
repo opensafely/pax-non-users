@@ -36,6 +36,7 @@ data <-
          tb_postest_treat_seq_sotmol,
          treatment_seq_sotmol,
          fup_seq,
+         covid_test_positive_date,
          all_of(covars),
          dplyr::starts_with("period_"))
 
