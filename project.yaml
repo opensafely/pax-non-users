@@ -309,3 +309,21 @@ actions:
       moderately_sensitive:
         csv1: output/seq_trials/itt/curves/itt_survcurves_simple.csv
         csv2: output/seq_trials/itt/curves/itt_diffcurve_simple.csv
+
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Sequential trials - PP
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # #
+
+  run_pp_analysis_simple:
+    run: r:latest analysis/seq_trials/pp_analysis.R --model=simple
+    needs: [data_prepare_seq_trials_month]
+    outputs:
+      highly_sensitive:
+        rds1: output/seq_trials/pp/pp_fit_simple.rds
+        rds2: output/seq_trials/pp/pp_vcov_simple.rds
+      moderately_sensitive:
+        csv1: output/seq_trials/pp/pp_fit_simple.csv
+        csv2: output/seq_trials/pp/pp_glance_simple.csv
+        txt: output/seq_trials/pp/log/pp_log_simple.txt
