@@ -25,12 +25,12 @@ add_ipacw_trial_no <- function(trials, treatment_window, trial_no, covars){
     #                         paste0(c("factor(tend)"),
     #                                collapse = " + ")) %>% as.formula()
     formula_denom <- paste0("treatment_seq_lead1_equal_to_arm ~ ",
-                            paste0(c("factor(tend) + ns(covid_test_positive_date, 3)", covars),
+                            paste0(c("factor(tend) + ns(covid_test_positive_date, 3) + period", covars),
                                    collapse = " + ")) %>% as.formula()
   } else if (tend_max == 1){
     # formula_denom <- paste0("treatment_seq_lead1_equal_to_arm ~ 1") %>% as.formula()
     formula_denom <- paste0("treatment_seq_lead1_equal_to_arm ~ ",
-                            paste0(c("ns(covid_test_positive_date, 3)", covars),
+                            paste0(c("ns(covid_test_positive_date, 3) + period", covars),
                                    collapse = " + ")) %>% as.formula()
   }
   # fit_num <- glm(formula_num,
