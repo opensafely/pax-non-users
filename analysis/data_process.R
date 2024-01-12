@@ -59,10 +59,13 @@ if(Sys.getenv("OPENSAFELY_BACKEND") %in% c("", "expectations")){
            paxlovid_covid_therapeutics = if_else(!is.na(paxlovid_covid_therapeutics),
                                                  date_treated,
                                                  NA_Date_),
-           sotrovimab_covid_therapeutics = if_else(!is.na(sotrovimab_covid_therapeutics),
+           sotrovimab_covid_therapeutics = if_else(is.na(paxlovid_covid_therapeutics) & 
+                                                     !is.na(sotrovimab_covid_therapeutics),
                                                    date_treated,
                                                    NA_Date_),
-           molnupiravir_covid_therapeutics = if_else(!is.na(molnupiravir_covid_therapeutics),
+           molnupiravir_covid_therapeutics = if_else(is.na(paxlovid_covid_therapeutics) &
+                                                       is.na(sotrovimab_covid_therapeutics) &
+                                                       !is.na(molnupiravir_covid_therapeutics),
                                                      date_treated,
                                                      NA_Date_)
     )

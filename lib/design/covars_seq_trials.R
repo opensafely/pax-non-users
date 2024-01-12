@@ -1,5 +1,5 @@
 covars <- 
-  c("ageband",
+  c("age",
     "sex",
     "ethnicity",
     "imdQ5",
@@ -31,4 +31,5 @@ covars <-
     "huntingtons_disease_nhsd",
     # vax vars
     "vaccination_status",
-    "tb_postest_vacc_cat")
+    "tb_postest_vacc_cat",
+    "period_week")

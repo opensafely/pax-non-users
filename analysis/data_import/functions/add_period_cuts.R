@@ -34,5 +34,6 @@ add_period_cuts <- function(data, study_dates){
                                breaks = seq_dates_start_interval_3month, 
                                include.lowest = TRUE,
                                right = FALSE,
-                               labels = 1:4))
+                               labels = 1:4),
+           period_year = 1)
 }

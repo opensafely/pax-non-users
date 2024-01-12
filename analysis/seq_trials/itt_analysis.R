@@ -26,7 +26,7 @@ library(optparse)
 library(tictoc)
 library(parglm)
 library(glue)
-source(here::here("lib", "design", "covars_seq_trials.R"))
+source(here::here("lib", "design", "formula_outcome_model.R"))
 source(here::here("analysis", "seq_trials", "functions", "glance_plr.R"))
 source(here::here("analysis", "seq_trials", "functions", "tidy_plr.R"))
 source(here::here("analysis", "seq_trials", "functions", "plr_process.R"))
@@ -46,84 +46,79 @@ args <- commandArgs(trailingOnly=TRUE)
 if(length(args)==0){
   # use for interactive testing
   model <- "simple"
+  period <- "month"
 } else {
   
   option_list <- list(
     make_option("--model", type = "character", default = "simple",
                 help = "Outcome model fitted. Choice between simple (main effects arm, period and trial), interaction_period (introducing interaction between arm and period), interaction_trial (introducing interaction between arm and trial), interaction_all (introducing interaction between arm and period; arm and trial), crude, crude_period and crude_trial [default %simple]. ",
-                metavar = "model")
+                metavar = "model"),
+    make_option("--period", type = "character", default = "month",
+                help = "Subsets of data used, options are 'month', '2month', '3month', 'week' and 'year' [default %default]. ",
+                metavar = "period")
   )
   
   opt_parser <- OptionParser(usage = "prepare_data:[version] [options]", option_list = option_list)
   opt <- parse_args(opt_parser)
   
   model <- opt$model
+  period <- opt$period
 }
 ## create special log file ----
-cat(glue("## script info for the itt analysis, using model: {model} ##"), 
+cat(glue("## script info for the itt analysis, using period: {period}; model: {model} ##"), 
     "  \n", 
-    file = fs::path(log_dir, glue("itt_log_{model}.txt")), append = FALSE)
+    file = fs::path(log_dir, glue("itt_log_{period}_{model}.txt")), append = FALSE)
 ## function to pass additional log text
 logoutput <- function(...){
-  cat(..., file = fs::path(log_dir, glue("itt_log_{model}.txt")), sep = "\n  ", append = TRUE)
+  cat(..., file = fs::path(log_dir, glue("itt_log_{period}_{model}.txt")), sep = "\n  ", append = TRUE)
 }
 
 ################################################################################
 # 0.3 Import data
 ################################################################################
-trials <- arrow::read_feather(here("output", "data", "data_seq_trials_monthly.feather"))
+file_name <- paste0("data_seq_trials_", period, "ly.feather")
+trials <- arrow::read_feather(here("output", "data", file_name))
 
 ################################################################################
 # 1.0 Outcome model
 ################################################################################
-if (model == "simple"){
-  f <- 
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4) + period + trial", covars),
-                  collapse = " + ")) %>%  
-    as.formula()
-} else if (model == "interaction_period"){
-  f <-
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4) + period + trial + arm:period", covars),
-                  collapse = " + ")) %>%  
-    as.formula()
-} else if (model == "interaction_trial"){
-  f <-
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4) + period + trial + arm:trial", covars),
-                  collapse = " + ")) %>%  
-    as.formula()
-} else if (model == "interaction_all"){
-  f <-
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4) + period + trial + arm:period + arm:trial", covars),
-                  collapse = " + ")) %>%  
-    as.formula()
-} else if (model == "crude"){
-  f <-
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4)"),
-                  collapse = " + ")) %>%  
-    as.formula()
-} else if (model == "crude_period"){
-  f <-
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4) + period"),
-                  collapse = " + ")) %>%  
-    as.formula()
-} else if (model == "crude_trial"){
-  f <-
-    paste0("status_seq ~ ",
-           paste0(c("arm + ns(tend, 4) + trial"),
-                  collapse = " + ")) %>%  
-    as.formula()
+fetch_formula <- function(f, model, period){
+  if (period != "year"){
+    if (model == "simple"){
+      f <- update(. ~ period + trial, f)
+    } else if (model == "interaction_period"){
+      f <- update(. ~ period + trial + arm:period, f)
+    } else if (model == "interaction_trial"){
+      f <- update(. ~ period + trial + arm:trial, f)
+    } else if (model == "interaction_all"){
+      f <- update(. ~ period + trial + arm:period + arm:trial, f)
+    } else if (model == "crude"){
+      f <- status_seq ~ arm + ns(tend, 4)
+    } else if (model == "crude_period"){
+      f <- status_seq ~ arm + ns(tend, 4) + period
+    } else if (model == "crude_trial"){
+      f <- status_seq ~ arm + ns(tend, 4) + trial
+    }
+  } else if (period == "year"){
+    if (model == "simple"){
+      f <- update(. ~ trial, f)
+    } else if (model == "interaction_trial"){
+      f <- update(. ~ trial + arm:trial, f)
+    } else if (model == "crude"){
+      f <- status_seq ~ arm + ns(tend, 4)
+    } else if (model == "crude_trial"){
+      f <- status_seq ~ arm + ns(tend, 4) + trial
+    }
+  }
+  f
 }
+print("Construct formula")
+f <- fetch_formula(f, model, period)
+print(f)
 # Settings for parglm fitting
 parglm_control <-
   parglm.control(maxit = 40,
                  nthreads = 4)
-
 print("Fit outcome model")
 tic()
 om_fit <-
@@ -154,18 +149,18 @@ print("Write output")
 tic()
 saveRDS(
   om_fit,
-  fs::path(output_dir, paste0("itt_fit_", model, ".rds"))
+  fs::path(output_dir, paste0("itt_fit_", period, "_", model, ".rds"))
 )
 saveRDS(
   om_processed$vcov,
-  fs::path(output_dir, paste0("itt_vcov_", model, ".rds"))
+  fs::path(output_dir, paste0("itt_vcov_", period, "_", model, ".rds"))
 )
 data.table::fwrite(
   om_processed$tidy,
-  fs::path(output_dir, paste0("itt_fit_", model, ".csv"))
+  fs::path(output_dir, paste0("itt_fit_", period, "_", model, ".csv"))
 )
 data.table::fwrite(
   om_processed$glance,
-  fs::path(output_dir, paste0("itt_glance_", model, ".csv"))
+  fs::path(output_dir, paste0("itt_glance_", period, "_", model, ".csv"))
 )
 toc()

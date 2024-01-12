@@ -39,7 +39,7 @@ if(length(args)==0){
   
   option_list <- list(
     make_option("--period", type = "character", default = "month",
-                help = "Subsets of data used, options are 'month', '2month', '3month' and 'week' [default %default]. ",
+                help = "Subsets of data used, options are 'month', '2month', '3month', 'week' and 'year' [default %default]. ",
                 metavar = "period")
   )
   

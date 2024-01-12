@@ -232,6 +232,13 @@ actions:
       highly_sensitive:
         data1: output/data/data_seq_trials_monthly.feather
 
+  data_prepare_seq_trials_year:
+    run: r:latest analysis/seq_trials/prepare_data.R --period=year
+    needs: [data_select_and_simplify]
+    outputs:
+      highly_sensitive:
+        data1: output/data/data_seq_trials_yearly.feather
+
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # # 
   ## Sequential trials - DESCRIPTIVES
@@ -246,13 +253,29 @@ actions:
         csv1: output/seq_trials/descriptives/data_flow_seq_trials_monthly.csv
         csv2: output/seq_trials/descriptives/data_flow_seq_trials_monthly_red.csv
   
-  create_flow_diagram:
-    run: r:latest analysis/seq_trials/descriptives/create_flow_diagram.R
+  create_flow_diagram_month:
+    run: r:latest analysis/seq_trials/descriptives/create_flow_diagram.R --period=month
     needs: [data_select_and_simplify, data_prepare_seq_trials_month]
     outputs:
       moderately_sensitive:
         csv1: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly.csv
         csv2: output/seq_trials/descriptives/flow_diagram/flow_diagram_monthly_red.csv
+  
+  describe_size_trials_year:
+    run: r:latest analysis/seq_trials/descriptives/describe_size_trials.R --period=year
+    needs: [data_prepare_seq_trials_year]
+    outputs:
+      moderately_sensitive:
+        csv1: output/seq_trials/descriptives/data_flow_seq_trials_yearly.csv
+        csv2: output/seq_trials/descriptives/data_flow_seq_trials_yearly_red.csv
+  
+  create_flow_diagram_year:
+    run: r:latest analysis/seq_trials/descriptives/create_flow_diagram.R --period=year
+    needs: [data_select_and_simplify, data_prepare_seq_trials_year]
+    outputs:
+      moderately_sensitive:
+        csv1: output/seq_trials/descriptives/flow_diagram/flow_diagram_yearly.csv
+        csv2: output/seq_trials/descriptives/flow_diagram/flow_diagram_yearly_red.csv
   
   estimate_crude_survival:
     run: r:latest analysis/seq_trials/descriptives/estimate_crude_survival.R
@@ -265,7 +288,7 @@ actions:
 
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # # 
-  ## Sequential trials - ITT
+  ## Sequential trials - ITT (MONTH)
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # #
   plot_km:
@@ -294,91 +317,99 @@ actions:
         plot2: output/seq_trials/descriptives/survival/km_estimates_period_red.png
 
   run_itt_analysis_simple:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=simple
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=simple
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds1: output/seq_trials/itt/itt_fit_simple.rds
-        rds2: output/seq_trials/itt/itt_vcov_simple.rds
+        rds1: output/seq_trials/itt/itt_fit_month_simple.rds
+        rds2: output/seq_trials/itt/itt_vcov_month_simple.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_simple.csv
-        csv2: output/seq_trials/itt/itt_glance_simple.csv
-        txt: output/seq_trials/itt/log/itt_log_simple.txt
+        csv1: output/seq_trials/itt/itt_fit_month_simple.csv
+        csv2: output/seq_trials/itt/itt_glance_month_simple.csv
+        txt: output/seq_trials/itt/log/itt_log_month_simple.txt
 
   run_itt_analysis_interaction_period:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_period
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=interaction_period
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds1: output/seq_trials/itt/itt_fit_interaction_period.rds
-        rds2: output/seq_trials/itt/itt_vcov_interaction_period.rds
+        rds1: output/seq_trials/itt/itt_fit_month_interaction_period.rds
+        rds2: output/seq_trials/itt/itt_vcov_month_interaction_period.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_interaction_period.csv
-        csv2: output/seq_trials/itt/itt_glance_interaction_period.csv
-        txt: output/seq_trials/itt/log/itt_log_interaction_period.txt
+        csv1: output/seq_trials/itt/itt_fit_month_interaction_period.csv
+        csv2: output/seq_trials/itt/itt_glance_month_interaction_period.csv
+        txt: output/seq_trials/itt/log/itt_log_month_interaction_period.txt
 
   run_itt_analysis_interaction_trial:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_trial
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=interaction_trial
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds1: output/seq_trials/itt/itt_fit_interaction_trial.rds
-        rds2: output/seq_trials/itt/itt_vcov_interaction_trial.rds
+        rds1: output/seq_trials/itt/itt_fit_month_interaction_trial.rds
+        rds2: output/seq_trials/itt/itt_vcov_month_interaction_trial.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_interaction_trial.csv
-        csv2: output/seq_trials/itt/itt_glance_interaction_trial.csv
-        txt: output/seq_trials/itt/log/itt_log_interaction_trial.txt
+        csv1: output/seq_trials/itt/itt_fit_month_interaction_trial.csv
+        csv2: output/seq_trials/itt/itt_glance_month_interaction_trial.csv
+        txt: output/seq_trials/itt/log/itt_log_month_interaction_trial.txt
 
   run_itt_analysis_interaction_all:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=interaction_all
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=interaction_all
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds1: output/seq_trials/itt/itt_fit_interaction_all.rds
-        rds2: output/seq_trials/itt/itt_vcov_interaction_all.rds
+        rds1: output/seq_trials/itt/itt_fit_month_interaction_all.rds
+        rds2: output/seq_trials/itt/itt_vcov_month_interaction_all.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_interaction_all.csv
-        csv2: output/seq_trials/itt/itt_glance_interaction_all.csv
-        txt: output/seq_trials/itt/log/itt_log_interaction_all.txt
+        csv1: output/seq_trials/itt/itt_fit_month_interaction_all.csv
+        csv2: output/seq_trials/itt/itt_glance_month_interaction_all.csv
+        txt: output/seq_trials/itt/log/itt_log_month_interaction_all.txt
 
   run_itt_analysis_crude:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=crude
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=crude
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
         rds1: output/seq_trials/itt/itt_fit_crude.rds
         rds2: output/seq_trials/itt/itt_vcov_crude.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_crude.csv
-        csv2: output/seq_trials/itt/itt_glance_crude.csv
-        txt: output/seq_trials/itt/log/itt_log_crude.txt
+        csv1: output/seq_trials/itt/itt_fit_month_crude.csv
+        csv2: output/seq_trials/itt/itt_glance_month_crude.csv
+        txt: output/seq_trials/itt/log/itt_log_month_crude.txt
 
   run_itt_analysis_crude_period:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=crude_period
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=crude_period
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds1: output/seq_trials/itt/itt_fit_crude_period.rds
-        rds2: output/seq_trials/itt/itt_vcov_crude_period.rds
+        rds1: output/seq_trials/itt/itt_fit_month_crude_period.rds
+        rds2: output/seq_trials/itt/itt_vcov_month_crude_period.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_crude_period.csv
-        csv2: output/seq_trials/itt/itt_glance_crude_period.csv
-        txt: output/seq_trials/itt/log/itt_log_crude_period.txt
+        csv1: output/seq_trials/itt/itt_fit_month_crude_period.csv
+        csv2: output/seq_trials/itt/itt_glance_month_crude_period.csv
+        txt: output/seq_trials/itt/log/itt_log_month_crude_period.txt
 
   run_itt_analysis_crude_trial:
-    run: r:latest analysis/seq_trials/itt_analysis.R --model=crude_trial
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=crude_trial
     needs: [data_prepare_seq_trials_month]
     outputs:
       highly_sensitive:
-        rds1: output/seq_trials/itt/itt_fit_crude_trial.rds
-        rds2: output/seq_trials/itt/itt_vcov_crude_trial.rds
+        rds1: output/seq_trials/itt/itt_fit_month_crude_trial.rds
+        rds2: output/seq_trials/itt/itt_vcov_month_crude_trial.rds
       moderately_sensitive:
-        csv1: output/seq_trials/itt/itt_fit_crude_trial.csv
-        csv2: output/seq_trials/itt/itt_glance_crude_trial.csv
-        txt: output/seq_trials/itt/log/itt_log_crude_trial.txt
+        csv1: output/seq_trials/itt/itt_fit_month_crude_trial.csv
+        csv2: output/seq_trials/itt/itt_glance_month_crude_trial.csv
+        txt: output/seq_trials/itt/log/itt_log_month_crude_trial.txt
 
   create_surv_curves_itt_simple:
-    run: r:latest analysis/seq_trials/itt_curves.R --model=simple
+    run: r:latest analysis/seq_trials/itt_curves.R 
+      --model=simple
     needs: [data_prepare_seq_trials_month, run_itt_analysis_simple]
     outputs:
       moderately_sensitive:
@@ -387,7 +418,7 @@ actions:
 
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # # 
-  ## Sequential trials - PP
+  ## Sequential trials - PP (MONTH)
   ## # # # # # # # # # # # # # # # # # # # 
   ## # # # # # # # # # # # # # # # # # # #
 
@@ -402,3 +433,36 @@ actions:
         csv1: output/seq_trials/pp/pp_fit_simple.csv
         csv2: output/seq_trials/pp/pp_glance_simple.csv
         txt: output/seq_trials/pp/log/pp_log_simple.txt
+
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## Sequential trials - ITT (YEAR)
+  ## # # # # # # # # # # # # # # # # # # # 
+  ## # # # # # # # # # # # # # # # # # # #
+  run_itt_analysis_year_simple:
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=simple
+      --period=year
+    needs: [data_prepare_seq_trials_year]
+    outputs:
+      highly_sensitive:
+        rds1: output/seq_trials/itt/itt_fit_year_simple.rds
+        rds2: output/seq_trials/itt/itt_vcov_year_simple.rds
+      moderately_sensitive:
+        csv1: output/seq_trials/itt/itt_fit_year_simple.csv
+        csv2: output/seq_trials/itt/itt_glance_year_simple.csv
+        txt: output/seq_trials/itt/log/itt_log_year_simple.txt
+  
+  run_itt_analysis_year_crude:
+    run: r:latest analysis/seq_trials/itt_analysis.R 
+      --model=crude
+      --period=year
+    needs: [data_prepare_seq_trials_year]
+    outputs:
+      highly_sensitive:
+        rds1: output/seq_trials/itt/itt_fit_year_crude.rds
+        rds2: output/seq_trials/itt/itt_vcov_year_crude.rds
+      moderately_sensitive:
+        csv1: output/seq_trials/itt/itt_fit_year_crude.csv
+        csv2: output/seq_trials/itt/itt_glance_year_crude.csv
+        txt: output/seq_trials/itt/log/itt_log_year_crude.txt

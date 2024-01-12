@@ -38,7 +38,8 @@ data <-
          fup_seq,
          covid_test_positive_date,
          all_of(covars),
-         dplyr::starts_with("period_"))
+         dplyr::starts_with("period_")) %>%
+  mutate(calendar_week = period_week)
 
 ################################################################################
 # 2.0 Save output

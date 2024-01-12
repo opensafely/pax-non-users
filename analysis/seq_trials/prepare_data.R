@@ -158,7 +158,7 @@ toc()
 trials %<>%
   mutate(arm = factor(arm, levels = c(0, 1)),
          trial = factor(trial, levels = 0:4),
-         period = factor(period, levels = 1:12))
+         period = factor(period, levels = cuts))
 
 
 size_trials <- object.size(trials)
