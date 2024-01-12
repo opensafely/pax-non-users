@@ -13,6 +13,8 @@ library(here)
 library(readr)
 library(dplyr)
 library(fs)
+# Set rounding and redaction thresholds
+source(here("lib", "design", "redaction.R"))
 
 ################################################################################
 # 0.1 Create directories for output
@@ -41,9 +43,6 @@ n_excluded_contraindicated <-
 ################################################################################
 # 2 Calc numbers
 ################################################################################
-# Set rounding and redaction thresholds
-rounding_threshold = 6
-redaction_threshold = 8
 total_n <- nrow(data)
 # missing age
 missing_age <-
