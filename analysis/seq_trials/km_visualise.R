@@ -9,6 +9,9 @@
 # 0.0 Import libraries + functions
 ################################################################################
 library(ggplot2)
+library(purrr)
+library(dplyr)
+library(readr)
 
 ################################################################################
 # 0.2 Create directories for output
